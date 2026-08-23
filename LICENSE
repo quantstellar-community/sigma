@@ -1,0 +1,184 @@
+QUANTSTELLAR PROPRIETARY LICENSE
+Version 1.0
+
+Copyright (c) 2026 Quantstellar.
+All rights reserved.
+
+1. DEFINITIONS
+
+“Software” means the source code, object code, documentation, models,
+algorithms, configurations, scripts, research implementations, interfaces,
+and other materials distributed with or as part of this repository.
+
+“Copyright Holder” means Quantstellar and/or the individual or legal entity
+that lawfully owns the intellectual property rights in the Software.
+
+“User” means any person or entity accessing or obtaining the Software.
+
+2. OWNERSHIP
+
+The Software and all associated intellectual property rights are and remain
+the property of the Copyright Holder, except for third-party components,
+libraries, datasets, or other materials that are subject to their own
+licenses or rights.
+
+Nothing in this License transfers ownership of the Software or any
+intellectual property rights to the User.
+
+3. LICENSE GRANT
+
+Subject to the terms of this License, the Copyright Holder grants the User
+a limited, revocable, non-exclusive, non-transferable, non-sublicensable
+license to access and use the Software solely for personal, educational,
+academic, research, evaluation, or non-commercial purposes.
+
+No rights are granted beyond those expressly stated in this License.
+
+4. RESTRICTIONS
+
+Unless expressly authorized in writing by the Copyright Holder, the User
+must not:
+
+a. use the Software for commercial purposes;
+
+b. sell, rent, lease, sublicense, or otherwise commercially exploit the
+   Software;
+
+c. redistribute or publish the Software or substantial portions of it;
+
+d. modify, adapt, translate, or create derivative works of the Software
+   for redistribution or commercial use;
+
+e. incorporate the Software or substantial portions of it into a commercial
+   product, service, platform, or system;
+
+f. use the Software to provide a commercial hosted, SaaS, API, or managed
+   service;
+
+g. remove or alter copyright, attribution, license, or proprietary notices;
+
+h. represent the Software or derivative works as being owned or developed
+   by the User or another party;
+
+i. attempt to circumvent technical, access, or licensing restrictions
+   associated with the Software.
+
+5. RESEARCH AND ACADEMIC USE
+
+The User may use the Software for legitimate academic, educational, and
+non-commercial research purposes, provided that appropriate attribution is
+given to the Copyright Holder.
+
+Publication of research results derived from the Software does not transfer
+ownership of the Software or its underlying intellectual property.
+
+Any use of the Software in a commercial research project, commercial
+publication, commercial service, or funded commercial development requires
+prior written permission from the Copyright Holder.
+
+6. COMMERCIAL LICENSING
+
+Commercial use of the Software may be permitted under a separate written
+license or commercial agreement issued by the Copyright Holder.
+
+Such an agreement may define, among other matters:
+
+- permitted fields of use;
+- territory;
+- duration;
+- number of users or deployments;
+- distribution rights;
+- modification rights;
+- support and maintenance;
+- fees or royalties;
+- confidentiality;
+- intellectual property rights.
+
+A separate commercial agreement supersedes this License only to the extent
+expressly stated in that agreement.
+
+7. INTELLECTUAL PROPERTY
+
+All copyrights, trade secrets, know-how, proprietary methodologies,
+software implementations, research artifacts, and other intellectual
+property contained in or associated with the Software remain with their
+respective lawful owners.
+
+This License does not grant any patent license, trademark license, or other
+intellectual property right except for the limited copyright license
+expressly stated herein.
+
+8. THIRD-PARTY MATERIALS
+
+The Software may contain or depend upon third-party software, libraries,
+datasets, models, APIs, or other materials.
+
+Such materials are not necessarily covered by this License and remain
+subject to their respective licenses and terms.
+
+Nothing in this License is intended to override or restrict rights granted
+by applicable third-party licenses.
+
+9. ATTRIBUTION
+
+Where permitted use under this License requires attribution, the User must
+retain reasonable copyright and proprietary notices and identify
+Quantstellar as the Copyright Holder.
+
+10. DISCLAIMER
+
+THE SOFTWARE IS PROVIDED “AS IS” AND “AS AVAILABLE”, WITHOUT WARRANTIES OF
+ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT,
+ACCURACY, OR RELIABILITY.
+
+THE COPYRIGHT HOLDER DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE,
+SECURE, AVAILABLE, OR SUITABLE FOR ANY PARTICULAR PURPOSE.
+
+11. LIMITATION OF LIABILITY
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER
+SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL,
+EXEMPLARY, OR LOSS-OF-PROFIT DAMAGES ARISING FROM OR RELATED TO THE USE OF
+THE SOFTWARE.
+
+12. TERMINATION
+
+The rights granted under this License automatically terminate if the User
+violates any material term of this License.
+
+Upon termination, the User must cease all uses of the Software that are no
+longer authorized and, where legally required, remove or destroy copies of
+the Software under the User’s control.
+
+Termination does not affect rights or obligations that by their nature are
+intended to survive termination.
+
+13. RESERVATION OF RIGHTS
+
+All rights not expressly granted under this License are reserved by the
+Copyright Holder.
+
+Nothing in this License shall be interpreted as granting any implied,
+estoppel-based, or other rights not expressly stated herein.
+
+14. GOVERNING LAW
+
+This License shall be interpreted and enforced in accordance with the
+applicable laws and jurisdiction agreed upon by the Copyright Holder.
+
+If no separate written agreement specifies otherwise, the parties shall
+seek to resolve disputes through good-faith negotiation before pursuing
+formal legal remedies.
+
+15. CONTACT
+
+For commercial licensing, permissions, partnership, or other inquiries,
+contact the Copyright Holder through the official Quantstellar contact
+channel.
+
+---
+
+QUANTSTELLAR
+Proprietary Software
+All Rights Reserved.
