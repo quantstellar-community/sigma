@@ -1,99 +1,38 @@
-# Sigma --- Product Requirements Document
+# Sigma — Product Requirements Document
 
-> **Phiên bản:** 0.1\
-> **Trạng thái:** Draft / Internal Baseline\
-> **Sản phẩm:** Sigma Risk Intelligence\
-> **Loại sản phẩm:** Regime-Aware Portfolio Risk Intelligence Engine\
-> **Lĩnh vực:** Market Risk & Portfolio Risk\
-> **Định hướng:** API-first, Modular Monolith
+**Phiên bản:** 0.2  
+**Trạng thái:** Draft / Internal Baseline  
+**Sản phẩm:** Sigma Risk Intelligence  
+**Loại sản phẩm:** Regime-Aware Portfolio Risk Intelligence Engine  
+**Lĩnh vực:** Market Risk & Portfolio Risk  
+**Định hướng:** API-first, Modular Monolith
 
-------------------------------------------------------------------------
+---
 
-## 1. Tổng quan
+## 1. Mục đích
 
-Sigma là một **Regime-Aware Portfolio Risk Intelligence Engine** nhằm hỗ
-trợ phân tích và định lượng rủi ro danh mục đầu tư thông qua mô hình hóa
-điều kiện thị trường, sinh kịch bản, xây dựng phân phối lãi/lỗ và tính
-toán các chỉ số rủi ro như VaR và CVaR.
+PRD định nghĩa **Sigma cần xây dựng gì, dành cho ai và tại sao sản phẩm cần tồn tại**.
 
-Sigma kết hợp phương pháp tài chính định lượng cổ điển với Quantum
-Computing tại những bước mà phương pháp lượng tử có vai trò tính toán rõ
-ràng.
+Tài liệu là baseline cho:
 
-Triết lý cốt lõi:
+- phạm vi sản phẩm;
+- vấn đề cần giải quyết;
+- người dùng mục tiêu;
+- mục tiêu V1;
+- yêu cầu chức năng;
+- ranh giới sản phẩm;
+- tiêu chí thành công;
+- định hướng phát triển.
 
-> **Classical First → Quantum Where Justified → Fair Benchmark → Measure
-> Real Value → Risk Intelligence → Decision Support**
+Chi tiết về UI/UX, kiến trúc, schema và công nghệ thuộc các tài liệu chuyên biệt.
 
-Sigma không giả định Quantum Computing luôn vượt trội so với Classical
-Computing. Hệ thống phải cho phép đặt các phương pháp trên cùng một bài
-toán để đánh giá độ chính xác, tài nguyên tính toán và giá trị thực tế.
+---
 
-------------------------------------------------------------------------
+## 2. Tổng quan sản phẩm
 
-## 2. Vấn đề cần giải quyết
+Sigma là **Regime-Aware Portfolio Risk Intelligence Engine**, biến dữ liệu thị trường và danh mục thành các đánh giá rủi ro định lượng:
 
-### 2.1. Risk modeling trong điều kiện thị trường thay đổi
-
-Phân phối lợi suất và mức độ biến động của thị trường không nhất thiết
-ổn định theo thời gian. Một quy trình risk analysis dựa trên một
-distribution cố định có thể không phản ánh đầy đủ sự thay đổi của market
-regimes.
-
-Sigma mô hình hóa quá trình:
-
-``` text
-Market State
-    ↓
-Return / Volatility Dynamics
-    ↓
-Risk Distribution
-    ↓
-Scenario Generation
-    ↓
-Portfolio Loss Distribution
-    ↓
-Risk Metrics
-```
-
-Mục tiêu là tạo ra risk analysis có xét đến điều kiện thị trường thay vì
-chỉ tạo ra một con số risk độc lập với bối cảnh.
-
-### 2.2. Computational challenge
-
-Monte Carlo là một phương pháp quan trọng để ước lượng các đại lượng rủi
-ro từ phân phối tổn thất, nhưng sai số sampling giảm theo tốc độ
-(O(1/`\sqrt{N}`{=tex})).
-
-Quantum Amplitude Estimation có lợi thế lý thuyết về query complexity
-trong một số bài toán ước lượng xác suất và kỳ vọng. Tuy nhiên, state
-preparation, distribution loading, oracle construction, circuit depth,
-số qubit, shots, noise và runtime có thể làm giảm hoặc loại bỏ lợi thế
-lý thuyết.
-
-Vì vậy, câu hỏi của Sigma không phải:
-
-> "Quantum có nhanh hơn Classical không?"
-
-mà là:
-
-> **"Trong điều kiện nào lợi thế tính toán của Quantum có thể tồn tại
-> sau khi tính đến toàn bộ financial risk pipeline?"**
-
-------------------------------------------------------------------------
-
-## 3. Product Vision
-
-### 3.1. Vision
-
-Xây dựng một nền tảng **Financial Risk Intelligence** có khả năng biến
-dữ liệu thị trường và thông tin danh mục thành các đánh giá rủi ro định
-lượng, có khả năng giải thích và có thể tích hợp vào các hệ thống tài
-chính khác thông qua API.
-
-### 3.2. Product direction
-
-``` text
+```text
 Market Data
     ↓
 Risk Modeling
@@ -109,343 +48,391 @@ Risk Intelligence
 Decision Support
 ```
 
-Quantum được xem là **computational enhancement layer**, không phải mục
-tiêu cuối cùng của sản phẩm.
+Sigma kết hợp phương pháp tài chính định lượng Classical với Quantum Computing ở những bài toán mà phương pháp lượng tử có vai trò tính toán rõ ràng.
 
-### 3.3. Long-term direction
+Triết lý:
 
-Risk Analytics là nền tảng ban đầu. Sigma có thể mở rộng về sau sang
-Portfolio Intelligence, Risk Contribution, Concentration Analysis,
-Portfolio Optimization, Credit Risk, Liquidity Risk, Dynamic Risk
-Management và các lớp Decision Intelligence rộng hơn.
+> **Classical First → Quantum Where Justified → Fair Benchmark → Measure Real Value → Risk Intelligence → Decision Support**
 
-Portfolio Management là lớp ứng dụng có thể phát triển phía trên Risk
-Engine, không phải lõi của Sigma V1.
+Sigma không giả định Quantum luôn vượt trội. Classical và Quantum phải được đánh giá trên cùng financial problem, với độ chính xác, chi phí tính toán và giá trị thực tế được đo lường rõ ràng.
 
-------------------------------------------------------------------------
+---
 
-## 4. Product Positioning
+## 3. Vấn đề cần giải quyết
 
-Sigma được định vị là:
+### 3.1. Rủi ro thay đổi theo điều kiện thị trường
 
-> **Risk Intelligence Engine, không phải Trading Bot.**
+Phân phối lợi suất và mức độ biến động có thể thay đổi theo thời gian. Một risk analysis dựa trên distribution cố định có thể không phản ánh đầy đủ các market regime khác nhau.
+
+Sigma hướng tới:
+
+```text
+Market State
+    ↓
+Return / Volatility Dynamics
+    ↓
+Risk Distribution
+    ↓
+Scenario Generation
+    ↓
+Portfolio Loss Distribution
+    ↓
+Risk Metrics
+```
+
+Mục tiêu là tạo risk analysis có xét đến bối cảnh thị trường, thay vì chỉ đưa ra một con số risk tách rời khỏi điều kiện tạo ra nó.
+
+### 3.2. Chi phí tính toán của risk estimation
+
+Monte Carlo là baseline quan trọng để ước lượng risk từ loss distribution. Một số phương pháp Quantum, đặc biệt Quantum Amplitude Estimation, có lợi thế lý thuyết về query complexity trong các bài toán phù hợp.
+
+Tuy nhiên, lợi thế đó có thể bị ảnh hưởng bởi:
+
+- state preparation;
+- distribution loading;
+- oracle construction;
+- circuit depth;
+- số qubit;
+- shots;
+- noise;
+- runtime;
+- chi phí toàn bộ pipeline.
+
+Vì vậy, câu hỏi nghiên cứu của Sigma là:
+
+> **Trong điều kiện nào lợi thế tính toán của Quantum còn tồn tại sau khi tính đến toàn bộ financial risk pipeline?**
+
+---
+
+## 4. Product Vision
+
+### Vision
+
+Xây dựng một nền tảng **Financial Risk Intelligence** có khả năng biến dữ liệu thị trường và thông tin danh mục thành đánh giá rủi ro định lượng, có khả năng giải thích và có thể tích hợp vào các hệ thống tài chính thông qua API.
+
+### Định hướng
+
+```text
+Market Data
+    ↓
+Risk Modeling
+    ↓
+Scenario Generation
+    ↓
+Loss Distribution
+    ↓
+Risk Estimation
+    ↓
+Risk Intelligence
+    ↓
+Decision Support
+```
+
+Quantum là **computational enhancement layer**, không phải mục tiêu cuối cùng của sản phẩm.
+
+### Định hướng dài hạn
+
+Risk Analytics là nền tảng ban đầu. Sau khi V1 được kiểm chứng, Sigma có thể mở rộng sang:
+
+- Portfolio Intelligence;
+- Risk Contribution;
+- Concentration Analysis;
+- Portfolio Optimization;
+- Credit Risk;
+- Liquidity Risk;
+- Dynamic Risk Management;
+- các lớp Decision Intelligence rộng hơn.
+
+Portfolio Management là lớp ứng dụng có thể phát triển phía trên Risk Engine, không phải lõi của Sigma V1.
+
+---
+
+## 5. Product Positioning
+
+Sigma là **Risk Intelligence Engine, không phải Trading Bot**.
 
 Sigma không nhằm:
 
--   dự báo giá cổ phiếu;
--   tự động giao dịch;
--   thay thế portfolio manager;
--   trở thành OMS/EMS;
--   trở thành hệ thống portfolio management hoàn chỉnh.
+- dự báo giá cổ phiếu;
+- tự động giao dịch;
+- thay thế Portfolio Manager;
+- trở thành OMS/EMS;
+- trở thành hệ thống Portfolio Management hoàn chỉnh.
 
 Sigma tập trung vào câu hỏi:
 
-> **"Danh mục có thể chịu rủi ro như thế nào, trong những điều kiện nào,
-> và mức độ bất định của kết quả là bao nhiêu?"**
+> **Danh mục có thể chịu rủi ro như thế nào, trong những điều kiện nào, và mức độ bất định của kết quả là bao nhiêu?**
 
-Sigma cung cấp risk intelligence để hỗ trợ quyết định, nhưng không mặc
-định tự động thực hiện quyết định đầu tư.
+Sigma cung cấp risk intelligence để hỗ trợ quyết định, nhưng không tự động thực hiện quyết định đầu tư.
 
-------------------------------------------------------------------------
+---
 
-## 5. Target Users
+## 6. Người dùng mục tiêu
 
-### 5.1. Risk Analysts
+### Risk Analyst
 
--   Phân tích portfolio risk.
--   Tính VaR/CVaR.
--   Phân tích loss distribution.
--   Phân tích risk contribution.
--   Thực hiện stress testing.
--   So sánh scenario.
+Cần:
 
-### 5.2. Portfolio Managers
+- portfolio risk;
+- VaR/CVaR;
+- loss distribution;
+- risk contribution;
+- stress testing;
+- scenario analysis.
 
--   Đánh giá mức độ rủi ro của danh mục.
--   Xác định các nguồn đóng góp lớn vào tail risk.
--   Đánh giá portfolio dưới các market scenarios.
--   Hỗ trợ quyết định quản trị danh mục.
+### Portfolio Manager
 
-### 5.3. Quantitative Researchers / Risk Modelers
+Cần:
 
--   Nghiên cứu risk distributions.
--   Thử nghiệm volatility/regime models.
--   Nghiên cứu Monte Carlo.
--   Nghiên cứu Quantum Amplitude Estimation.
--   Benchmark Classical--Quantum approaches.
+- risk profile;
+- tail risk drivers;
+- portfolio response dưới các market scenarios;
+- decision support.
 
-### 5.4. Financial Institutions
+### Quantitative Researcher / Risk Modeler
 
-Định hướng dài hạn:
+Cần:
 
--   Ngân hàng.
--   Công ty chứng khoán.
--   Công ty quản lý tài sản.
--   Fintech.
--   Các tổ chức tài chính có nhu cầu phân tích và quản trị rủi ro.
+- risk distributions;
+- volatility/regime models;
+- Monte Carlo;
+- Quantum Amplitude Estimation;
+- Classical–Quantum benchmarking.
 
-------------------------------------------------------------------------
+### Financial Institutions
 
-## 6. User Problems
+Định hướng dài hạn gồm:
 
-### P1 --- Portfolio Risk Quantification
+- ngân hàng;
+- công ty chứng khoán;
+- công ty quản lý tài sản;
+- fintech;
+- các tổ chức tài chính có nhu cầu phân tích và quản trị rủi ro.
 
-Người dùng cần biết mức độ rủi ro của một danh mục dưới các điều kiện
-thị trường khác nhau.
+---
 
-### P2 --- Tail Risk Understanding
+## 7. Các vấn đề người dùng
 
-Người dùng cần hiểu:
+| Mã | Vấn đề |
+|---|---|
+| P1 | Định lượng rủi ro danh mục dưới các điều kiện thị trường khác nhau |
+| P2 | Hiểu tail risk, Expected Shortfall và các tài sản đóng góp lớn |
+| P3 | Mô hình hóa risk theo market regime thay vì distribution cố định |
+| P4 | Phân tích scenario và stress |
+| P5 | Đánh giá Classical và Quantum trên cùng financial problem |
+| P6 | Tích hợp risk computation qua API |
 
--   xác suất xảy ra loss lớn;
--   mức loss tại tail;
--   Expected Shortfall;
--   các scenario xấu;
--   tài sản đóng góp lớn vào tail risk.
+---
 
-### P3 --- Regime-Aware Risk
+## 8. Mục tiêu sản phẩm
 
-Người dùng cần mô hình hóa risk trong bối cảnh thị trường thay đổi thay
-vì giả định một distribution cố định.
-
-### P4 --- Scenario & Stress Analysis
-
-Người dùng cần đánh giá portfolio dưới các market shock hoặc scenario cụ
-thể.
-
-### P5 --- Classical--Quantum Evaluation
-
-Nhà nghiên cứu cần một framework để đặt Classical và Quantum trên cùng
-một financial problem và đánh giá một cách công bằng.
-
-### P6 --- Integration
-
-Các hệ thống tài chính khác cần sử dụng risk computation thông qua API
-thay vì phụ thuộc vào giao diện Sigma.
-
-------------------------------------------------------------------------
-
-## 7. Product Goals
-
-### Goal 1 --- Risk Analytics Core
+### Goal 1 — Risk Analytics Core
 
 Sigma phải có khả năng:
 
--   xử lý market data;
--   tính returns;
--   mô hình hóa volatility;
--   nhận diện market regime;
--   xây dựng regime-aware distribution;
--   sinh scenarios;
--   tạo portfolio loss distribution;
--   tính VaR;
--   tính CVaR / Expected Shortfall;
--   thực hiện stress testing.
+- xử lý market data;
+- tính returns;
+- mô hình hóa volatility;
+- nhận diện market regime;
+- xây dựng regime-aware distribution;
+- sinh scenarios;
+- tạo portfolio loss distribution;
+- tính VaR;
+- tính CVaR / Expected Shortfall;
+- thực hiện stress testing.
 
-### Goal 2 --- Classical Baseline
+### Goal 2 — Classical Baseline
 
-Classical Monte Carlo phải là baseline chính để:
+Classical Monte Carlo là baseline để:
 
--   kiểm chứng methodology;
--   làm reference implementation;
--   đánh giá accuracy;
--   làm đối chứng cho Quantum.
+- kiểm chứng methodology;
+- làm reference implementation;
+- đánh giá accuracy;
+- đối chứng với Quantum.
 
-### Goal 3 --- Quantum Enhancement
+### Goal 3 — Quantum Enhancement
 
-Quantum được đưa vào một financial estimation problem cụ thể, ưu tiên
-các bài toán phù hợp với Quantum Amplitude Estimation và các biến thể
-phù hợp.
+Nghiên cứu Quantum trên các financial estimation problem cụ thể, ưu tiên các bài toán phù hợp với Quantum Amplitude Estimation và các biến thể liên quan.
 
-### Goal 4 --- Fair Classical--Quantum Benchmark
+### Goal 4 — Fair Classical–Quantum Benchmark
 
 Benchmark phải xem xét:
 
--   accuracy;
--   estimation error;
--   number of samples / queries;
--   runtime;
--   qubits;
--   circuit depth;
--   shots;
--   noise;
--   state preparation cost;
--   oracle cost;
--   end-to-end computational cost.
+- accuracy;
+- estimation error;
+- samples / queries;
+- runtime;
+- qubits;
+- circuit depth;
+- shots;
+- noise;
+- state preparation cost;
+- oracle cost;
+- end-to-end computational cost.
 
-### Goal 5 --- Productize Risk Engine
+### Goal 5 — Productize Risk Engine
 
-Risk computation phải có API rõ ràng để có thể được sử dụng bởi
-dashboard, notebook, CLI và các client bên ngoài trong tương lai.
+Risk computation phải có API rõ ràng để có thể được sử dụng bởi dashboard, notebook, CLI và các client bên ngoài trong tương lai.
 
-------------------------------------------------------------------------
+---
 
-## 8. Product Principles
+## 9. Nguyên tắc sản phẩm
 
-### 8.1. Classical First
+### Classical First
 
-Classical methods phải được xây dựng và kiểm chứng trước khi đưa Quantum
-vào.
+Classical methods phải được xây dựng và kiểm chứng trước khi đưa Quantum vào.
 
-### 8.2. Quantum Where Justified
+### Quantum Where Justified
 
 Mỗi Quantum component phải có:
 
--   financial problem;
--   mathematical formulation;
--   computational motivation;
--   classical baseline;
--   benchmark protocol.
+- financial problem;
+- mathematical formulation;
+- computational motivation;
+- classical baseline;
+- benchmark protocol.
 
-### 8.3. No Assumed Quantum Advantage
-
-Sigma không được mặc định Quantum thắng.
+### Không giả định Quantum Advantage
 
 Một kết quả hợp lệ có thể là:
 
-``` text
-Quantum has theoretical query advantage
+```text
+Quantum có lợi thế lý thuyết về query complexity
         ↓
-State preparation dominates
+State preparation chi phối chi phí
         ↓
-No end-to-end practical advantage
+Không có practical advantage ở cấp độ end-to-end
 ```
 
-Đây vẫn là một kết quả nghiên cứu có giá trị.
+Đây vẫn là kết quả nghiên cứu có giá trị.
 
-### 8.4. Financial Validity First
+### Financial Validity First
 
-Quantum result không có ý nghĩa nếu financial formulation hoặc risk
-methodology không hợp lệ.
+Quantum result không có ý nghĩa nếu financial formulation hoặc risk methodology không hợp lệ.
 
-### 8.5. End-to-End Evaluation
+### End-to-End Evaluation
 
-Benchmark phải tính đến toàn bộ computational pipeline thay vì chỉ
-benchmark một quantum circuit cô lập.
+Benchmark phải đánh giá toàn bộ computational pipeline, không chỉ một quantum circuit cô lập.
 
-### 8.6. Explainability
+### Explainability
 
 Risk output phải giúp người dùng hiểu:
 
--   risk đến từ đâu;
--   scenario nào tạo ra risk;
--   tài sản nào đóng góp nhiều nhất;
--   assumptions nào được sử dụng.
+- risk đến từ đâu;
+- scenario nào tạo ra risk;
+- tài sản nào đóng góp nhiều nhất;
+- assumptions nào được sử dụng.
 
-### 8.7. API First
+### API First
 
-Risk Engine phải độc lập với UI. Taipy là reference client; API là
-product interface.
+Risk Engine độc lập với UI. Taipy là reference client; API là product interface.
 
-------------------------------------------------------------------------
+---
 
-## 9. V1 Product Scope
+## 10. Phạm vi V1
 
 Sigma V1 tập trung vào:
 
 > **Regime-Aware Portfolio Risk Intelligence**
 
-### 9.1. Input
+### Input
 
--   historical market prices;
--   portfolio positions / weights;
--   portfolio value;
--   confidence level;
--   risk horizon;
--   simulation parameters;
--   scenario parameters.
+- historical market prices;
+- portfolio positions / weights;
+- portfolio value;
+- confidence level;
+- risk horizon;
+- simulation parameters;
+- scenario parameters.
 
-### 9.2. Data Processing
+### Data Processing
 
--   data ingestion;
--   data validation;
--   cleaning;
--   adjusted price handling;
--   return calculation;
--   volatility estimation;
--   covariance/correlation estimation.
+- data ingestion;
+- validation;
+- cleaning;
+- adjusted price handling;
+- return calculation;
+- volatility estimation;
+- covariance / correlation estimation.
 
-### 9.3. Market Modeling
+### Market Modeling
 
--   return modeling;
--   conditional volatility modeling;
--   market regime detection;
--   regime-aware distribution modeling.
+- return modeling;
+- conditional volatility modeling;
+- market regime detection;
+- regime-aware distribution modeling.
 
-GARCH và HMM có thể được sử dụng khi phù hợp với financial/statistical
-assumptions.
+GARCH và HMM có thể được sử dụng khi phù hợp với financial/statistical assumptions.
 
-### 9.4. Scenario Generation
+### Scenario Generation
 
--   Monte Carlo simulation;
--   portfolio-level scenario generation;
--   loss distribution;
--   stress scenarios.
+- Monte Carlo simulation;
+- portfolio-level scenario generation;
+- loss distribution;
+- stress scenarios.
 
-### 9.5. Risk Metrics
+### Risk Metrics
 
--   VaR;
--   CVaR / Expected Shortfall;
--   Expected Loss;
--   volatility;
--   simulated worst loss;
--   probability of loss vượt threshold;
--   risk contribution.
+- VaR;
+- CVaR / Expected Shortfall;
+- Expected Loss;
+- volatility;
+- simulated worst loss;
+- probability of loss vượt threshold;
+- risk contribution.
 
-### 9.6. Quantum Risk Estimation
+### Quantum Risk Estimation
 
 V1 nghiên cứu:
 
--   Quantum Amplitude Estimation;
--   các biến thể phù hợp như Iterative / Maximum Likelihood Amplitude
-    Estimation khi cần;
--   quantum state preparation;
--   risk/payoff oracle;
--   quantum resource estimation.
+- Quantum Amplitude Estimation;
+- các biến thể phù hợp như Iterative / Maximum Likelihood Amplitude Estimation khi cần;
+- quantum state preparation;
+- risk / payoff oracle;
+- quantum resource estimation.
 
 Quantum module phải được benchmark với Classical baseline.
 
-### 9.7. Classical--Quantum Benchmark
+### Classical–Quantum Benchmark
 
-Sigma phải có khả năng so sánh Classical và Quantum trên cùng financial
-problem với cùng evaluation criteria.
+Sigma phải so sánh Classical và Quantum trên cùng financial problem và cùng evaluation criteria.
 
-### 9.8. Stress Testing
+### Stress Testing
 
 V1 hỗ trợ:
 
--   market shock;
--   volatility shock;
--   asset/sector shock;
--   historical crisis scenarios;
--   custom scenarios khi phù hợp.
+- market shock;
+- volatility shock;
+- asset / sector shock;
+- historical crisis scenarios;
+- custom scenarios khi methodology phù hợp.
 
-### 9.9. API
+### API
 
-API phải hỗ trợ các nhóm chức năng:
+API hỗ trợ các nhóm chức năng:
 
--   portfolio analysis;
--   risk estimation;
--   scenario/stress analysis;
--   Classical--Quantum benchmark.
+- portfolio analysis;
+- risk estimation;
+- scenario / stress analysis;
+- Classical–Quantum benchmark.
 
-### 9.10. Dashboard
+### Dashboard
 
-Taipy đóng vai trò:
+Taipy là:
 
--   reference client;
--   interactive risk console;
--   visualization layer;
--   benchmark interface;
--   demonstration interface.
+- reference client;
+- interactive risk console;
+- visualization layer;
+- benchmark interface;
+- demonstration interface.
 
 Dashboard không chứa financial business logic.
 
-------------------------------------------------------------------------
+---
 
-## 10. V1 Core Workflow
+## 11. Luồng chính của V1
 
-``` text
+```text
 Market Data
       ↓
 Data Validation & Cleaning
@@ -464,219 +451,230 @@ Portfolio Loss Distribution
       ↓
 ┌───────────────────────────┐
 │ Classical Risk Estimation │
-│          vs               │
-│ Quantum Estimation        │
+│            vs             │
+│ Quantum Risk Estimation   │
 └─────────────┬─────────────┘
               ↓
-        VaR / CVaR
+          VaR / CVaR
               ↓
-       Stress Testing
+        Stress Testing
               ↓
-      Risk Intelligence
+       Risk Intelligence
               ↓
        Decision Support
               ↓
         FastAPI / UI
 ```
 
-------------------------------------------------------------------------
+Quantum là nhánh estimation/benchmark tùy trường hợp, không phải điều kiện bắt buộc của Classical risk workflow.
 
-## 11. Product Outputs
+---
 
-### 11.1. Risk Summary
+## 12. Product Outputs
 
--   Portfolio Value.
--   Volatility.
--   VaR 95%.
--   VaR 99%.
--   CVaR 95%.
--   CVaR 99%.
--   Expected Loss.
+### Risk Summary
 
-### 11.2. Risk Decomposition
+- Portfolio Value;
+- Volatility;
+- VaR 95%;
+- VaR 99%;
+- CVaR 95%;
+- CVaR 99%;
+- Expected Loss.
 
--   Asset Risk Contribution.
--   Portfolio Concentration.
--   Volatility Contribution.
--   Covariance / Correlation.
--   Top Risk Drivers.
+### Risk Decomposition
 
-### 11.3. Scenario & Stress Results
+- Asset Risk Contribution;
+- Portfolio Concentration;
+- Volatility Contribution;
+- Covariance / Correlation;
+- Top Risk Drivers.
 
--   Portfolio Loss.
--   Loss Distribution.
--   Tail Loss.
--   Stress Loss.
--   VaR Change.
--   CVaR Change.
--   Worst Scenarios.
+### Scenario & Stress
 
-### 11.4. Classical--Quantum Benchmark
+- Portfolio Loss;
+- Loss Distribution;
+- Tail Loss;
+- Stress Loss;
+- VaR Change;
+- CVaR Change;
+- Worst Scenarios.
 
--   Estimator.
--   Estimate.
--   Absolute Error.
--   Relative Error.
--   Runtime.
--   Number of Samples / Queries.
--   Qubits.
--   Circuit Depth.
--   Shots.
--   Noise Setting.
--   State Preparation Cost.
--   Oracle Cost.
+### Classical–Quantum Benchmark
 
-Kết luận benchmark phải phản ánh kết quả thực nghiệm thay vì mặc định
-Quantum thắng.
+- estimator;
+- estimate;
+- absolute error;
+- relative error;
+- runtime;
+- samples / queries;
+- qubits;
+- circuit depth;
+- shots;
+- noise setting;
+- state preparation cost;
+- oracle cost.
 
-------------------------------------------------------------------------
+Kết luận benchmark phải phản ánh kết quả thực nghiệm, không mặc định Quantum thắng.
 
-## 12. Quantum Research Scope
+---
 
-Quantum trong V1 là computational layer cho một số estimation problems
-đã được financial formulation.
+## 13. Quantum Research Scope
+
+Quantum trong V1 là computational layer cho các estimation problem đã có financial formulation.
 
 Quantum không xử lý:
 
--   raw data cleaning;
--   market data ingestion;
--   toàn bộ portfolio pipeline;
--   financial preprocessing;
--   API orchestration.
+- raw data cleaning;
+- market data ingestion;
+- toàn bộ portfolio pipeline;
+- financial preprocessing;
+- API orchestration.
 
 Quantum nhận một bài toán đã được chuẩn hóa, ví dụ:
 
-``` text
+```text
 P(Loss > Threshold)
 ```
 
 hoặc một expected value / tail-related quantity phù hợp.
 
-Classical Monte Carlo và Quantum Amplitude Estimation được đánh giá trên
-cùng quantity.
+Khi benchmark, Classical Monte Carlo và Quantum Amplitude Estimation phải ước lượng **cùng một financial quantity**.
 
-------------------------------------------------------------------------
+---
 
-## 13. Classical--Quantum Benchmark Philosophy
+## 14. Classical–Quantum Benchmark Philosophy
 
-Sigma có thể nghiên cứu ba architecture:
+Sigma có thể nghiên cứu ba hướng:
 
 ### A. Pure Classical
 
-``` text
+```text
 Historical Data
-→ Classical Scenario Generation
-→ Classical Monte Carlo
-→ VaR/CVaR
+      ↓
+Classical Scenario Generation
+      ↓
+Classical Monte Carlo
+      ↓
+VaR / CVaR
 ```
 
 ### B. Naive Hybrid
 
-``` text
+```text
 Historical Data
-→ Classical Scenarios
-→ Quantum State Loading
-→ QAE
-→ VaR/CVaR
+      ↓
+Classical Scenarios
+      ↓
+Quantum State Loading
+      ↓
+QAE
+      ↓
+VaR / CVaR
 ```
 
 ### C. Quantum / Co-designed Architecture
 
-``` text
+```text
 Historical Data
-→ Classical Parameter Estimation
-→ Quantum Scenario Generation
-→ Quantum Estimation
-→ VaR/CVaR
+      ↓
+Classical Parameter Estimation
+      ↓
+Quantum Scenario Generation
+      ↓
+Quantum Estimation
+      ↓
+VaR / CVaR
 ```
 
-Các architecture trên là research directions, không phải kết luận trước
-về practical advantage.
+Đây là các hướng nghiên cứu, không phải kết luận trước về practical advantage.
 
-Mục tiêu là kiểm tra liệu theoretical quantum advantage có còn tồn tại
-sau state preparation, distribution loading, oracle construction và các
-overhead của toàn pipeline hay không.
+Mục tiêu là kiểm tra liệu lợi thế lý thuyết có còn tồn tại sau:
 
-------------------------------------------------------------------------
+- state preparation;
+- distribution loading;
+- oracle construction;
+- circuit execution;
+- noise;
+- overhead của toàn pipeline.
 
-## 14. Non-Goals --- V1 không làm
+---
+
+## 15. Non-Goals — V1 không làm
 
 Sigma V1 không bao gồm:
 
--   stock price prediction;
--   automated trading;
--   broker execution;
--   OMS/EMS;
--   full portfolio management;
--   production auto-rebalancing;
--   dynamic leverage như core functionality;
--   QAOA portfolio optimization;
--   full credit risk platform;
--   full liquidity risk platform;
--   XVA;
--   enterprise real-time trading infrastructure;
--   microservices architecture;
--   Kubernetes;
--   Kafka;
--   mobile application;
--   LLM financial advisor.
+- stock price prediction;
+- automated trading;
+- broker execution;
+- OMS/EMS;
+- full portfolio management;
+- production auto-rebalancing;
+- dynamic leverage như core functionality;
+- QAOA portfolio optimization;
+- full credit risk platform;
+- full liquidity risk platform;
+- XVA;
+- enterprise real-time trading infrastructure;
+- microservices architecture;
+- Kubernetes;
+- Kafka;
+- mobile application;
+- LLM financial advisor.
 
-Các hướng trên có thể được xem xét trong roadmap nếu có
-financial/product justification.
+Các hướng trên chỉ được xem xét khi có financial hoặc product justification rõ ràng.
 
-------------------------------------------------------------------------
+---
 
-## 15. Decision Support Boundary
+## 16. Decision Support Boundary
 
-Sigma cung cấp **risk intelligence**, không tự động thay thế quyết định
-đầu tư.
+Sigma cung cấp **risk intelligence**, không tự động thay thế quyết định đầu tư.
 
 Sigma có thể cho biết:
 
-``` text
+```text
 CVaR 99% tăng đáng kể dưới volatility shock.
 
 NVDA đóng góp lớn nhất vào portfolio tail risk.
 ```
 
-Sigma có thể hỗ trợ hiểu:
+Sigma hỗ trợ người dùng hiểu:
 
--   risk level;
--   risk drivers;
--   scenario impact;
--   tail behavior.
+- risk level;
+- risk drivers;
+- scenario impact;
+- tail behavior.
 
 V1 không tự động:
 
--   đặt lệnh;
--   rebalance portfolio;
--   thay đổi leverage;
--   hedge position.
+- đặt lệnh;
+- rebalance portfolio;
+- thay đổi leverage;
+- hedge position.
 
-------------------------------------------------------------------------
+---
 
-## 16. Product Interfaces
+## 17. Product Interfaces
 
-### 16.1. API
+### API
 
 FastAPI là product-facing interface.
 
-Client tương tác với Sigma thông qua API contract thay vì truy cập trực
-tiếp internal modules.
+Client tương tác với Sigma thông qua API contract thay vì truy cập trực tiếp internal modules.
 
-### 16.2. Dashboard
+### Dashboard
 
 Taipy là reference client cho:
 
--   portfolio setup;
--   risk analysis;
--   scenario analysis;
--   stress testing;
--   benchmark visualization.
+- portfolio setup;
+- risk analysis;
+- scenario analysis;
+- stress testing;
+- benchmark visualization.
 
-### 16.3. Future Clients
+### Future Clients
 
-``` text
+```text
 Taipy
 Notebook
 CLI
@@ -687,150 +685,159 @@ Third-party Application
      Sigma API
 ```
 
-------------------------------------------------------------------------
+---
 
-## 17. Business Direction
+## 18. Business Direction
 
 Sigma được định hướng **B2B trước**.
 
 Các nhóm khách hàng dài hạn:
 
--   ngân hàng;
--   công ty chứng khoán;
--   công ty quản lý tài sản;
--   fintech;
--   các tổ chức tài chính.
+- ngân hàng;
+- công ty chứng khoán;
+- công ty quản lý tài sản;
+- fintech;
+- các tổ chức tài chính.
 
 Các hình thức sản phẩm có thể gồm:
 
--   Risk Intelligence Platform;
--   Risk Analytics API;
--   specialized risk modules;
--   integration services.
+- Risk Intelligence Platform;
+- Risk Analytics API;
+- specialized risk modules;
+- integration services.
 
-Business model không phải mục tiêu trực tiếp của V1. V1 ưu tiên kiểm
-chứng:
+Business model không phải mục tiêu trực tiếp của V1.
 
-``` text
+V1 ưu tiên kiểm chứng:
+
+```text
 Problem
-→ Methodology
-→ Engine
-→ Benchmark
-→ Product Utility
+   ↓
+Methodology
+   ↓
+Engine
+   ↓
+Benchmark
+   ↓
+Product Utility
 ```
 
 trước khi mở rộng commercial deployment.
 
-------------------------------------------------------------------------
+---
 
-## 18. Success Criteria
+## 19. Tiêu chí thành công
 
-### 18.1. Financial Correctness
+### Financial Correctness
 
--   Risk methodology được định nghĩa rõ.
--   VaR/CVaR được tính nhất quán.
--   Scenario generation có assumptions rõ ràng.
--   Kết quả có thể được kiểm chứng bằng tests.
+- Risk methodology được định nghĩa rõ;
+- VaR/CVaR được tính nhất quán;
+- scenario generation có assumptions rõ ràng;
+- kết quả có thể kiểm chứng bằng tests.
 
-### 18.2. Technical Correctness
+### Technical Correctness
 
--   Core modules hoạt động độc lập.
--   API contract rõ ràng.
--   Dashboard sử dụng API.
--   Classical baseline reproducible.
--   Quantum module có thể chạy trên simulator và/hoặc backend phù hợp.
+- Core modules hoạt động độc lập;
+- API contract rõ ràng;
+- Dashboard sử dụng API;
+- Classical baseline có thể tái lập;
+- Quantum module có thể chạy trên simulator và/hoặc backend phù hợp.
 
-### 18.3. Scientific Validity
+### Scientific Validity
 
--   Classical baseline được thiết lập trước.
--   Quantum formulation rõ ràng.
--   Benchmark sử dụng cùng problem và evaluation criteria.
--   Resource overhead được ghi nhận.
--   Không tuyên bố quantum advantage nếu dữ liệu thực nghiệm không chứng
-    minh.
+- Classical baseline được thiết lập trước;
+- Quantum formulation rõ ràng;
+- benchmark dùng cùng problem và evaluation criteria;
+- resource overhead được ghi nhận;
+- không tuyên bố quantum advantage nếu dữ liệu thực nghiệm không chứng minh.
 
-### 18.4. Product Utility
+### Product Utility
 
 Người dùng có thể:
 
-``` text
+```text
 Configure Portfolio
-        ↓
+      ↓
 Run Risk Analysis
-        ↓
+      ↓
 Inspect Risk Metrics
-        ↓
+      ↓
 Explore Scenarios
-        ↓
+      ↓
 Understand Risk Drivers
-        ↓
+      ↓
 Compare Classical / Quantum
 ```
 
-### 18.5. Reproducibility
+### Reproducibility
 
-Mỗi experiment cần có khả năng ghi nhận:
+Mỗi experiment quan trọng cần ghi nhận:
 
--   data source;
--   dataset version/snapshot;
--   model assumptions;
--   simulation parameters;
--   quantum parameters;
--   benchmark configuration;
--   output metrics.
+- data source;
+- dataset version / snapshot;
+- model assumptions;
+- simulation parameters;
+- quantum parameters;
+- benchmark configuration;
+- output metrics.
 
-------------------------------------------------------------------------
+---
 
-## 19. Key Product Metrics
+## 20. Key Product Metrics
 
 ### Risk Engine
 
--   VaR estimation error;
--   CVaR estimation error;
--   scenario convergence;
--   simulation runtime;
--   reproducibility.
+- VaR estimation error;
+- CVaR estimation error;
+- scenario convergence;
+- simulation runtime;
+- reproducibility.
 
 ### Quantum
 
--   estimation error;
--   query count;
--   circuit depth;
--   qubit count;
--   shots;
--   state preparation cost;
--   oracle cost;
--   noise sensitivity;
--   end-to-end runtime.
+- estimation error;
+- query count;
+- circuit depth;
+- qubit count;
+- shots;
+- state preparation cost;
+- oracle cost;
+- noise sensitivity;
+- end-to-end runtime.
 
 ### Product
 
--   end-to-end analysis time;
--   successful analysis rate;
--   API reliability;
--   interpretability of risk results;
--   usability of risk output.
+- end-to-end analysis time;
+- successful analysis rate;
+- API reliability;
+- interpretability of risk results;
+- usability of risk output.
 
-Không sử dụng một metric duy nhất như "Quantum runtime \< Classical
-runtime" để kết luận quantum advantage.
+Không dùng một metric duy nhất như:
 
-------------------------------------------------------------------------
+```text
+Quantum runtime < Classical runtime
+```
 
-## 20. Constraints
+để kết luận quantum advantage.
+
+---
+
+## 21. Ràng buộc
 
 Sigma V1 được phát triển trong điều kiện:
 
--   giới hạn thời gian của cuộc thi;
--   giới hạn computational resources;
--   giới hạn quantum hardware;
--   giới hạn dữ liệu;
--   giới hạn nhân lực;
--   yêu cầu reproducibility;
--   yêu cầu scientific credibility.
+- giới hạn thời gian;
+- giới hạn computational resources;
+- giới hạn quantum hardware;
+- giới hạn dữ liệu;
+- giới hạn nhân lực;
+- yêu cầu reproducibility;
+- yêu cầu scientific credibility.
 
-Do đó ưu tiên:
+Vì vậy, ưu tiên:
 
-``` text
+```text
 Correctness
     >
 Complexity
@@ -844,106 +851,121 @@ Measured Value
 Quantum Hype
 ```
 
-------------------------------------------------------------------------
+---
 
-## 21. V1 Development Priorities
+## 22. Ưu tiên phát triển V1
 
-### P0 --- Core Risk Foundation
+### P0 — Core Risk Foundation
 
--   Data.
--   Returns.
--   Volatility.
--   Regime.
--   Distribution.
--   Monte Carlo.
--   Loss Distribution.
--   VaR/CVaR.
+- Data;
+- Returns;
+- Volatility;
+- Regime;
+- Distribution;
+- Monte Carlo;
+- Loss Distribution;
+- VaR/CVaR.
 
-### P1 --- Quantum Research
+### P1 — Quantum Research
 
--   Quantum formulation.
--   State preparation.
--   Oracle.
--   QAE-family.
--   Benchmarking.
--   Resource tracking.
+- Quantum formulation;
+- state preparation;
+- oracle;
+- QAE-family;
+- benchmarking;
+- resource tracking.
 
-### P2 --- Productization
+### P2 — Productization
 
--   FastAPI.
--   API schemas.
--   Taipy dashboard.
--   Scenario Lab.
--   Quantum Benchmark Lab.
+- FastAPI;
+- API schemas;
+- Taipy dashboard;
+- Scenario Lab;
+- Quantum Benchmark Lab.
 
-### P3 --- Extended Intelligence
+### P3 — Extended Intelligence
 
--   Risk decomposition.
--   Advanced stress testing.
--   Decision-support features.
+- Risk decomposition;
+- advanced stress testing;
+- decision-support features.
 
-------------------------------------------------------------------------
+---
 
-## 22. Initial Roadmap
+## 23. Roadmap
 
-### Phase 1 --- Foundation
+### Phase 1 — Foundation
 
-``` text
+```text
 Scope
-→ Data
-→ Methodology
-→ Core Architecture
+  ↓
+Data
+  ↓
+Methodology
+  ↓
+Core Architecture
 ```
 
-### Phase 2 --- Classical Risk Engine
+### Phase 2 — Classical Risk Engine
 
-``` text
+```text
 Returns
-→ Volatility
-→ Regime
-→ Distribution
-→ Monte Carlo
-→ VaR/CVaR
+  ↓
+Volatility
+  ↓
+Regime
+  ↓
+Distribution
+  ↓
+Monte Carlo
+  ↓
+VaR/CVaR
 ```
 
-### Phase 3 --- Quantum Research
+### Phase 3 — Quantum Research
 
-``` text
+```text
 Financial Problem
-→ Quantum Formulation
-→ State Preparation
-→ Oracle
-→ QAE
-→ Benchmark
+  ↓
+Quantum Formulation
+  ↓
+State Preparation
+  ↓
+Oracle
+  ↓
+QAE
+  ↓
+Benchmark
 ```
 
-### Phase 4 --- Product Integration
+### Phase 4 — Product Integration
 
-``` text
+```text
 Risk Engine
-→ FastAPI
-→ Taipy
+  ↓
+FastAPI
+  ↓
+Taipy
 ```
 
-### Phase 5 --- Validation
+### Phase 5 — Validation
 
-``` text
+```text
 Scientific Validation
-+
+        +
 Financial Validation
-+
+        +
 Engineering Validation
-+
+        +
 Product Validation
 ```
 
-------------------------------------------------------------------------
+---
 
-## 23. Future Product Direction
+## 24. Định hướng phát triển sau V1
 
 Sau khi V1 được kiểm chứng:
 
-``` text
+```text
 V1
 Risk Analytics
     ↓
@@ -957,68 +979,61 @@ V4
 Multi-Layer Financial Risk Intelligence
 ```
 
-Các capability tương lai có thể bao gồm:
+Capability tương lai có thể gồm:
 
--   Portfolio optimization.
--   Risk-aware allocation.
--   Dynamic risk monitoring.
--   Credit Risk.
--   Liquidity Risk.
--   Broader scenario intelligence.
--   Advanced quantum financial computing.
+- Portfolio optimization;
+- Risk-aware allocation;
+- Dynamic risk monitoring;
+- Credit Risk;
+- Liquidity Risk;
+- broader scenario intelligence;
+- advanced quantum financial computing.
 
 Mọi capability mới phải đáp ứng:
 
-``` text
+```text
 Financial Need
-+
+      +
 Scientific Justification
-+
+      +
 Technical Feasibility
-+
+      +
 Product Value
 ```
 
-------------------------------------------------------------------------
+---
 
-## 24. Product Boundaries
+## 25. Product Boundaries
 
-``` text
-                    Sigma
-                      │
-        ┌─────────────┴─────────────┐
-        │                           │
-   Risk Intelligence          Decision Support
-        │                           │
-   ┌────┼────┬────────┐             │
-   │    │    │        │             │
- Data Model Scenario Quantum    Future Layer
-        │
-        ▼
-   Risk Metrics
-   VaR / CVaR
+```text
+                     Sigma
+                       │
+         ┌─────────────┴─────────────┐
+         │                           │
+ Risk Intelligence            Decision Support
+         │                           │
+   ┌─────┼─────┬────────┐            │
+   │     │     │        │            │
+ Data  Model Scenario Quantum     Future Layer
+         │
+         ▼
+    Risk Metrics
+    VaR / CVaR
 ```
 
-Quantum là computational enhancement layer bên trong Risk Intelligence,
-không phải product độc lập.
+Quantum là computational enhancement layer bên trong Risk Intelligence, không phải product độc lập.
 
-------------------------------------------------------------------------
+---
 
-## 25. Product Definition
+## 26. Product Definition
 
-> **Sigma là một Regime-Aware Portfolio Risk Intelligence Engine sử dụng
-> dữ liệu thị trường để mô hình hóa điều kiện thị trường, sinh kịch bản,
-> xây dựng phân phối tổn thất và ước lượng các chỉ số rủi ro như
-> VaR/CVaR; đồng thời nghiên cứu khả năng sử dụng Quantum Amplitude
-> Estimation để tăng cường một số bài toán ước lượng và đánh giá phương
-> pháp lượng tử một cách công bằng với Classical Computing.**
+> **Sigma là một Regime-Aware Portfolio Risk Intelligence Engine sử dụng dữ liệu thị trường để mô hình hóa điều kiện thị trường, sinh kịch bản, xây dựng phân phối tổn thất và ước lượng các chỉ số rủi ro như VaR/CVaR; đồng thời nghiên cứu khả năng sử dụng Quantum Amplitude Estimation để tăng cường một số bài toán ước lượng và đánh giá phương pháp lượng tử một cách công bằng với Classical Computing.**
 
-Sigma không tuyên bố Quantum Advantage trước khi có bằng chứng thực
-nghiệm.
+Sigma không tuyên bố Quantum Advantage trước khi có bằng chứng thực nghiệm.
 
 Giá trị của Sigma nằm ở:
 
-``` text
+```text
 Financially Meaningful Problem
             +
 Rigorous Risk Modeling
@@ -1034,18 +1049,17 @@ Risk Intelligence
 API-first Product
 ```
 
-------------------------------------------------------------------------
+---
 
-## 26. North Star
+## 27. North Star
 
 > **Sigma không xây Quantum để chứng minh Quantum.**
->
-> **Sigma xây Risk Intelligence, và sử dụng Quantum ở những nơi Quantum
-> thực sự có thể tạo ra giá trị có thể đo lường.**
+
+> **Sigma xây Risk Intelligence, và sử dụng Quantum ở những nơi Quantum thực sự có thể tạo ra giá trị có thể đo lường.**
 
 Mục tiêu cuối cùng:
 
-``` text
+```text
 Scientifically Rigorous
         +
 Technically Feasible
@@ -1059,22 +1073,20 @@ Productizable
 SIGMA RISK INTELLIGENCE
 ```
 
-------------------------------------------------------------------------
+---
 
-## 27. Document Boundary
+## 28. Document Boundary
 
-PRD này định nghĩa **what và why** của Sigma.
+PRD định nghĩa **what và why** của Sigma.
 
-Các nội dung sau không thuộc phạm vi chi tiết của PRD và sẽ được quy
-định trong các tài liệu chuyên biệt:
+| Nội dung | Tài liệu |
+|---|---|
+| Product experience và UI/UX | `DESIGN.md` |
+| System architecture và dependency direction | `ARCHITECTURE.md` |
+| Data / domain schema | `SCHEMA.md` |
+| Engineering / research rules | `RULES.md` |
+| Technology selection | `TECH_STACK.md` |
+| Team ownership | `TEAM.md` / `ROLES.md` |
+| Development workflow | `WORKFLOW.md` |
 
--   Product experience và UI/UX → `DESIGN.md`
--   System architecture và dependency direction → `ARCHITECTURE.md`
--   Data/domain schema → `SCHEMA.md`
--   Engineering/research rules → `RULES.md`
--   Technology selection → `TECH_STACK.md`
--   Team ownership → `TEAM.md` và `ROLES.md`
--   Development workflow → `WORKFLOW.md`
-
-PRD là baseline để các tài liệu tiếp theo phát triển nhất quán, không
-phải nơi chứa toàn bộ implementation detail của Sigma.
+PRD là baseline để các tài liệu khác phát triển nhất quán, không phải nơi chứa toàn bộ implementation detail của Sigma.

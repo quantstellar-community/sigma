@@ -1,38 +1,48 @@
-# Sigma --- Engineering & Research Rules
+# Sigma — Quy tắc Kỹ thuật & Nghiên cứu
 
-> **Phiên bản:** 0.1\
-> **Trạng thái:** Draft / Internal Baseline\
-> **Phạm vi:** Engineering, Research, Financial Modeling, Quantum
-> Benchmarking và Product Development\
-> **Sản phẩm:** Sigma Risk Intelligence
+**Phiên bản:** 0.2  
+**Trạng thái:** Draft / Internal Baseline  
+**Phạm vi:** Kỹ thuật, nghiên cứu, mô hình tài chính, Quantum, benchmark và product development  
+**Sản phẩm:** Sigma Risk Intelligence
 
-------------------------------------------------------------------------
+---
 
 ## 1. Mục đích
 
-`RULES.md` định nghĩa các nguyên tắc và ràng buộc mà mọi phần của Sigma
-phải tuân thủ trong quá trình nghiên cứu, phát triển, kiểm thử và
-productization.
+`RULES.md` định nghĩa các nguyên tắc và ràng buộc mà Sigma phải tuân thủ trong nghiên cứu, phát triển, kiểm thử và productization.
 
-Nếu `PRD.md` trả lời **Sigma cần làm gì và tại sao**, `DESIGN.md` trả
-lời **người dùng trải nghiệm Sigma như thế nào**, `ARCHITECTURE.md` trả
-lời **hệ thống được cấu trúc ra sao**, và `SCHEMA.md` trả lời **dữ liệu
-có ý nghĩa gì**, thì `RULES.md` trả lời:
+Nếu:
 
-> **Chúng ta phải xây dựng và đánh giá Sigma theo những nguyên tắc
-> nào?**
+```text
+PRD.md
+→ What / Why
 
-Rules trong tài liệu này là các **guardrails**. Chúng không thay thế
-implementation detail và không được dùng để tạo thêm abstraction không
-cần thiết.
+DESIGN.md
+→ User Experience
 
-------------------------------------------------------------------------
+ARCHITECTURE.md
+→ System Structure
 
-# 2. Rule Hierarchy
+SCHEMA.md
+→ Data Meaning
 
-Khi các yêu cầu xung đột, ưu tiên theo thứ tự:
+RULES.md
+→ Constraints & Guardrails
+```
 
-``` text
+thì `RULES.md` trả lời:
+
+> **Chúng ta phải xây dựng và đánh giá Sigma theo những nguyên tắc nào?**
+
+Rules là **guardrails**, không phải implementation detail và không được dùng để tạo thêm abstraction hoặc infrastructure không cần thiết.
+
+---
+
+## 2. Thứ tự ưu tiên
+
+Khi các yêu cầu xung đột, ưu tiên:
+
+```text
 Financial Correctness
         ↓
 Scientific Validity
@@ -46,24 +56,23 @@ Product Utility
 Engineering Convenience
 ```
 
-Không được hy sinh financial/scientific correctness chỉ để:
+Không hy sinh financial/scientific correctness chỉ để:
 
--   code nhanh hơn;
--   UI đẹp hơn;
--   benchmark đẹp hơn;
--   Quantum result nổi bật hơn;
--   architecture trông enterprise hơn.
+- code nhanh hơn;
+- UI đẹp hơn;
+- benchmark đẹp hơn;
+- Quantum result nổi bật hơn;
+- architecture trông enterprise hơn.
 
-------------------------------------------------------------------------
+---
 
-# 3. Core Philosophy
+# 3. Nguyên tắc cốt lõi
 
-## RULE-001 --- Classical First
+## RULE-001 — Classical First
 
-Classical methodology phải được xây dựng và kiểm chứng trước khi dùng
-Quantum để mở rộng bài toán.
+Classical methodology phải được xây dựng và kiểm chứng trước khi dùng Quantum.
 
-``` text
+```text
 Financial Problem
       ↓
 Classical Formulation
@@ -75,32 +84,30 @@ Quantum Formulation
 Fair Benchmark
 ```
 
-Quantum không được là starting point chỉ vì bài toán có thể được biểu
-diễn trên quantum computer.
+Quantum không phải starting point chỉ vì bài toán có thể chạy trên quantum computer.
 
-------------------------------------------------------------------------
+---
 
-## RULE-002 --- Quantum Where Justified
+## RULE-002 — Quantum Where Justified
 
 Mỗi Quantum component phải trả lời được:
 
-1.  Financial problem là gì?
-2.  Quantity cần tính là gì?
-3.  Classical baseline là gì?
-4.  Quantum contribution nằm ở đâu?
-5.  Overhead của Quantum là gì?
-6.  Điều kiện nào có thể tạo ra practical value?
+1. Financial problem là gì?
+2. Quantity cần tính là gì?
+3. Classical baseline là gì?
+4. Quantum đóng góp ở đâu?
+5. Quantum overhead là gì?
+6. Điều kiện nào có thể tạo ra practical value?
 
-Nếu không trả lời được các câu hỏi trên, không đưa Quantum vào
-production/research pipeline chính.
+Nếu chưa trả lời được, không đưa Quantum vào pipeline chính.
 
-------------------------------------------------------------------------
+---
 
-## RULE-003 --- No Assumed Quantum Advantage
+## RULE-003 — Không giả định Quantum Advantage
 
-Không được viết hoặc trình bày:
+Không được kết luận:
 
-``` text
+```text
 Quantum is faster.
 Quantum is better.
 Quantum has advantage.
@@ -110,56 +117,49 @@ nếu chưa có evidence phù hợp.
 
 Có thể có:
 
-``` text
-Theoretical query advantage
+```text
+Theoretical Query Advantage
 ```
 
-nhưng điều đó không đồng nghĩa:
+nhưng điều đó không đồng nghĩa với:
 
-``` text
-End-to-end practical advantage
+```text
+End-to-End Practical Advantage
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-004 --- Measure the Whole Pipeline
+## RULE-004 — Đánh giá toàn bộ pipeline
 
-Mọi claim về computational advantage phải xem xét toàn bộ pipeline liên
-quan.
+Mọi claim về computational advantage phải xem xét toàn bộ pipeline liên quan:
 
-Tối thiểu phải cân nhắc:
-
-``` text
+```text
 Data Preparation
-+
+      +
 Model / Distribution Construction
-+
+      +
 State Preparation
-+
+      +
 Oracle Construction
-+
+      +
 Quantum Estimation
-+
+      +
 Measurement / Post-processing
 ```
 
-Nếu Classical và Quantum dùng các pipeline khác nhau, phải ghi rõ sự
-khác biệt.
+Nếu Classical và Quantum sử dụng pipeline khác nhau, phải ghi rõ.
 
-Không được benchmark chỉ một quantum circuit rồi dùng kết quả đó để kết
-luận về toàn hệ thống.
+Không benchmark một quantum circuit cô lập rồi dùng kết quả đó để kết luận về toàn hệ thống.
 
-------------------------------------------------------------------------
+---
 
-# 4. Financial Modeling Rules
+# 4. Quy tắc mô hình tài chính
 
-## RULE-005 --- Financial Semantics Must Be Explicit
+## RULE-005 — Financial Semantics phải rõ ràng
 
-Mọi financial quantity phải có định nghĩa rõ.
+Mọi financial quantity phải có định nghĩa thống nhất:
 
-Ví dụ:
-
-``` text
+```text
 Return
 Loss
 P&L
@@ -170,73 +170,63 @@ Volatility
 Risk Contribution
 ```
 
-Không được để hai module sử dụng cùng một tên nhưng khác semantics.
+Không để hai module dùng cùng một tên nhưng khác semantics.
 
-------------------------------------------------------------------------
+---
 
-## RULE-006 --- Return Convention Must Be Consistent
+## RULE-006 — Return Convention phải nhất quán
 
-Sigma phải xác định rõ return convention:
+Sigma phải xác định rõ sử dụng:
 
-``` text
+```text
 Simple Return
 ```
 
 hoặc:
 
-``` text
+```text
 Log Return
 ```
 
-Nếu methodology yêu cầu chuyển đổi, conversion phải explicit.
+Nếu cần chuyển đổi, conversion phải được thực hiện và ghi nhận rõ.
 
-Không được để một module ngầm sử dụng log return trong khi module khác
-giả định simple return.
+Không để một module ngầm dùng log return trong khi module khác giả định simple return.
 
-------------------------------------------------------------------------
+---
 
-## RULE-007 --- Loss Convention Must Be Consistent
+## RULE-007 — Loss Convention phải nhất quán
 
-Sigma phải định nghĩa một loss convention duy nhất trong từng risk
-workflow.
+Trong từng risk workflow, phải có một loss convention rõ ràng.
 
 Ví dụ:
 
-``` text
+```text
 Loss > 0
+→ Tổn thất
 ```
 
-được hiểu là tổn thất.
+Nếu representation nội bộ dùng:
 
-Nếu representation nội bộ sử dụng P&L:
-
-``` text
+```text
 P&L < 0
 ```
 
 thì conversion sang loss phải explicit.
 
-Không được trộn hai convention trong cùng calculation path mà không có
-transformation rõ ràng.
+Không trộn hai convention trong cùng calculation path mà không có transformation rõ ràng.
 
-------------------------------------------------------------------------
+---
 
-## RULE-008 --- Risk Result Must Carry Context
+## RULE-008 — Risk Result phải đi kèm Context
 
-Không được coi:
-
-``` text
-VaR = X
-```
-
-là một result đầy đủ nếu thiếu context quan trọng.
+`VaR = X` chưa phải một result đầy đủ nếu thiếu context quan trọng.
 
 Risk result phải có khả năng truy nguyên tới:
 
-``` text
+```text
 Portfolio
 Dataset
-Analysis
+Analysis Period
 Risk Horizon
 Confidence Level
 Model
@@ -244,15 +234,13 @@ Scenario Configuration
 Method
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-009 --- Model Assumptions Must Be Explicit
+## RULE-009 — Model Assumptions phải rõ
 
-Mọi model quan trọng phải ghi nhận assumptions.
+Mọi model quan trọng phải ghi nhận assumptions, chẳng hạn:
 
-Ví dụ:
-
-``` text
+```text
 Return Model
 Volatility Model
 Regime Model
@@ -263,32 +251,31 @@ Scenario Assumption
 
 Không giấu assumptions trong implementation.
 
-------------------------------------------------------------------------
+---
 
-## RULE-010 --- Model Choice Requires Financial Justification
+## RULE-010 — Model phải có Financial Justification
 
 Không chọn model chỉ vì:
 
--   phổ biến;
--   dễ code;
--   chạy nhanh;
--   có sẵn trong library;
--   "quant thường dùng".
+- phổ biến;
+- dễ code;
+- chạy nhanh;
+- có sẵn trong library;
+- “quant thường dùng”.
 
 Model phải phù hợp với problem và data.
 
-GARCH, HMM, Student-t, Monte Carlo hoặc model khác chỉ được dùng khi có
-statistical/financial justification.
+GARCH, HMM, Student-t, Monte Carlo hoặc phương pháp khác chỉ được dùng khi có statistical/financial justification.
 
-------------------------------------------------------------------------
+---
 
-# 5. Data Rules
+# 5. Quy tắc dữ liệu
 
-## RULE-011 --- Data Provenance Is Mandatory for Important Results
+## RULE-011 — Data Provenance là bắt buộc với kết quả quan trọng
 
-Các analysis/experiment quan trọng phải biết:
+Analysis/experiment quan trọng phải biết:
 
-``` text
+```text
 Source
 Dataset Version
 Time Range
@@ -297,46 +284,44 @@ Adjustment Policy
 Collection Time
 ```
 
-Khi cần reproducibility, phải có thêm metadata phù hợp như checksum hoặc
-snapshot identity.
+Khi cần reproducibility, bổ sung metadata phù hợp như checksum hoặc snapshot identity.
 
-------------------------------------------------------------------------
+---
 
-## RULE-012 --- Do Not Invent Missing Data
+## RULE-012 — Không tự tạo dữ liệu bị thiếu
 
 Nếu data provider không cung cấp một field:
 
-``` text
+```text
 Unavailable
 ```
 
-không được tự tạo dữ liệu giả để làm pipeline chạy.
+Không tự tạo dữ liệu giả chỉ để pipeline chạy.
 
-Nếu một preprocessing step được sử dụng để xử lý missing data, method
-phải được ghi nhận.
+Nếu sử dụng preprocessing để xử lý missing data, phải ghi nhận method.
 
-------------------------------------------------------------------------
+---
 
-## RULE-013 --- Adjusted Price Policy Must Be Explicit
+## RULE-013 — Chính sách Adjusted Price phải rõ
 
 Nếu sử dụng adjusted price, phải ghi rõ:
 
--   field nào được dùng;
--   adjustment convention;
--   data provider;
--   khoảng thời gian.
+- field được dùng;
+- adjustment convention;
+- data provider;
+- khoảng thời gian.
 
-Không được ngầm hiểu `Close` và `Adjusted Close` là tương đương.
+Không mặc định `Close` và `Adjusted Close` là tương đương.
 
-------------------------------------------------------------------------
+---
 
-## RULE-014 --- Data Validation Before Modeling
+## RULE-014 — Validation trước Modeling
 
 Không chạy risk model trực tiếp trên raw data chưa validation.
 
 Tối thiểu kiểm tra:
 
-``` text
+```text
 Asset Identity
 Timestamp Ordering
 Duplicates
@@ -345,98 +330,97 @@ Data Coverage
 Portfolio Weight Validity
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-015 --- Demo Data and Research Data Share the Same Contract
+## RULE-015 — Demo Data và Research Data dùng cùng Data Contract
 
-Demo dataset có thể nhỏ hơn research dataset, nhưng phải tuân theo cùng
-logical data contract.
+Demo dataset có thể nhỏ hơn research dataset nhưng phải tuân theo cùng logical data contract.
 
-Không xây một pipeline giả chỉ dành cho demo nếu pipeline đó khác bản
-chất production/research workflow.
+Không xây một pipeline giả chỉ dành cho demo nếu pipeline đó khác bản chất với research/production workflow.
 
-------------------------------------------------------------------------
+---
 
-# 6. Portfolio Rules
+# 6. Quy tắc Portfolio
 
-## RULE-016 --- Portfolio and Market Data Are Separate Concepts
+## RULE-016 — Portfolio và Market Data là hai khái niệm riêng
 
 Portfolio biểu diễn exposure.
 
 Market Data biểu diễn observation.
 
-Không trộn hai loại dữ liệu trong cùng abstraction chỉ vì chúng đều chứa
-asset identifiers.
+Không trộn hai loại dữ liệu trong cùng abstraction chỉ vì đều chứa asset identifier.
 
-------------------------------------------------------------------------
+---
 
-## RULE-017 --- Portfolio Weights Must Be Validated
+## RULE-017 — Portfolio Weights phải được kiểm tra
 
-Trước khi analysis:
+Trước analysis:
 
-``` text
-weights
-→ validate
-→ normalize only if explicitly configured
+```text
+Weights
+   ↓
+Validate
+   ↓
+Normalize
 ```
 
-Không tự động normalize weights mà không thông báo hoặc ghi nhận
-configuration.
+Chỉ normalize khi được cấu hình rõ.
 
-------------------------------------------------------------------------
+Không tự động normalize mà không thông báo hoặc ghi nhận configuration.
 
-## RULE-018 --- Portfolio Value and Currency Must Be Explicit
+---
 
-Monetary risk outputs phải có currency.
+## RULE-018 — Portfolio Value và Currency phải rõ
 
-Không được trả về:
+Mọi monetary risk output phải có currency.
 
-``` text
+Không trả về:
+
+```text
 VaR = 42,000
 ```
 
-mà không biết 42,000 là USD, EUR hay currency khác.
+mà không biết đơn vị tiền tệ.
 
-------------------------------------------------------------------------
+---
 
-# 7. Risk Engine Rules
+# 7. Quy tắc Risk Engine
 
-## RULE-019 --- Classical Risk Engine Must Stand Alone
+## RULE-019 — Classical Risk Engine phải độc lập
 
-Classical Risk Analysis phải chạy được mà không cần Quantum backend.
+Classical Risk Analysis phải chạy được khi Quantum backend không khả dụng.
 
-``` text
-Quantum unavailable
+```text
+Quantum Unavailable
         ↓
 Classical Risk Analysis
         ↓
-Still functional
+Still Functional
 ```
 
 Quantum failure không được làm hỏng core risk capability.
 
-------------------------------------------------------------------------
+---
 
-## RULE-020 --- Risk Concepts Are Independent of Estimator Implementation
+## RULE-020 — Risk Concept độc lập với Estimator
 
-`VaR`, `CVaR`, `Expected Loss` và các financial concepts không thuộc
-riêng Classical hay Quantum.
+`VaR`, `CVaR`, `Expected Loss` và các financial concepts không thuộc riêng Classical hay Quantum.
 
 Estimator chỉ là phương pháp tính quantity.
 
-``` text
+```text
 Risk Quantity
     ├── Classical Estimator
     └── Quantum Estimator
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-021 --- VaR and CVaR Must Share the Same Context
+## RULE-021 — VaR và CVaR phải cùng Context
 
-Nếu VaR và CVaR được so sánh, phải đảm bảo:
+Khi so sánh VaR và CVaR, phải đảm bảo phù hợp về:
 
-``` text
+```text
 Portfolio
 Dataset
 Horizon
@@ -444,30 +428,28 @@ Confidence Level
 Scenario Context
 ```
 
-phù hợp.
+---
 
-------------------------------------------------------------------------
+## RULE-022 — Tail Risk phải được định lượng rõ
 
-## RULE-022 --- Tail Risk Must Be Represented Explicitly
+Khi phân tích CVaR / Expected Shortfall, phải xác định:
 
-Khi phân tích CVaR/Expected Shortfall, phải xác định rõ:
+- tail definition;
+- confidence level;
+- loss convention;
+- sample/scenario context.
 
--   tail definition;
--   confidence level;
--   loss convention;
--   sample/scenario context.
+Không dùng “tail risk” như một khái niệm không định lượng.
 
-Không dùng từ "tail risk" như một khái niệm không định lượng.
+---
 
-------------------------------------------------------------------------
+# 8. Quy tắc Scenario Generation
 
-# 8. Scenario Generation Rules
+## RULE-023 — Scenario phải ghi rõ Method
 
-## RULE-023 --- Scenario Generation Must Be Method-Specific
+Scenario phải phân biệt nguồn/method:
 
-Scenario phải ghi nhận nguồn/method:
-
-``` text
+```text
 Monte Carlo
 Historical
 Stress
@@ -476,84 +458,80 @@ Other
 
 Không trộn simulated scenario và historical scenario mà không phân biệt.
 
-------------------------------------------------------------------------
+---
 
-## RULE-024 --- Scenario Configuration Must Be Reproducible
+## RULE-024 — Scenario Configuration phải tái lập được
 
-Nếu stochastic simulation sử dụng random seed và reproducibility là
-requirement, seed phải được lưu.
+Nếu stochastic simulation yêu cầu reproducibility, seed phải được lưu.
 
-Cùng configuration và cùng seed phải cho phép tái lập behavior ở mức phù
-hợp với implementation.
+Cùng configuration và cùng seed phải cho phép tái lập behavior ở mức phù hợp với implementation.
 
-------------------------------------------------------------------------
+---
 
-## RULE-025 --- Scenario Count Is a Modeling Parameter
+## RULE-025 — Scenario Count là Modeling Parameter
 
-Không chọn scenario count tùy tiện.
+Scenario count không được chọn tùy tiện.
 
-Scenario count phải được xem như một parameter của accuracy/convergence
-analysis.
+Phải được xem như parameter liên quan đến accuracy/convergence.
 
-Nếu benchmark thay đổi scenario count, phải ghi nhận sự thay đổi.
+Nếu benchmark thay đổi scenario count, phải ghi nhận thay đổi đó.
 
-------------------------------------------------------------------------
+---
 
-## RULE-026 --- Scenario Generation Must Not Be Hidden
+## RULE-026 — Scenario Generation phải có khả năng truy nguyên
 
-Risk result phải có khả năng truy ngược về:
+Risk result phải có khả năng truy ngược, khi cần:
 
-``` text
+```text
 Distribution
-→ Scenario Configuration
-→ Scenario Set
+    ↓
+Scenario Configuration
+    ↓
+Scenario Set
 ```
 
-khi analysis cần explainability/reproducibility.
+---
 
-------------------------------------------------------------------------
+# 9. Quy tắc Regime & Distribution
 
-# 9. Regime & Distribution Rules
+## RULE-027 — Regime là Model Output
 
-## RULE-027 --- Regime Is a Model Output
-
-Market regime không được coi là ground truth nếu nó được suy ra bởi
-model.
+Market regime không được coi là ground truth nếu nó được suy ra bởi model.
 
 Ví dụ:
 
-``` text
+```text
 HMM
-→ inferred regime
+→ Inferred Regime
 ```
 
 phải được phân biệt với:
 
-``` text
-Historical event label
+```text
+Historical Event Label
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-028 --- Regime-Aware Distribution Must Preserve Conditioning
+## RULE-028 — Regime-Aware Distribution phải giữ Conditioning
 
 Nếu distribution phụ thuộc regime:
 
-``` text
+```text
 P(Return | Regime)
 ```
 
 thì regime condition phải được giữ trong model/scenario context.
 
-Không được flatten regime information mà không có justification.
+Không flatten regime information mà không có justification.
 
-------------------------------------------------------------------------
+---
 
-## RULE-029 --- Distribution Parameters Must Be Traceable
+## RULE-029 — Distribution Parameters phải truy nguyên được
 
 Các distribution parameters quan trọng phải có thể truy nguyên tới:
 
-``` text
+```text
 Model
 Dataset
 Fit Window
@@ -562,74 +540,77 @@ Regime
 
 khi cần.
 
-------------------------------------------------------------------------
+---
 
-# 10. Quantum Rules
+# 10. Quy tắc Quantum
 
-## RULE-030 --- Quantum Does Not Receive Raw Financial Data by Default
+## RULE-030 — Quantum không nhận Raw Financial Data mặc định
 
-Quantum layer không tự nhận raw market CSV để "tự làm finance".
+Quantum layer không tự nhận raw market data để “tự làm finance”.
 
 Pipeline phải là:
 
-``` text
+```text
 Raw Data
-→ Financial Modeling
-→ Financial Quantity
-→ Quantum Formulation
-→ Quantum Estimation
+   ↓
+Financial Modeling
+   ↓
+Financial Quantity
+   ↓
+Quantum Formulation
+   ↓
+Quantum Estimation
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-031 --- Quantum Problem Must Have a Financial Quantity
+## RULE-031 — Quantum Problem phải có Financial Quantity
 
-Mỗi quantum experiment phải xác định rõ quantity.
+Mỗi quantum experiment phải xác định rõ quantity cần estimate.
 
 Ví dụ:
 
-``` text
+```text
 P(Loss > Threshold)
 ```
 
 hoặc một expected value / tail-related quantity có formulation rõ ràng.
 
-Không benchmark "QAE" một cách trừu tượng mà không có financial target.
+Không benchmark “QAE” một cách trừu tượng mà không có financial target.
 
-------------------------------------------------------------------------
+---
 
-## RULE-032 --- State Preparation Is Part of the Cost
+## RULE-032 — State Preparation là một phần của Cost
 
-Không được loại state preparation khỏi cost analysis chỉ vì nó nằm
-"trước circuit".
+Không loại state preparation khỏi cost analysis chỉ vì nó xảy ra trước circuit.
 
-Nếu state preparation cần computational resources đáng kể, phải ghi
-nhận.
+Nếu state preparation cần computational resources đáng kể, phải ghi nhận.
 
-------------------------------------------------------------------------
+---
 
-## RULE-033 --- Oracle Construction Is Part of the Cost
+## RULE-033 — Oracle Construction là một phần của Cost
 
 Oracle không phải free abstraction.
 
-Khi oracle thực hiện:
+Nếu oracle thực hiện:
 
-``` text
+```text
 Scenario
-→ Portfolio Loss
-→ Threshold Check
+   ↓
+Portfolio Loss
+   ↓
+Threshold Check
 ```
 
-chi phí construction và execution phải được xem xét trong resource
-analysis.
+chi phí construction và execution phải được xem xét trong resource analysis.
 
-------------------------------------------------------------------------
+---
 
-## RULE-034 --- Shots, Qubits and Depth Must Be Recorded
+## RULE-034 — Qubits, Depth và Shots phải được ghi nhận
 
 Quantum benchmark nên ghi nhận khi phù hợp:
 
-``` text
+```text
 Qubits
 Circuit Depth
 Gate Count
@@ -640,57 +621,51 @@ Noise Model
 Backend
 ```
 
-Không chỉ ghi "Quantum estimate".
+Không chỉ ghi “Quantum Estimate”.
 
-------------------------------------------------------------------------
+---
 
-## RULE-035 --- Hardware and Simulator Results Must Be Distinguished
+## RULE-035 — Phân biệt Simulator và Hardware
 
-Không được gọi simulator result là hardware result.
+Không gọi simulator result là hardware result.
 
 Phải ghi rõ:
 
-``` text
+```text
 Simulator
 ```
 
 hoặc:
 
-``` text
+```text
 Quantum Hardware
 ```
 
 và backend cụ thể khi cần.
 
-------------------------------------------------------------------------
+---
 
-## RULE-036 --- Noise Must Be Explicit
+## RULE-036 — Noise phải được ghi rõ
 
-Nếu benchmark sử dụng noise model:
+Nếu benchmark sử dụng noise model, phải ghi nhận noise model.
 
-``` text
-Noise Model
-```
+Nếu không có noise:
 
-phải được ghi nhận.
-
-Nếu noise-free:
-
-``` text
+```text
 Noise: None / Ideal
 ```
 
 phải được thể hiện rõ.
 
-------------------------------------------------------------------------
+---
 
-# 11. Classical--Quantum Benchmark Rules
+# 11. Quy tắc Classical–Quantum Benchmark
 
-## RULE-037 --- Same Financial Problem
+## RULE-037 — Cùng một Financial Problem
 
-Classical và Quantum phải estimate cùng một target quantity.
+Classical và Quantum phải estimate cùng một target quantity:
 
-``` text
+```text
 Same Portfolio
 Same Dataset
 Same Model Context
@@ -698,174 +673,177 @@ Same Quantity
 Same Risk Definition
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-038 --- Comparable Accuracy
+## RULE-038 — Accuracy phải Comparable
 
-Accuracy metrics phải được tính theo cùng definition.
+Accuracy metrics phải dùng cùng definition.
 
 Ví dụ:
 
-``` text
+```text
 Absolute Error
 Relative Error
 ```
 
 không được định nghĩa khác nhau giữa hai estimator.
 
-------------------------------------------------------------------------
+---
 
-## RULE-039 --- Resource Metrics Are First-Class Metrics
+## RULE-039 — Resource Metrics là First-Class Metrics
 
-Benchmark phải xem xét cả:
+Benchmark phải xem xét:
 
-``` text
+```text
 Accuracy
-+
+    +
 Computational Cost
-+
+    +
 Quantum Resources
-+
+    +
 End-to-End Runtime
 ```
 
 Không dùng runtime duy nhất.
 
-------------------------------------------------------------------------
+---
 
-## RULE-040 --- Benchmark Architecture Must Be Explicit
-
-Nếu benchmark sử dụng:
+## RULE-040 — Benchmark Architecture phải rõ
 
 ### Pure Classical
 
-``` text
+```text
 Historical Data
-→ Classical Scenario Generation
-→ Classical Monte Carlo
+      ↓
+Classical Scenario Generation
+      ↓
+Classical Monte Carlo
 ```
-
-phải ghi rõ.
 
 ### Naive Hybrid
 
-``` text
+```text
 Historical Data
-→ Classical Scenarios
-→ Quantum State Loading
-→ QAE
+      ↓
+Classical Scenarios
+      ↓
+Quantum State Loading
+      ↓
+QAE
 ```
 
-phải ghi rõ.
+### Quantum / Co-designed Architecture
 
-### Quantum / Co-designed Scenario Architecture
-
-``` text
+```text
 Historical Data
-→ Classical Parameter Estimation
-→ Quantum Scenario Distribution
-→ Quantum Estimation
+      ↓
+Classical Parameter Estimation
+      ↓
+Quantum Scenario Distribution
+      ↓
+Quantum Estimation
 ```
 
-phải ghi rõ.
+Các architecture này phải được phân biệt rõ, không trộn thành một pipeline mơ hồ.
 
-Các architecture này không được trộn thành một pipeline mơ hồ.
+---
 
-------------------------------------------------------------------------
+## RULE-041 — Không che giấu State Preparation Overhead
 
-## RULE-041 --- Do Not Hide State-Preparation Overhead
+Nếu Classical scenario generation tạo distribution rồi Quantum load distribution vào state, chi phí đó phải được tính hoặc ít nhất báo cáo rõ trong benchmark boundary.
 
-Nếu Classical scenario generation tạo ra distribution rồi Quantum load
-distribution vào state, cost đó phải được tính hoặc ít nhất được báo cáo
-rõ trong benchmark boundary.
+---
 
-------------------------------------------------------------------------
-
-## RULE-042 --- Do Not Claim Advantage from Theoretical Complexity Alone
+## RULE-042 — Không kết luận từ Theoretical Complexity בלבד
 
 Ví dụ:
 
-``` text
+```text
 QAE theoretical complexity = O(1/N)
 MC complexity = O(1/√N)
 ```
 
 không đủ để kết luận:
 
-``` text
+```text
 Sigma has practical quantum advantage.
 ```
 
-Cần evidence về implementation/resource/end-to-end behavior.
+Cần evidence về implementation, resources và end-to-end behavior.
 
-------------------------------------------------------------------------
+---
 
-## RULE-043 --- Negative Results Are Valid Results
+## RULE-043 — Negative Results vẫn là Valid Results
 
 Các kết quả như:
 
-``` text
+```text
 Quantum has lower query count
 but higher end-to-end runtime.
 ```
 
 hoặc:
 
-``` text
+```text
 Classical outperforms Quantum
 under current hardware/noise constraints.
 ```
 
 đều là valid research outcomes.
 
-Không được thay đổi methodology chỉ để tạo một quantum win.
+Không thay đổi methodology chỉ để tạo quantum win.
 
-------------------------------------------------------------------------
+---
 
-# 12. Research Rules
+# 12. Quy tắc Nghiên cứu
 
-## RULE-044 --- Hypothesis Before Experiment
+## RULE-044 — Hypothesis trước Experiment
 
 Experiment quan trọng phải có:
 
-``` text
+```text
 Problem
-→ Hypothesis
-→ Method
-→ Baseline
-→ Metrics
-→ Experiment
-→ Conclusion
+   ↓
+Hypothesis
+   ↓
+Method
+   ↓
+Baseline
+   ↓
+Metrics
+   ↓
+Experiment
+   ↓
+Conclusion
 ```
 
-Không bắt đầu bằng "chạy model xem có gì".
+Không bắt đầu bằng “chạy model xem có gì”.
 
-------------------------------------------------------------------------
+---
 
-## RULE-045 --- Research and Production Are Separate
+## RULE-045 — Research và Production tách biệt
 
-Research có thể:
-
--   fail;
--   branch;
--   thử nhiều model;
--   chứa temporary code.
+Research có thể fail, branch, thử nhiều model và chứa temporary code.
 
 Production Core thì không.
 
 Promotion flow:
 
-``` text
+```text
 Research
-→ Validate
-→ Stabilize
-→ Test
-→ Core
+   ↓
+Validate
+   ↓
+Stabilize
+   ↓
+Test
+   ↓
+Core
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-046 --- Notebooks Are Not Production Modules
+## RULE-046 — Notebook không phải Production Module
 
 Không đưa notebook trực tiếp vào runtime API.
 
@@ -873,13 +851,13 @@ Không copy-paste notebook logic vào nhiều nơi.
 
 Logic reusable phải được chuyển vào `src/sigma/`.
 
-------------------------------------------------------------------------
+---
 
-## RULE-047 --- Experiments Must Be Configurable
+## RULE-047 — Experiment phải có Configuration
 
 Experiment quan trọng nên có configuration rõ:
 
-``` text
+```text
 Dataset
 Model
 Parameters
@@ -891,42 +869,31 @@ Scenario Count
 
 Không hard-code toàn bộ trong notebook.
 
-------------------------------------------------------------------------
+---
 
-## RULE-048 --- Research Claims Must Be Evidence-Based
+## RULE-048 — Research Claim phải dựa trên Evidence
 
 Phải phân biệt:
 
-``` text
+```text
 Observed
-```
-
-với:
-
-``` text
 Inferred
-```
-
-và:
-
-``` text
 Hypothesized
 ```
 
 Không trình bày hypothesis như empirical fact.
 
-------------------------------------------------------------------------
+---
 
-# 13. Reproducibility Rules
+# 13. Quy tắc Reproducibility
 
-## RULE-049 --- Important Results Must Be Reproducible
+## RULE-049 — Kết quả quan trọng phải tái lập được
 
-Một result quan trọng phải có đủ metadata để người khác tái tạo
-experiment ở mức phù hợp.
+Một result quan trọng phải có đủ metadata để người khác tái tạo experiment ở mức phù hợp.
 
 Tối thiểu:
 
-``` text
+```text
 Code Version
 Dataset Version
 Configuration
@@ -935,13 +902,13 @@ Parameters
 Seed (if applicable)
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-050 --- Benchmark Artifacts Must Preserve Context
+## RULE-050 — Benchmark Artifact phải giữ Context
 
 Benchmark result không được tồn tại như một bảng số không có:
 
-``` text
+```text
 Problem
 Configuration
 Backend
@@ -949,136 +916,141 @@ Method
 Dataset
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-051 --- Randomness Must Be Controlled When Required
+## RULE-051 — Randomness phải được kiểm soát khi cần
 
 Randomness phải được:
 
--   seed;
--   record;
--   hoặc giải thích tại sao không thể deterministic.
+- seed;
+- record;
+- hoặc giải thích tại sao không thể deterministic.
 
-------------------------------------------------------------------------
+---
 
-# 14. Architecture Rules
+# 14. Quy tắc Kiến trúc
 
-## RULE-052 --- Modular Monolith for V1
+## RULE-052 — Modular Monolith cho V1
 
 Sigma V1 sử dụng Modular Monolith.
 
 Không tạo microservice chỉ để phân chia folder.
 
-------------------------------------------------------------------------
+---
 
-## RULE-053 --- Domain Must Remain Framework-Agnostic
+## RULE-053 — Domain độc lập với Framework
 
 Domain không phụ thuộc:
 
-``` text
+```text
 FastAPI
 Taipy
 Qiskit
-UI framework
+UI Framework
 ```
 
-nếu không có lý do architectural bắt buộc.
+nếu không có lý do kiến trúc bắt buộc.
 
-------------------------------------------------------------------------
+---
 
-## RULE-054 --- UI Must Not Access Core Directly
+## RULE-054 — UI không truy cập Core trực tiếp
 
 Luồng chính:
 
-``` text
+```text
 Taipy
-→ FastAPI
-→ Application
-→ Core
+   ↓
+FastAPI
+   ↓
+Application
+   ↓
+Core
 ```
 
 Không:
 
-``` text
+```text
 Taipy
-→ sigma.risk
+   ↓
+sigma.risk
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-055 --- API Must Not Contain Financial Computation
+## RULE-055 — API không chứa Financial Computation
 
-FastAPI layer chịu trách nhiệm:
+FastAPI chịu trách nhiệm:
 
--   routing;
--   request/response;
--   validation;
--   serialization;
--   dependency wiring.
+- routing;
+- request/response;
+- validation;
+- serialization;
+- dependency wiring.
 
 Financial computation thuộc Core.
 
-------------------------------------------------------------------------
+---
 
-## RULE-056 --- Application Orchestrates; Engines Compute
+## RULE-056 — Application điều phối, Engine tính toán
 
-Application layer điều phối.
+Application layer điều phối workflow.
 
 Engine/module thực hiện computation.
 
-Không để application service trở thành một "god class" chứa toàn bộ
-financial logic.
+Không để application service trở thành “god class” chứa toàn bộ financial logic.
 
-------------------------------------------------------------------------
+---
 
-## RULE-057 --- Risk Must Not Depend on Quantum
+## RULE-057 — Risk không phụ thuộc Quantum
 
 Risk concepts và Classical Risk Engine phải tồn tại độc lập.
 
-Quantum có thể cung cấp estimator/computational implementation phù hợp,
-nhưng Risk layer không được trở thành Quantum-dependent.
+Quantum có thể cung cấp estimator phù hợp, nhưng Risk layer không được trở thành Quantum-dependent.
 
-------------------------------------------------------------------------
+---
 
-## RULE-058 --- Research Must Not Become a Runtime Dependency
+## RULE-058 — Research không trở thành Runtime Dependency
 
 Production path:
 
-``` text
+```text
 UI
-→ API
-→ Application
-→ Core
+   ↓
+API
+   ↓
+Application
+   ↓
+Core
 ```
 
 không được yêu cầu:
 
-``` text
+```text
 research/
 notebooks/
 ```
 
 để chạy.
 
-------------------------------------------------------------------------
+---
 
-# 15. API Rules
+# 15. Quy tắc API
 
-## RULE-059 --- API Contracts Must Be Explicit
+## RULE-059 — API Contract phải rõ
 
 Request/response phải có schema rõ.
 
 Không expose internal Python object representation một cách ngẫu nhiên.
 
-------------------------------------------------------------------------
+---
 
-## RULE-060 --- API Is the Integration Boundary
+## RULE-060 — API là Integration Boundary
 
 External clients phải sử dụng API.
 
 Ví dụ:
 
-``` text
+```text
 Taipy
 CLI
 Future Web Client
@@ -1087,39 +1059,43 @@ Financial Institution Client
 
 đều có thể sử dụng cùng API.
 
-------------------------------------------------------------------------
+---
 
-## RULE-061 --- API Should Return Product-Relevant Results
+## RULE-061 — API trả về Product-Relevant Results
 
 Không trả internal debugging structure cho end user chỉ vì dễ implement.
 
 API result phải phản ánh product contract.
 
-------------------------------------------------------------------------
+---
 
-# 16. UI Rules
+# 16. Quy tắc UI
 
-## RULE-062 --- Risk First
+## RULE-062 — Risk First
 
-UI phải ưu tiên:
+UI ưu tiên:
 
-``` text
+```text
 Risk
-→ Drivers
-→ Scenarios
-→ Stress
-→ Quantum Benchmark
+  ↓
+Drivers
+  ↓
+Scenarios
+  ↓
+Stress
+  ↓
+Quantum Benchmark
 ```
 
-không ưu tiên Quantum trước risk.
+Không ưu tiên Quantum trước risk.
 
-------------------------------------------------------------------------
+---
 
-## RULE-063 --- No Quantum Hype in UI
+## RULE-063 — Không Quantum Hype trong UI
 
 Không sử dụng:
 
-``` text
+```text
 Quantum = Better
 Quantum = Faster
 Quantum = Superior
@@ -1127,105 +1103,101 @@ Quantum = Superior
 
 nếu benchmark không chứng minh.
 
-------------------------------------------------------------------------
+---
 
-## RULE-064 --- Technical Details Use Progressive Disclosure
+## RULE-064 — Technical Details dùng Progressive Disclosure
 
-UI chính chỉ hiển thị information cần thiết.
+UI chính chỉ hiển thị thông tin cần thiết.
 
 Technical details có thể nằm trong:
 
-``` text
+```text
 Advanced
 Details
 Benchmark Metadata
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-065 --- Errors Must Be Actionable
+## RULE-065 — Error phải có hành động rõ
 
-Error message phải nói:
+Error message nên trả lời:
 
-``` text
-What happened
-Why
-What user can do
+```text
+What happened?
+Why?
+What can the user do?
 ```
 
 Không expose stack trace cho end user.
 
-------------------------------------------------------------------------
+---
 
-# 17. Testing Rules
+# 17. Quy tắc Testing & Evaluation
 
-## RULE-066 --- Tests Are Part of the Product
+## RULE-066 — Test là một phần của Product
 
-Code không được coi là hoàn thành nếu functionality quan trọng không có
-verification phù hợp.
+Functionality quan trọng chưa được coi là hoàn thành nếu thiếu verification phù hợp.
 
-------------------------------------------------------------------------
+---
 
-## RULE-067 --- Financial Invariants Must Be Tested
+## RULE-067 — Financial Invariants phải được kiểm thử
 
 Ví dụ:
 
-``` text
-Portfolio weights
-Return calculations
-Loss convention
-VaR ordering
-CVaR tail relationship
-Scenario dimensions
+```text
+Portfolio Weights
+Return Calculations
+Loss Convention
+VaR Ordering
+CVaR Tail Relationship
+Scenario Dimensions
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-068 --- Classical Baseline Must Be Tested Before Quantum Benchmark
+## RULE-068 — Classical Baseline phải được kiểm thử trước Quantum Benchmark
 
-Không benchmark Quantum trên một Classical implementation chưa được kiểm
-chứng.
+Không benchmark Quantum trên một Classical implementation chưa được kiểm chứng.
 
-------------------------------------------------------------------------
+---
 
-## RULE-069 --- Quantum Tests Must Separate Logic from Backend
+## RULE-069 — Quantum Test phải tách Logic khỏi Backend
 
-Có thể kiểm tra:
+Khi có thể, kiểm tra riêng:
 
-``` text
-Financial formulation
-Oracle logic
-State preparation
+```text
+Financial Formulation
+Oracle Logic
+State Preparation
 Estimator
 ```
 
-riêng biệt khi có thể.
-
 Không để toàn bộ correctness phụ thuộc vào một hardware/backend.
 
-------------------------------------------------------------------------
+---
 
-## RULE-070 --- Evaluation Is Not the Same as Unit Testing
+## RULE-070 — Evaluation khác Unit Testing
 
 Unit tests trả lời:
 
-> Code có hoạt động đúng theo contract không?
+> **Code có hoạt động đúng theo contract không?**
 
 Evaluation trả lời:
 
-> Method có tạo ra kết quả có ý nghĩa và đáng tin không?
+> **Method có tạo ra kết quả có ý nghĩa và đáng tin không?**
 
 Sigma cần cả hai.
 
-------------------------------------------------------------------------
+---
 
-# 18. Dependency & Code Quality Rules
+# 18. Quy tắc Code & Dependency
 
-## RULE-071 --- Avoid Premature Abstraction
+## RULE-071 — Tránh Abstraction quá sớm
 
 Không tạo:
 
-``` text
+```text
 Factory
 Manager
 Repository
@@ -1234,71 +1206,69 @@ Service
 Utils
 ```
 
-nếu abstraction chưa giải quyết một vấn đề thật.
+nếu abstraction chưa giải quyết một vấn đề thực tế.
 
-------------------------------------------------------------------------
+---
 
-## RULE-072 --- One Responsibility Per Module
+## RULE-072 — Mỗi Module có một Responsibility rõ
 
-Module phải có responsibility rõ.
+Không tạo `utils.py` khổng lồ chỉ để chứa những thứ chưa biết đặt ở đâu.
 
-Không tạo `utils.py` khổng lồ chứa mọi thứ không biết đặt đâu.
+---
 
-------------------------------------------------------------------------
-
-## RULE-073 --- Prefer Explicit Interfaces
+## RULE-073 — Interface phải Explicit
 
 Nếu module cần interface, contract phải rõ.
 
 Không dùng implicit coupling thông qua global state.
 
-------------------------------------------------------------------------
+---
 
-## RULE-074 --- No Circular Dependencies
+## RULE-074 — Không Circular Dependency
 
-Dependency cycle trong Core phải được coi là architectural defect.
+Dependency cycle trong Core là architectural defect.
 
-------------------------------------------------------------------------
+---
 
-## RULE-075 --- No UI Logic in Core
+## RULE-075 — Không đưa UI Logic vào Core
 
 Core không được biết:
 
-``` text
+```text
 Taipy page
-widget
-chart
-session state
+Widget
+Chart
+Session State
 ```
 
-------------------------------------------------------------------------
+---
 
-# 19. Configuration & Environment Rules
+# 19. Quy tắc Configuration & Environment
 
-## RULE-076 --- Configuration Is Not Business Logic
+## RULE-076 — Configuration không phải Business Logic
 
-Config chứa parameters, không chứa algorithm implementation.
+Configuration chứa parameters, không chứa algorithm implementation.
 
-------------------------------------------------------------------------
+---
 
-## RULE-077 --- Secrets Never Enter Source Control
+## RULE-077 — Secret không được vào Source Control
 
 Không commit:
 
-``` text
+```text
 API Keys
 Tokens
 Passwords
 Credentials
 ```
 
-------------------------------------------------------------------------
+---
 
-## RULE-078 --- Environment Differences Must Be Explicit
+## RULE-078 — Environment Differences phải rõ
 
-Phải phân biệt khi phù hợp:
+Khi phù hợp, phân biệt:
 
-``` text
+```text
 Local
 Research
 Demo
@@ -1307,27 +1277,21 @@ Production
 
 Không hard-code environment-specific behavior trong Core.
 
-------------------------------------------------------------------------
+---
 
-# 20. Documentation Rules
+# 20. Quy tắc Documentation
 
-## RULE-079 --- Documentation Must Follow the Architecture
+## RULE-079 — Documentation phải khớp Architecture
 
 Docs phải phản ánh system thực tế.
 
-Không để:
+Không để documentation mô tả một architecture mà code không tuân theo.
 
-``` text
-ARCHITECTURE.md
-```
+---
 
-mô tả một architecture mà code hoàn toàn không tuân theo.
+## RULE-080 — Mỗi Concern có một Source of Truth
 
-------------------------------------------------------------------------
-
-## RULE-080 --- One Source of Truth per Concern
-
-``` text
+```text
 PRD
 → What / Why
 
@@ -1355,148 +1319,146 @@ WORKFLOW
 
 Không duplicate cùng một decision ở nhiều file nếu không cần.
 
-------------------------------------------------------------------------
+---
 
-## RULE-081 --- Claims Must Be Traceable
+## RULE-081 — Claim phải truy nguyên được
 
-Đối với research/scientific claim quan trọng, phải biết:
+Đối với research/scientific claim quan trọng:
 
-``` text
+```text
 Claim
-→ Evidence
-→ Experiment / Source
+  ↓
+Evidence
+  ↓
+Experiment / Source
 ```
 
-------------------------------------------------------------------------
+---
 
-# 21. Git & Change Rules
+# 21. Quy tắc Git & Thay đổi
 
-## RULE-082 --- Changes Must Respect Boundaries
+## RULE-082 — Change phải tôn trọng Boundary
 
-Một change làm thay đổi:
+Thay đổi ảnh hưởng đến:
 
-``` text
+```text
 Schema
-API contract
+API Contract
 Architecture
-Financial methodology
-Benchmark protocol
+Financial Methodology
+Benchmark Protocol
 ```
 
 phải được review ở đúng concern.
 
-------------------------------------------------------------------------
+---
 
-## RULE-083 --- Avoid Mixing Unrelated Changes
+## RULE-083 — Không trộn các thay đổi không liên quan
 
-Không gộp:
+Tránh gộp:
 
-``` text
-Financial model change
+```text
+Financial Model Change
 +
-UI redesign
+UI Redesign
 +
-Dependency migration
+Dependency Migration
 ```
 
 trong một change nếu không có lý do.
 
-------------------------------------------------------------------------
+---
 
-## RULE-084 --- Documentation Changes Accompany Significant Architecture Changes
+## RULE-084 — Architecture Change phải đi kèm Documentation
 
-Nếu architecture thay đổi đáng kể, documentation liên quan phải được cập
-nhật cùng change.
+Nếu architecture thay đổi đáng kể, các tài liệu liên quan phải được cập nhật cùng change.
 
-------------------------------------------------------------------------
+---
 
-# 22. Product Scope Rules
+# 22. Quy tắc Product Scope
 
-## RULE-085 --- V1 Must Stay Focused
+## RULE-085 — V1 phải tập trung
 
 V1 tập trung:
 
-``` text
+```text
 Regime-Aware Portfolio Risk
 ```
 
-Không thêm feature chỉ vì "có thể làm".
+Không thêm feature chỉ vì “có thể làm”.
 
-------------------------------------------------------------------------
+---
 
-## RULE-086 --- No Feature Without Financial Purpose
+## RULE-086 — Feature phải có Financial Purpose
 
 Mỗi feature mới phải trả lời:
 
-``` text
-Financial problem?
-User value?
-Scientific/technical justification?
+```text
+Financial Problem?
+User Value?
+Scientific / Technical Justification?
 ```
 
 Nếu không, defer.
 
-------------------------------------------------------------------------
+---
 
-## RULE-087 --- No Infrastructure Without Workload
+## RULE-087 — Infrastructure phải có Workload
 
 Không thêm:
 
-``` text
+```text
 Kafka
 Kubernetes
 Microservices
-Distributed queues
+Distributed Queues
 ```
 
 chỉ vì chúng phổ biến.
 
-Infrastructure phải xuất hiện khi workload/product requirement cần.
+Infrastructure chỉ xuất hiện khi workload hoặc product requirement cần.
 
-------------------------------------------------------------------------
+---
 
-# 23. Decision Rules
+# 23. Quy tắc Quyết định
 
-## RULE-088 --- Explicit Assumptions
+## RULE-088 — Assumption phải được nêu rõ
 
 Khi dữ liệu hoặc requirement chưa đủ, phải ghi rõ assumption.
 
-------------------------------------------------------------------------
+---
 
-## RULE-089 --- Uncertainty Must Be Labeled
+## RULE-089 — Uncertainty phải được gắn nhãn
 
-Nếu một kết luận chưa được kiểm chứng:
+Khi kết luận chưa được kiểm chứng, dùng nhãn phù hợp:
 
-``` text
+```text
 [Giả thuyết]
 [Chưa xác minh]
 [Suy luận]
 ```
 
-phải được sử dụng khi phù hợp với mức độ certainty.
+---
 
-------------------------------------------------------------------------
-
-## RULE-090 --- Strong Claims Require Evidence
+## RULE-090 — Strong Claim phải có Evidence
 
 Đặc biệt với:
 
--   quantum advantage;
--   risk model superiority;
--   financial performance;
--   scalability;
--   production readiness.
+- quantum advantage;
+- risk model superiority;
+- financial performance;
+- scalability;
+- production readiness.
 
-Không được claim mạnh hơn evidence.
+Không claim mạnh hơn evidence.
 
-------------------------------------------------------------------------
+---
 
 # 24. Definition of Done
 
-Một feature/research component quan trọng chỉ được xem là hoàn thành
-khi:
+Một feature hoặc research component quan trọng chỉ được xem là hoàn thành khi:
 
-``` text
+```text
 Requirement
     ↓
 Implementation
@@ -1508,15 +1470,15 @@ Tests / Evaluation
 Documentation
 ```
 
-Tùy loại work, Definition of Done phải bao gồm:
+Tùy loại công việc, Definition of Done có thể cần:
 
--   code;
--   tests;
--   evaluation nếu là research;
--   documentation;
--   reproducibility metadata nếu cần.
+- code;
+- tests;
+- evaluation nếu là research;
+- documentation;
+- reproducibility metadata.
 
-------------------------------------------------------------------------
+---
 
 # 25. Rule Exceptions
 
@@ -1524,24 +1486,20 @@ Rules có thể có exception khi có lý do chính đáng.
 
 Exception phải:
 
-1.  được ghi nhận;
-2.  giải thích lý do;
-3.  xác định phạm vi;
-4.  không âm thầm phá vỡ architecture.
+1. được ghi nhận;
+2. giải thích lý do;
+3. xác định phạm vi;
+4. không âm thầm phá vỡ architecture.
 
-Không được dùng:
+“Deadline gấp” không phải lý do đủ để hy sinh financial hoặc scientific correctness.
 
-> "Deadline gấp"
+---
 
-làm lý do duy nhất để phá vỡ financial/scientific correctness.
+# 26. Khi cần quyết định nhanh
 
-------------------------------------------------------------------------
+Ưu tiên:
 
-# 26. Priority of Rules
-
-Nếu cần quyết định nhanh:
-
-``` text
+```text
 1. Không làm sai financial meaning.
 2. Không làm sai scientific conclusion.
 3. Không che giấu benchmark overhead.
@@ -1551,13 +1509,13 @@ Nếu cần quyết định nhanh:
 7. Sau đó mới tối ưu convenience.
 ```
 
-------------------------------------------------------------------------
+---
 
-# 27. Sigma Research Integrity
+# 27. Research Integrity
 
 Sigma phải chấp nhận cả ba kết quả:
 
-``` text
+```text
 Quantum Advantage
 Quantum No Advantage
 Inconclusive
@@ -1565,13 +1523,13 @@ Inconclusive
 
 Một research result tốt không nhất thiết là:
 
-``` text
+```text
 Quantum wins.
 ```
 
-Một research result tốt có thể là:
+Ví dụ một kết quả hợp lệ:
 
-``` text
+```text
 Quantum provides theoretical query advantage,
 but state preparation and oracle costs dominate
 under the evaluated conditions.
@@ -1579,20 +1537,18 @@ under the evaluated conditions.
 
 Hoặc:
 
-``` text
+```text
 Classical remains preferable under the tested
 portfolio scale and hardware constraints.
 ```
 
-Giá trị của Sigma nằm ở việc **đo và giải thích** kết quả, không phải ép
-kết quả theo narrative.
+Giá trị của Sigma nằm ở **đo lường và giải thích kết quả**, không phải ép kết quả theo narrative.
 
-------------------------------------------------------------------------
+---
 
-# 28. Final Engineering Principle
+# 28. Nguyên tắc Kỹ thuật
 
-> **Build the smallest system that can produce a scientifically
-> defensible result.**
+> **Build the smallest system that can produce a scientifically defensible result.**
 
 Không xây infrastructure trước khi có workload.
 
@@ -1604,33 +1560,47 @@ Không benchmark Quantum trước khi có Classical baseline.
 
 Không claim advantage trước khi có evidence.
 
-------------------------------------------------------------------------
+---
 
-# 29. Final Research Principle
+# 29. Nguyên tắc Nghiên cứu
 
-> **Problem → Hypothesis → Mathematical Formulation → Classical Baseline
-> → Quantum Method → Fair Benchmark → Resource Analysis → Scientific
-> Conclusion → Product Evaluation**
+```text
+Problem
+   ↓
+Hypothesis
+   ↓
+Mathematical Formulation
+   ↓
+Classical Baseline
+   ↓
+Quantum Method
+   ↓
+Fair Benchmark
+   ↓
+Resource Analysis
+   ↓
+Scientific Conclusion
+   ↓
+Product Evaluation
+```
 
 Đây là research loop chuẩn của Sigma.
 
-------------------------------------------------------------------------
+---
 
-# 30. Final Product Principle
+# 30. Nguyên tắc Sản phẩm
 
-> **Financial Problem First. Computational Method Second. Product Value
-> Third.**
+> **Financial Problem First. Computational Method Second. Product Value Third.**
 
 Sigma không xây Quantum để chứng minh Quantum.
 
-Sigma xây Financial Risk Intelligence và sử dụng Quantum tại những nơi
-Quantum có thể tạo ra giá trị được đo lường.
+Sigma xây Financial Risk Intelligence và sử dụng Quantum ở những nơi Quantum có thể tạo ra giá trị được đo lường.
 
-------------------------------------------------------------------------
+---
 
 # 31. North Star
 
-``` text
+```text
 Financial Correctness
         +
 Scientific Rigor
@@ -1646,5 +1616,4 @@ Product Utility
 SIGMA
 ```
 
-> **Không hype. Không over-engineer. Không giả định advantage. Đo lường,
-> kiểm chứng và xây dựng giá trị thực.**
+> **Không hype. Không over-engineer. Không giả định advantage. Đo lường, kiểm chứng và xây dựng giá trị thực.**

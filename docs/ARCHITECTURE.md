@@ -1,47 +1,31 @@
-# Sigma --- Architecture Document
+# Sigma — Kiến trúc hệ thống
 
-> **Phiên bản:** 0.1\
-> **Trạng thái:** Draft / Internal Baseline\
-> **Sản phẩm:** Sigma Risk Intelligence\
-> **Kiến trúc:** Modular Monolith\
-> **Interface:** FastAPI\
-> **Reference Client:** Taipy
+**Phiên bản:** 0.2  
+**Trạng thái:** Draft / Internal Baseline  
+**Sản phẩm:** Sigma Risk Intelligence  
+**Kiến trúc:** Modular Monolith  
+**API:** FastAPI  
+**Reference Client:** Taipy
 
-------------------------------------------------------------------------
+---
 
 ## 1. Mục đích
 
-`ARCHITECTURE.md` định nghĩa cấu trúc hệ thống Sigma, ranh giới giữa các
-module, hướng phụ thuộc, luồng dữ liệu và cách các lớp giao tiếp với
-nhau.
+`ARCHITECTURE.md` mô tả kiến trúc hệ thống của Sigma: cấu trúc module, trách nhiệm, hướng phụ thuộc, luồng dữ liệu và ranh giới giữa Core, API, giao diện và Research.
 
-Tài liệu này trả lời:
+Các tài liệu liên quan:
 
--   Sigma được cấu trúc như thế nào?
--   Các module có trách nhiệm gì?
--   Module nào được phép phụ thuộc module nào?
--   Research, Core, API và UI liên kết ra sao?
--   Financial computation nằm ở đâu?
--   Quantum computation nằm ở đâu?
--   Dữ liệu đi qua hệ thống như thế nào?
--   API boundary được đặt ở đâu?
--   Hệ thống có thể phát triển như thế nào mà không phá vỡ core?
+- `SCHEMA.md` — cấu trúc dữ liệu và domain semantics.
+- `TECH_STACK.md` — lựa chọn công nghệ.
+- `RULES.md` — quy tắc và ràng buộc của dự án.
 
-Tài liệu này là architectural source of truth ở cấp hệ thống. Chi tiết
-về data/domain objects thuộc `SCHEMA.md`; technology selection thuộc
-`TECH_STACK.md`; các quy tắc bất biến thuộc `RULES.md`.
+---
 
-------------------------------------------------------------------------
+## 2. Định hướng kiến trúc
 
-# 2. Architectural Vision
+Sigma V1 sử dụng **Modular Monolith** với một Risk Intelligence Core, một API boundary ổn định và các client có thể thay thế.
 
-Sigma được xây dựng như một **Modular Monolith** với một Risk
-Intelligence Core rõ ràng, một API boundary ổn định và các client có thể
-thay thế.
-
-Kiến trúc mục tiêu:
-
-``` text
+```text
 Research
    ↓
 Sigma Core
@@ -50,157 +34,109 @@ Application
    ↓
 FastAPI
    ↓
-Taipy / Other Clients
+Taipy / External Clients
 ```
 
-Core phải độc lập với UI và API framework.
+Nguyên tắc chính:
 
-Nguyên tắc:
+> **Một repository → module rõ ràng → ranh giới rõ ràng → API-first → client có thể thay thế.**
 
-> **One Repository → Modular Core → Clear Boundaries → API-first →
-> Replaceable Clients**
+Sigma V1 **không** sử dụng microservices.
 
-Sigma không được thiết kế theo hướng microservices ở V1.
+Mục tiêu là giữ hệ thống đơn giản để phát triển và nghiên cứu nhanh, nhưng đủ rõ ràng để có thể mở rộng khi xuất hiện nhu cầu thực tế.
 
-------------------------------------------------------------------------
+---
 
-# 3. Architectural Principles
+## 3. Nguyên tắc kiến trúc
 
-## 3.1. Modular Monolith
+### 3.1. Modular Monolith
 
-Toàn bộ Sigma V1 nằm trong một repository và một application boundary
-chính.
+Toàn bộ Sigma V1 nằm trong một repository và application boundary chính.
 
-Các module được tách theo trách nhiệm nghiệp vụ và computational
-responsibility, không tách thành các service độc lập chỉ để tạo cảm giác
-enterprise.
+Các module được tách theo trách nhiệm, không tách thành service độc lập chỉ để tạo kiến trúc phức tạp.
 
-Lợi ích:
+**Module boundary không đồng nghĩa với process boundary.** Một module có thể độc lập về trách nhiệm mà chưa cần chạy thành service riêng.
 
--   development đơn giản;
--   debugging dễ;
--   testing trực tiếp;
--   research integration thuận tiện;
--   giảm network overhead;
--   phù hợp với quy mô V1.
+### 3.2. Phân tách trách nhiệm
 
-------------------------------------------------------------------------
+| Lớp | Trách nhiệm |
+|---|---|
+| Domain | Khái niệm tài chính |
+| Data | Thu thập, tải và xử lý dữ liệu |
+| Modeling | Mô hình thống kê và tài chính |
+| Scenarios | Sinh kịch bản |
+| Risk | Tính toán các đại lượng rủi ro |
+| Quantum | Tính toán và ước lượng lượng tử |
+| Application | Điều phối quy trình |
+| API | Giao tiếp bên ngoài |
+| UI | Trình bày và tương tác |
+| Research | Khám phá và thử nghiệm |
 
-## 3.2. Separation of Concerns
+### 3.3. Domain độc lập
 
-Mỗi layer có một trách nhiệm rõ ràng:
+Domain không phụ thuộc vào FastAPI, Taipy, Qiskit, cơ sở dữ liệu hay framework giao diện.
 
-``` text
-Domain
-→ Financial concepts
+Domain chỉ biểu diễn các khái niệm tài chính dùng chung trong hệ thống.
 
-Data
-→ Market data
+### 3.4. Classical First
 
-Modeling
-→ Statistical / financial models
+Phương pháp cổ điển là cơ sở của Risk Analysis.
 
-Scenarios
-→ Scenario generation
+Quantum không được trở thành dependency bắt buộc. Nếu Quantum backend không khả dụng, Classical Risk Analysis vẫn phải hoạt động.
 
-Risk
-→ Risk quantities and metrics
+### 3.5. Quantum Where Justified
 
-Quantum
-→ Quantum estimation
+Quantum chỉ được đưa vào sau quy trình:
 
-Application
-→ Orchestration
-
-API
-→ External interface
-
-UI
-→ Presentation
+```text
+Bài toán tài chính
+      ↓
+Công thức hóa
+      ↓
+Classical Baseline
+      ↓
+Quantum Formulation
+      ↓
+Benchmark
 ```
 
-------------------------------------------------------------------------
+Quantum là **lớp tăng cường tính toán**, không phải một hệ thống thay thế toàn bộ Sigma.
 
-## 3.3. Domain Independence
+### 3.6. API-first
 
-`domain/` không phụ thuộc:
+FastAPI là ranh giới giữa Sigma Core và client.
 
--   FastAPI;
--   Taipy;
--   Qiskit;
--   database implementation;
--   external UI.
-
-Domain định nghĩa financial concepts cần thiết cho Sigma.
-
-------------------------------------------------------------------------
-
-## 3.4. Classical First
-
-Classical implementation là baseline của risk methodology.
-
-Quantum không được trở thành dependency bắt buộc để chạy Classical Risk
-Analysis.
-
-Nếu Quantum backend lỗi, Classical Risk Analysis vẫn phải hoạt động.
-
-------------------------------------------------------------------------
-
-## 3.5. Quantum Where Justified
-
-Quantum chỉ được sử dụng tại những computational problem đã có:
-
-``` text
-Financial Problem
-→ Mathematical Formulation
-→ Classical Baseline
-→ Quantum Formulation
-→ Benchmark
+```text
+Taipy / External Client
+          ↓ HTTP
+       FastAPI
+          ↓
+     Application
+          ↓
+      Sigma Core
 ```
 
-Quantum không phải một pipeline độc lập thay thế toàn bộ Sigma.
+Client không truy cập trực tiếp các module nội bộ của Core.
 
-------------------------------------------------------------------------
+### 3.7. Research tách khỏi Core
 
-## 3.6. API First
+`research/` dành cho:
 
-FastAPI là interface giữa Sigma Core và external clients.
+- khám phá dữ liệu;
+- kiểm tra giả thuyết;
+- thử nghiệm phương pháp;
+- đánh giá và benchmark;
+- tạo nguyên mẫu.
 
-Taipy không được truy cập trực tiếp internal core modules.
+Chỉ logic đã được kiểm chứng và ổn định mới được đưa vào `src/sigma/`.
 
-``` text
-Taipy
-   ↓ HTTP
-FastAPI
-   ↓
-Application
-   ↓
-Core
-```
+Không sử dụng notebook làm production implementation.
 
-------------------------------------------------------------------------
+---
 
-## 3.7. Research Is Not Production Core
+## 4. Cấu trúc repository
 
-`research/` là nơi:
-
--   exploration;
--   hypothesis testing;
--   experiments;
--   benchmark;
--   prototyping.
-
-Logic ổn định mới được promotion vào `src/sigma/`.
-
-Không copy-paste notebook thành production implementation.
-
-------------------------------------------------------------------------
-
-# 4. Repository Architecture
-
-Cấu trúc repository:
-
-``` text
+```text
 sigma/
 │
 ├── src/
@@ -226,14 +162,12 @@ sigma/
 │   └── artifacts/
 │
 ├── configs/
-│
 ├── tests/
 │   ├── unit/
 │   ├── integration/
 │   └── evaluation/
 │
 ├── docs/
-│
 ├── pyproject.toml
 ├── README.md
 ├── .env.example
@@ -241,17 +175,13 @@ sigma/
 └── Makefile
 ```
 
-Repository structure là organizational boundary. Không phải mọi folder
-đều là runtime layer.
+Đây là ranh giới tổ chức của repository, không phải tất cả đều là runtime layer.
 
-------------------------------------------------------------------------
+---
 
-# 5. System Context
+## 5. System Context
 
-Sigma nằm giữa các nguồn dữ liệu, người dùng tài chính, external clients
-và computational backends.
-
-``` mermaid
+```mermaid
 flowchart LR
     User["Risk Analyst / Portfolio Manager / Quant"]
     Data["Market Data Sources"]
@@ -270,82 +200,25 @@ flowchart LR
     UI --> User
 ```
 
-### Context interpretation
+- Người dùng tương tác thông qua client.
+- Taipy là reference client của V1.
+- FastAPI là product-facing interface.
+- Core thực hiện financial computation.
+- Market data đi vào Data layer.
+- Quantum backend chỉ được dùng khi workflow yêu cầu.
+- Quantum backend không phải nơi lưu trữ dữ liệu chính của Sigma.
 
--   Người dùng tương tác với Sigma thông qua client.
--   Taipy là reference client V1.
--   FastAPI cung cấp product-facing interface.
--   Core thực hiện financial computation.
--   Market data đi vào Data layer.
--   Quantum backend chỉ được sử dụng khi một computation path yêu cầu.
--   Quantum backend không phải system-of-record của Sigma.
+---
 
-------------------------------------------------------------------------
+## 6. Sigma Core
 
-# 6. High-Level Architecture
+### 6.1. Domain
 
-``` mermaid
-flowchart TD
-    UI["Taipy Reference UI"]
+**Path:** `src/sigma/domain/`
 
-    API["FastAPI API"]
+Biểu diễn các khái niệm dùng xuyên suốt hệ thống, chẳng hạn:
 
-    APP["Application Layer"]
-
-    DOMAIN["Domain"]
-    DATA["Data"]
-    MODEL["Modeling"]
-    SCENARIOS["Scenarios"]
-    RISK["Risk"]
-    QUANTUM["Quantum"]
-
-    UI --> API
-    API --> APP
-
-    APP --> DOMAIN
-    APP --> DATA
-    APP --> MODEL
-    APP --> SCENARIOS
-    APP --> RISK
-    APP --> QUANTUM
-
-    DATA --> DOMAIN
-    MODEL --> DOMAIN
-    SCENARIOS --> DOMAIN
-    RISK --> DOMAIN
-    QUANTUM --> DOMAIN
-```
-
-Đây là conceptual architecture. Chi tiết class/interface thuộc
-implementation và schema documents.
-
-------------------------------------------------------------------------
-
-# 7. Core Layers
-
-## 7.1. Domain Layer
-
-Path:
-
-``` text
-src/sigma/domain/
-```
-
-Gồm các financial concepts như:
-
-``` text
-portfolio.py
-market.py
-scenario.py
-risk.py
-```
-
-Domain có trách nhiệm biểu diễn các khái niệm mà các module khác cùng
-hiểu.
-
-Ví dụ conceptual objects:
-
-``` text
+```text
 Portfolio
 Position
 MarketData
@@ -353,34 +226,15 @@ Scenario
 RiskEstimate
 ```
 
-Domain không thực hiện:
+Domain không xử lý HTTP, UI hoặc thực thi mạch lượng tử.
 
--   HTTP;
--   UI;
--   quantum circuit execution;
--   external API orchestration.
+### 6.2. Data
 
-------------------------------------------------------------------------
+**Path:** `src/sigma/data/`
 
-# 8. Data Layer
+Đưa dữ liệu từ nguồn bên ngoài hoặc storage về dạng Core có thể sử dụng.
 
-Path:
-
-``` text
-src/sigma/data/
-```
-
-Các module:
-
-``` text
-loaders.py
-sources.py
-preprocessing.py
-```
-
-Data layer chịu trách nhiệm:
-
-``` text
+```text
 External / Stored Data
         ↓
 Loading
@@ -392,35 +246,22 @@ Domain-compatible Data
 
 Data layer không quyết định VaR/CVaR và không chứa UI logic.
 
-Data source abstraction cho phép Sigma thay đổi nguồn dữ liệu mà không
-thay đổi risk methodology.
+### 6.3. Modeling
 
-------------------------------------------------------------------------
+**Path:** `src/sigma/modeling/`
 
-# 9. Modeling Layer
+Các thành phần chính:
 
-Path:
-
-``` text
-src/sigma/modeling/
-```
-
-Các module:
-
-``` text
+```text
 returns.py
 volatility.py
 regime.py
 distribution.py
 ```
 
-Modeling chịu trách nhiệm biến market observations thành
-statistical/financial representations phục vụ scenario generation và
-risk estimation.
+Luồng:
 
-Conceptual flow:
-
-``` text
+```text
 Market Data
     ↓
 Returns
@@ -432,34 +273,28 @@ Regime
 Distribution
 ```
 
-Modeling không trực tiếp điều khiển UI hoặc API.
+Modeling tạo các biểu diễn thống kê và tài chính phục vụ scenario generation.
 
-------------------------------------------------------------------------
+### 6.4. Scenarios
 
-# 10. Scenario Layer
+**Path:** `src/sigma/scenarios/`
 
-Path:
+Các thành phần chính:
 
-``` text
-src/sigma/scenarios/
-```
-
-Các module:
-
-``` text
+```text
 monte_carlo.py
 stress.py
 ```
 
-Scenario layer chịu trách nhiệm:
+Chịu trách nhiệm:
 
--   scenario generation;
--   portfolio scenario propagation;
--   stress scenario construction.
+- sinh kịch bản;
+- truyền kịch bản qua danh mục;
+- xây dựng stress scenarios;
+- tạo portfolio outcomes;
+- hình thành loss distribution.
 
-Conceptual flow:
-
-``` text
+```text
 Distribution / Market State
         ↓
 Scenario Engine
@@ -469,131 +304,89 @@ Portfolio Outcomes
 Loss Distribution
 ```
 
-Monte Carlo là Classical baseline quan trọng của Sigma.
+Monte Carlo là classical baseline quan trọng của Sigma.
 
-------------------------------------------------------------------------
+### 6.5. Risk
 
-# 11. Risk Layer
+**Path:** `src/sigma/risk/`
 
-Path:
+Các thành phần chính:
 
-``` text
-src/sigma/risk/
-```
-
-Các module:
-
-``` text
+```text
 var.py
 cvar.py
 metrics.py
 ```
 
-Risk layer định nghĩa và tính toán risk quantities.
+Tính toán:
 
-Ví dụ:
+- VaR;
+- CVaR / Expected Shortfall;
+- Expected Loss;
+- Risk Metrics;
+- Risk Contribution.
 
-``` text
-VaR
-CVaR / Expected Shortfall
-Expected Loss
-Risk Metrics
-Risk Contribution
-```
+Risk layer **không phụ thuộc Quantum**. Financial risk quantity phải độc lập với phương pháp dùng để ước lượng nó.
 
-Risk layer không phụ thuộc Quantum.
-
-Điều này rất quan trọng:
-
-``` text
-Risk
-  ↑
-Classical Estimator
-  ↑
+```text
+Risk Quantity
+      ↑
+  Estimator
+      ↑
 Scenario / Distribution
 ```
 
-Quantum có thể cung cấp một estimator cho một quantity phù hợp, nhưng
-khái niệm financial risk không thuộc Quantum layer.
+Quantum có thể cung cấp estimator, nhưng không định nghĩa financial semantics.
 
-------------------------------------------------------------------------
+### 6.6. Quantum
 
-# 12. Quantum Layer
+**Path:** `src/sigma/quantum/`
 
-Path:
+Các thành phần chính:
 
-``` text
-src/sigma/quantum/
-```
-
-Các module:
-
-``` text
+```text
 amplitude_estimation.py
 state_preparation.py
 oracle.py
 benchmark.py
 ```
 
-Quantum layer chịu trách nhiệm về computational implementation của các
-quantum estimation methods.
+Luồng:
 
-Conceptual flow:
-
-``` text
+```text
 Financial Quantity
-        ↓
+      ↓
 Quantum Formulation
-        ↓
+      ↓
 State Preparation
-        ↓
+      ↓
 Oracle
-        ↓
+      ↓
 Amplitude Estimation
-        ↓
+      ↓
 Estimate
 ```
 
-Quantum layer phải theo dõi các resource factors phù hợp:
+Khi phù hợp, cần theo dõi:
 
--   qubits;
--   circuit depth;
--   shots;
--   query count;
--   state preparation cost;
--   oracle cost;
--   noise;
--   runtime.
+- số qubit;
+- độ sâu mạch;
+- số shots;
+- số truy vấn;
+- chi phí chuẩn bị trạng thái;
+- chi phí oracle;
+- nhiễu;
+- thời gian chạy.
 
-Quantum layer không:
+Quantum layer không tải raw market data trực tiếp, không xử lý UI và không định nghĩa product workflow.
 
--   load raw market data trực tiếp;
--   thực hiện UI;
--   điều khiển FastAPI;
--   định nghĩa product workflow.
+### 6.7. Application
 
-------------------------------------------------------------------------
+**Path:** `src/sigma/application/`
 
-# 13. Application Layer
+Điều phối workflow giữa các module:
 
-Path:
-
-``` text
-src/sigma/application/
-```
-
-Các module:
-
-``` text
-portfolio_analysis.py
-quantum_benchmark.py
-```
-
-Application layer là orchestration layer.
-
-Nó kết nối các capabilities:
-
-``` text
+```text
 Data
  ↓
 Modeling
@@ -603,34 +396,23 @@ Scenarios
 Risk
 ```
 
-và:
+Khi benchmark:
 
-``` text
+```text
 Classical Estimator
         ↕
 Quantum Estimator
         ↓
-Benchmark
+    Benchmark
 ```
 
-Application layer không nên chứa low-level statistical implementation.
+Application quyết định **workflow nào được thực hiện**, nhưng không chứa low-level statistical hoặc quantum implementation.
 
-Nó quyết định **workflow nào được thực hiện**, không tự implement toàn
-bộ computation.
+### 6.8. API
 
-------------------------------------------------------------------------
+**Path:** `src/sigma/api/`
 
-# 14. API Layer
-
-Path:
-
-``` text
-src/sigma/api/
-```
-
-Cấu trúc:
-
-``` text
+```text
 api/
 ├── main.py
 ├── routes/
@@ -644,41 +426,24 @@ api/
     └── quantum.py
 ```
 
-API layer là external interface.
+API chịu trách nhiệm:
 
-Responsibilities:
+- nhận request;
+- xác thực dữ liệu đầu vào;
+- routing;
+- serialization;
+- dependency wiring;
+- HTTP concerns.
 
--   request handling;
--   response serialization;
--   API validation;
--   routing;
--   dependency wiring;
--   HTTP concerns.
+API không chứa GARCH, Monte Carlo, VaR hay QAE implementation.
 
-API không được trở thành nơi chứa:
+---
 
-``` text
-GARCH calculation
-Monte Carlo implementation
-VaR calculation
-QAE circuit construction
-```
+## 7. UI Layer
 
-Các computation đó thuộc Core.
+**Path:** `ui/`
 
-------------------------------------------------------------------------
-
-# 15. UI Layer
-
-Path:
-
-``` text
-ui/
-```
-
-Cấu trúc:
-
-``` text
+```text
 ui/
 ├── app.py
 ├── pages/
@@ -687,125 +452,96 @@ ui/
 └── assets/
 ```
 
-Taipy là reference client.
+Taipy là reference client của V1.
 
 UI chịu trách nhiệm:
 
--   user interaction;
--   input collection;
--   presentation;
--   visualization;
--   interaction state.
+- nhận input;
+- trình bày kết quả;
+- trực quan hóa;
+- quản lý interaction state.
 
-UI giao tiếp với backend qua:
+UI giao tiếp với backend qua API:
 
-``` text
+```text
 ui/api_client.py
         ↓ HTTP
-FastAPI
+     FastAPI
 ```
 
-UI không import:
+UI không import trực tiếp `sigma.risk`, `sigma.quantum` hoặc `sigma.modeling` để thực hiện business computation.
 
-``` text
-sigma.risk
-sigma.quantum
-sigma.modeling
-```
+---
 
-để thực hiện business computation.
+## 8. Research Layer
 
-------------------------------------------------------------------------
+**Path:** `research/`
 
-# 16. Research Layer
-
-Path:
-
-``` text
+```text
 research/
 ├── notebooks/
 └── experiments/
 ```
 
-Research được thiết kế như experimental boundary.
+### Notebooks
 
-## Notebooks
+Dùng cho exploration, visualization, kiểm tra giả thuyết và prototyping.
 
-Dùng cho:
+### Experiments
 
--   exploration;
--   visualization;
--   hypothesis testing;
--   methodology prototyping.
-
-## Experiments
-
-``` text
+```text
 experiments/
 ├── classical/
 └── quantum/
 ```
 
-Dùng cho reproducible experiments và benchmark.
+Dùng cho các thí nghiệm có thể tái lập và benchmark.
 
-Research có thể import Core:
+Research có thể sử dụng Core:
 
-``` text
+```text
 Research
    ↓
 Sigma Core
 ```
 
-nhưng Core không import Research:
+nhưng Core không được phụ thuộc Research.
 
-``` text
-Sigma Core
-   ✕
-Research
-```
+---
 
-------------------------------------------------------------------------
+## 9. Tests và Evaluation
 
-# 17. Tests & Evaluation
-
-Path:
-
-``` text
+```text
 tests/
 ├── unit/
 ├── integration/
 └── evaluation/
 ```
 
-## Unit
+**Unit:** kiểm tra từng module hoặc function.
 
-Kiểm tra module/function behavior.
+**Integration:** kiểm tra sự tương tác giữa module và API/application boundary.
 
-## Integration
+**Evaluation:** phục vụ đánh giá khoa học và benchmark, gồm:
 
-Kiểm tra interaction giữa các modules và API/application boundaries.
+- Classical baseline;
+- Quantum benchmark;
+- độ chính xác;
+- hội tụ;
+- tài nguyên tính toán;
+- độ nhạy với nhiễu;
+- so sánh đầu-cuối.
 
-## Evaluation
+Evaluation phải trả lời cả hai câu hỏi:
 
-Đây là lớp scientific evaluation.
+> **Code có hoạt động đúng không?**  
+> **Phương pháp có thực sự tốt và có giá trị không?**
 
-Dùng cho:
+---
 
--   Classical baseline;
--   Quantum benchmark;
--   accuracy;
--   convergence;
--   resource usage;
--   noise sensitivity;
--   end-to-end comparison.
+## 10. Luồng dữ liệu đầu-cuối
 
-Evaluation không chỉ kiểm tra "code chạy".
-
-------------------------------------------------------------------------
-
-# 18. End-to-End Data Flow
-
-``` mermaid
+```mermaid
 flowchart TD
     MARKET["Market Data"]
     VALIDATE["Validation / Cleaning"]
@@ -829,100 +565,59 @@ flowchart TD
     REGIME --> DIST
     DIST --> SCENARIO
     SCENARIO --> LOSS
-
     LOSS --> CLASSICAL
     LOSS --> QUANTUM
-
     CLASSICAL --> RISK
     QUANTUM --> RISK
-
     RISK --> INTEL
     INTEL --> API
     API --> UI
 ```
 
-Đây là logical data flow. Chi tiết data schema sẽ được định nghĩa trong
-`SCHEMA.md`.
+Đây là luồng logic cấp hệ thống. Chi tiết schema và data contract thuộc `SCHEMA.md`.
 
-------------------------------------------------------------------------
+---
 
-# 19. Classical--Quantum Boundary
+## 11. Ranh giới Classical — Quantum
 
-Sigma có hai computational paths:
+Với một financial quantity phù hợp, Sigma có thể có hai phương pháp ước lượng:
 
-``` text
+```text
                  Financial Quantity
-                        │
-              ┌─────────┴─────────┐
-              │                   │
-              ▼                   ▼
-         Classical            Quantum
-         Estimator             Estimator
-              │                   │
-              └─────────┬─────────┘
-                        ▼
-                    Benchmark
-                        │
-                        ▼
-                Risk Intelligence
+                         │
+              ┌──────────┴──────────┐
+              ↓                     ↓
+       Classical Estimator   Quantum Estimator
+              │                     │
+              └──────────┬──────────┘
+                         ↓
+                     Benchmark
+                         ↓
+                 Risk Intelligence
 ```
 
-Classical path có thể sử dụng:
+Classical path có thể sử dụng Monte Carlo.
 
-``` text
-Monte Carlo
-```
+Quantum path có thể sử dụng Amplitude Estimation hoặc phương pháp lượng tử phù hợp khác.
 
-Quantum path có thể sử dụng:
+Khi benchmark, hai phương pháp phải ước lượng **cùng một financial quantity** trong điều kiện so sánh công bằng.
 
-``` text
-Amplitude Estimation
-```
+Quantum không phải một sản phẩm riêng:
 
-Benchmark phải so sánh cùng quantity.
-
-------------------------------------------------------------------------
-
-# 20. Quantum Is Not a Separate Product
-
-Không sử dụng architecture:
-
-``` text
-Sigma Risk
-     +
-Sigma Quantum
-```
-
-theo kiểu hai hệ thống độc lập.
-
-Thay vào đó:
-
-``` text
+```text
 Sigma
-│
-└── Risk Intelligence
-      │
+ └── Risk Intelligence
       ├── Classical Methods
-      │
       └── Quantum Methods
 ```
 
-Quantum là computational enhancement layer.
+---
 
-Điều này cho phép:
+## 12. Luồng thực thi
 
--   Classical fallback;
--   fair benchmark;
--   independent evolution;
--   tránh coupling risk methodology với quantum implementation.
+### 12.1. Phân tích rủi ro danh mục
 
-------------------------------------------------------------------------
-
-# 21. Application Execution Flow
-
-Một portfolio risk analysis có thể đi theo:
-
-``` text
+```text
 Client
   ↓
 FastAPI
@@ -946,9 +641,9 @@ Calculate Risk
 Return Risk Result
 ```
 
-Quantum benchmark là workflow riêng:
+### 12.2. Benchmark lượng tử
 
-``` text
+```text
 Client
   ↓
 FastAPI
@@ -963,44 +658,20 @@ Prepare Quantum Representation
   ↓
 Run Quantum Estimator
   ↓
-Collect Resources
+Collect Resource Metrics
   ↓
 Compare
   ↓
 Return Benchmark
 ```
 
-------------------------------------------------------------------------
+Benchmark lượng tử là workflow nghiên cứu bổ sung, không phải điều kiện để thực hiện Classical Risk Analysis.
 
-# 22. API Boundary
+---
 
-Boundary:
+## 13. Hướng phụ thuộc
 
-``` mermaid
-flowchart LR
-    CLIENT["Taipy / External Client"]
-    API["FastAPI"]
-    APP["Application"]
-    CORE["Sigma Core"]
-
-    CLIENT -->|HTTP| API
-    API --> APP
-    APP --> CORE
-```
-
-API request không được truyền trực tiếp vào low-level model functions mà
-không qua application contract khi workflow có orchestration.
-
-API response phải là product-facing representation của kết quả, không
-expose internal implementation details không cần thiết.
-
-------------------------------------------------------------------------
-
-# 23. Dependency Direction
-
-Dependency direction được giữ một chiều ở mức architecture:
-
-``` text
+```text
 UI
  ↓ HTTP
 API
@@ -1012,122 +683,70 @@ Core Modules
 
 Trong Core:
 
-``` text
+```text
 Application
- ↓
-Domain
-Data
-Modeling
-Scenarios
-Risk
-Quantum
+     ↓
+Domain / Data / Modeling / Scenarios / Risk / Quantum
 ```
 
-Research:
+Research sử dụng Core:
 
-``` text
+```text
 Research
- ↓
+   ↓
 Core
 ```
 
-Không được:
+Không được tạo dependency ngược từ Core lên Research.
 
-``` text
-Core
- ↓
-Research
-```
+Các quy tắc quan trọng:
 
-và không được:
+1. Domain không biết API hoặc UI.
+2. Risk không phụ thuộc Quantum.
+3. Quantum không phụ thuộc UI.
+4. UI chỉ giao tiếp với backend thông qua API.
+5. API không chứa financial business logic.
+6. Research không trở thành runtime dependency của Core.
+7. Application điều phối; các engine thực hiện tính toán.
+8. Framework và infrastructure không được leak vào Domain nếu không cần thiết.
 
-``` text
-Domain
- ↓
-API
-UI
-Quantum Framework
-```
+---
 
-------------------------------------------------------------------------
+## 14. Configuration và Data Boundary
 
-# 24. Dependency Rules
+### Configuration
 
-## Rule 1
+**Path:** `configs/`
 
-Domain không biết API/UI.
-
-## Rule 2
-
-Risk không phụ thuộc Quantum.
-
-## Rule 3
-
-Quantum không phụ thuộc UI.
-
-## Rule 4
-
-UI chỉ giao tiếp với backend thông qua API.
-
-## Rule 5
-
-API không chứa financial business logic.
-
-## Rule 6
-
-Research không trở thành runtime dependency của Core.
-
-## Rule 7
-
-Application orchestrates; engines compute.
-
-## Rule 8
-
-Infrastructure/framework details không được leak vào Domain nếu không
-cần thiết.
-
-------------------------------------------------------------------------
-
-# 25. Configuration Boundary
-
-Configuration nằm tại:
-
-``` text
+```text
 configs/
 ├── default.yaml
 └── benchmark.yaml
 ```
 
-Configuration có thể định nghĩa:
+Có thể chứa:
 
--   model parameters;
--   scenario parameters;
--   benchmark settings;
--   experiment settings.
+- tham số mô hình;
+- tham số scenario;
+- benchmark settings;
+- experiment settings.
 
-Configuration không nên chứa business logic.
+Configuration không chứa business logic.
 
-Secrets không nằm trong repository.
+Secret không được lưu trong repository. `.env.example` chỉ mô tả các biến môi trường cần thiết.
 
-`.env.example` mô tả environment variables cần thiết; secret thật được
-quản lý bên ngoài source code.
+### Data
 
-------------------------------------------------------------------------
-
-# 26. Data Storage Boundary
-
-Repository có:
-
-``` text
+```text
 data/
 ├── raw/
 ├── processed/
 └── artifacts/
 ```
 
-Conceptual flow:
+Luồng:
 
-``` text
+```text
 Raw
  ↓
 Processed
@@ -1137,16 +756,13 @@ Artifacts
 
 Data storage là supporting layer, không phải business logic.
 
-Risk Engine không nên phụ thuộc cứng vào một local file format nếu data
-contract có thể được abstraction.
+---
 
-------------------------------------------------------------------------
-
-# 27. Deployment Architecture --- V1
+## 15. Deployment và khả năng mở rộng V1
 
 V1 ưu tiên deployment đơn giản:
 
-``` mermaid
+```mermaid
 flowchart TB
     USER["User"]
     UI["Taipy Client"]
@@ -1162,81 +778,41 @@ flowchart TB
     CORE --> QS
 ```
 
-Không yêu cầu:
+V1 không yêu cầu:
 
--   Kubernetes;
--   microservices;
--   distributed service mesh;
--   message broker.
+- Kubernetes;
+- microservices;
+- service mesh;
+- message broker;
+- distributed infrastructure.
 
-Các thành phần mới chỉ được thêm khi có workload hoặc product
-requirement thực sự.
+Trong V1, các module có thể chạy trong cùng application/process boundary.
 
-------------------------------------------------------------------------
+Nếu một computation trở thành bottleneck thực sự:
 
-# 28. Runtime Separation
-
-Về logical runtime:
-
-``` text
-UI Runtime
-    │
-    │ HTTP
-    ▼
-API Runtime
-    │
-    ▼
-Sigma Core
-```
-
-Trong V1, các thành phần Core có thể chạy trong cùng application/process
-boundary khi phù hợp.
-
-Điều này không có nghĩa architecture mất modularity.
-
-**Module boundary và process boundary là hai khái niệm khác nhau.**
-
-------------------------------------------------------------------------
-
-# 29. Scalability Strategy
-
-Sigma V1 không tối ưu cho distributed scale trước khi có evidence cần
-thiết.
-
-Evolution path:
-
-``` text
+```text
 Modular Monolith
       ↓
-Profile Bottlenecks
+Đo bottleneck
       ↓
-Identify Real Workload
+Hiểu workload
       ↓
-Optimize Core
+Tối ưu
       ↓
-Scale Specific Component
+Chỉ tách component khi cần
 ```
 
-Nếu sau này một computation trở thành bottleneck thực sự, component đó
-mới được xem xét tách riêng.
+Ví dụ, Quantum Job Execution có thể được tách thành job hoặc service riêng nếu workload thực tế yêu cầu.
 
-Ví dụ:
+> **Không tách service trước khi có bằng chứng về bottleneck.**
 
-``` text
-Quantum Job Execution
-```
+---
 
-có thể trở thành asynchronous external job nếu workload thực tế yêu cầu.
+## 16. Research → Production
 
-Không tách service trước khi có bottleneck.
+Logic được đưa từ Research vào Core theo quy trình:
 
-------------------------------------------------------------------------
-
-# 30. Research-to-Production Boundary
-
-Logic được promotion theo flow:
-
-``` text
+```text
 Hypothesis
     ↓
 Notebook
@@ -1256,23 +832,23 @@ API
 UI
 ```
 
-Không đi ngược:
+Mục tiêu là giữ exploratory code ở Research và chỉ đưa phương pháp đã được kiểm chứng vào Core.
 
-``` text
+Không đi theo chiều ngược:
+
+```text
 UI
  ↓
 Notebook
 ```
 
-và không lấy demo code làm production core.
+và không dùng demo code chưa được kiểm chứng làm production core.
 
-------------------------------------------------------------------------
+### Tái lập nghiên cứu
 
-# 31. Scientific Reproducibility Boundary
+Mỗi experiment quan trọng nên lưu:
 
-Mỗi experiment quan trọng nên có:
-
-``` text
+```text
 Dataset
 Model
 Parameters
@@ -1281,62 +857,60 @@ Method
 Backend
 Quantum Resources
 Output Metrics
+Code Version
 ```
 
-Research artifacts phải có khả năng truy ngược tới methodology và code
-version phù hợp.
+---
 
-------------------------------------------------------------------------
+## 17. Cô lập lỗi
 
-# 32. Failure Isolation
+Quantum là một path tùy chọn.
 
-Một failure trong Quantum path không được làm mất Classical Risk
-capability.
+Một lỗi trong Quantum path không được làm mất khả năng phân tích rủi ro Classical:
 
-Conceptually:
-
-``` text
+```text
 Risk Analysis
-      │
-      ├── Classical → available
-      │
-      └── Quantum → optional / research path
+     │
+     ├── Classical → Available
+     │
+     └── Quantum → Optional / Research
 ```
 
 Nếu Quantum backend không khả dụng:
 
-``` text
+```text
 Quantum Failure
       ↓
-Benchmark unavailable
+Quantum Benchmark Unavailable
       ↓
-Classical Risk Analysis remains available
+Classical Risk Analysis
+      ↓
+Still Available
 ```
 
-Đây là architectural requirement quan trọng.
+Đây là yêu cầu kiến trúc của Sigma V1.
 
-------------------------------------------------------------------------
+---
 
-# 33. Observability Boundary
+## 18. Observability và Security
 
-V1 chỉ cần observability ở mức phù hợp:
+### Observability
 
--   application errors;
--   API errors;
--   computation duration;
--   benchmark metadata;
--   experiment results.
+V1 chỉ cần theo dõi ở mức phù hợp với kiến trúc:
 
-Không cần xây một distributed observability platform khi chưa có
-distributed architecture.
+- lỗi ứng dụng;
+- lỗi API;
+- thời gian tính toán;
+- benchmark metadata;
+- kết quả experiment.
 
-------------------------------------------------------------------------
+Không xây nền tảng observability phân tán khi Sigma chưa có kiến trúc phân tán.
 
-# 34. Security Boundary
+### Security
 
-Security responsibility được phân lớp:
+Security tập trung quanh API boundary:
 
-``` text
+```text
 Client
   ↓
 API Boundary
@@ -1346,229 +920,149 @@ Application
 Core
 ```
 
-Secrets:
+Secret phải được quản lý bên ngoài source code, chẳng hạn bằng environment variables hoặc hệ thống quản lý secret.
 
-``` text
-.env / external secret management
-```
+Không lưu secret trong:
 
-không nằm trong:
-
-``` text
+```text
 source code
 configs/default.yaml
 notebooks
 ```
 
-Financial data access policy phải được xác định theo deployment context.
+Chính sách truy cập dữ liệu tài chính phụ thuộc vào môi trường triển khai.
 
-------------------------------------------------------------------------
+---
 
-# 35. Architecture Decisions
+## 19. Các quyết định kiến trúc
 
-## ADR-01 --- Modular Monolith
+### ADR-01 — Modular Monolith
 
-**Decision:** Sigma V1 sử dụng Modular Monolith.
+**Quyết định:** Sigma V1 sử dụng Modular Monolith.
 
-**Reason:** giảm complexity và giữ development/research velocity trong
-giai đoạn đầu.
+**Lý do:** giảm độ phức tạp và giữ tốc độ phát triển, nghiên cứu.
 
-------------------------------------------------------------------------
+### ADR-02 — FastAPI làm Product API
 
-## ADR-02 --- FastAPI as Product API
+**Quyết định:** FastAPI là interface giữa Sigma và client.
 
-**Decision:** FastAPI là interface giữa Sigma và clients.
+**Lý do:** tạo integration boundary rõ ràng và giữ Core độc lập với UI.
 
-**Reason:** giữ Core độc lập với UI và tạo integration boundary rõ ràng.
+### ADR-03 — Taipy làm Reference Client
 
-------------------------------------------------------------------------
+**Quyết định:** Taipy là reference client của V1.
 
-## ADR-03 --- Taipy as Reference Client
+**Lý do:** phù hợp với hệ sinh thái Python hiện tại và giữ UI tách khỏi Core.
 
-**Decision:** Taipy là reference UI client V1.
+### ADR-04 — Research nằm ngoài Core
 
-**Reason:** phù hợp với Python-centric research/product prototype và cho
-phép xây dashboard nhanh mà không đưa UI logic vào Core.
+**Quyết định:** notebooks và experiments nằm ngoài `src/sigma/`.
 
-------------------------------------------------------------------------
+**Lý do:** bảo vệ Core khỏi exploratory code và dependency không ổn định.
 
-## ADR-04 --- Research Outside Core
+### ADR-05 — Quantum nằm trong Core Boundary
 
-**Decision:** Research notebooks và experiments nằm ngoài `src/sigma`.
+**Quyết định:** Quantum là module của Sigma Core, không phải service độc lập.
 
-**Reason:** bảo vệ production core khỏi exploratory code.
+**Lý do:** V1 chưa có bằng chứng cho thấy cần Quantum microservice.
 
-------------------------------------------------------------------------
+### ADR-06 — Risk độc lập với Quantum
 
-## ADR-05 --- Quantum Inside Core Boundary
+**Quyết định:** Risk layer không phụ thuộc Quantum layer.
 
-**Decision:** Quantum là module trong Sigma Core thay vì một service độc
-lập.
+**Lý do:** financial risk concepts phải độc lập với computational implementation.
 
-**Reason:** V1 chưa có workload justification cho quantum microservice;
-giữ computation gần financial formulation và benchmark logic.
+### ADR-07 — Không thêm hạ tầng sớm
 
-------------------------------------------------------------------------
+**Quyết định:** không đưa microservices, Kubernetes, Kafka, Airflow/Prefect hoặc distributed infrastructure vào V1 nếu chưa có yêu cầu.
 
-## ADR-06 --- Risk Independent from Quantum
+**Lý do:** tránh over-engineering và giữ kiến trúc phù hợp với workload thực tế.
 
-**Decision:** Risk layer không phụ thuộc Quantum layer.
+---
 
-**Reason:** risk concepts phải tồn tại độc lập với computational
-implementation.
+## 20. Architectural Non-Goals
 
-------------------------------------------------------------------------
+Sigma V1 không hướng tới:
 
-## ADR-07 --- No Premature Infrastructure
+- microservices;
+- Kubernetes;
+- enterprise distributed architecture;
+- real-time trading infrastructure;
+- high-frequency computation;
+- autonomous portfolio management;
+- quantum-only architecture;
+- database-heavy architecture khi chưa cần;
+- frontend/backend code duplication;
+- infrastructure abstraction chỉ để tạo cảm giác enterprise.
 
-**Decision:** Không thêm microservices, Kubernetes, Kafka,
-Airflow/Prefect hoặc distributed infrastructure vào V1 nếu chưa có
-requirement.
+---
 
-**Reason:** tránh over-engineering và giữ architecture aligned với
-actual workload.
+## 21. Tiêu chí đánh giá kiến trúc
 
-------------------------------------------------------------------------
+Kiến trúc V1 phù hợp khi đáp ứng:
 
-# 36. Architectural Non-Goals
+- **Phân tách rõ:** mỗi module có trách nhiệm rõ ràng.
+- **Dependency an toàn:** Core không phụ thuộc API hoặc UI.
+- **Classical độc lập:** Classical Risk Analysis chạy được khi không có Quantum.
+- **API isolation:** client không truy cập trực tiếp Core.
+- **Research isolation:** research không trở thành runtime dependency.
+- **Testability:** Core có thể kiểm thử độc lập.
+- **Reproducibility:** experiment có thể tái lập từ configuration và metadata.
+- **Evolvability:** có thể thay UI hoặc data source mà không viết lại Risk Engine.
 
-V1 không hướng tới:
+---
 
--   microservices;
--   Kubernetes;
--   enterprise distributed architecture;
--   real-time trading infrastructure;
--   high-frequency computation;
--   autonomous portfolio management;
--   quantum-only architecture;
--   database-heavy architecture khi chưa cần;
--   frontend/backend code duplication;
--   infrastructure abstraction chỉ để "trông enterprise".
+## 22. Architecture North Star
 
-------------------------------------------------------------------------
-
-# 37. Architecture Evolution
-
-Architecture phải cho phép mở rộng:
-
-``` text
-                 Sigma
-                   │
-        ┌──────────┴──────────┐
-        │                     │
- Risk Intelligence       Future Intelligence
-        │
- ┌──────┼────────┐
- │      │        │
-Classical Quantum Scenario
+```text
+                         USER
+                           │
+                           ▼
+                    TAIPY / CLIENT
+                           │
+                          HTTP
+                           │
+                           ▼
+                        FASTAPI
+                           │
+                           ▼
+                     APPLICATION
+                           │
+             ┌─────────────┼─────────────┐
+             ▼             ▼             ▼
+          DOMAIN        ENGINES         DATA
+                           │
+                    ┌──────┼──────┐
+                    ▼      ▼      ▼
+                  MODEL SCENARIOS RISK
+                                  │
+                                  ▼
+                               QUANTUM
+                                  │
+                                  ▼
+                          RISK INTELLIGENCE
+                                  │
+                                  ▼
+                           DECISION SUPPORT
 ```
 
-Các capability tương lai có thể được thêm vào bằng module boundaries rõ
-ràng thay vì phá vỡ Core.
+Nguyên tắc cốt lõi:
 
-Nếu một module trở thành independent scalability bottleneck, nó có thể
-được tách thành service sau khi có evidence.
+> **Sigma Core là Financial Risk Intelligence Engine độc lập với giao diện.**  
+> **API là boundary để productize Core.**  
+> **Taipy là một client có thể thay thế.**  
+> **Research là experimental layer.**  
+> **Quantum là computational enhancement layer.**  
+> **Mỗi module giữ đúng trách nhiệm của mình.**  
+> **Complexity chỉ được đưa vào khi hệ thống thực sự cần.**
 
-------------------------------------------------------------------------
+---
 
-# 38. Architectural Success Criteria
+## Architectural Principle
 
-Kiến trúc V1 được xem là đạt yêu cầu khi:
-
-### Modularity
-
-Các module có responsibility rõ ràng.
-
-### Dependency Safety
-
-Không có dependency direction ngược từ Core lên API/UI.
-
-### Classical Independence
-
-Classical Risk Analysis hoạt động không cần Quantum backend.
-
-### API Isolation
-
-Client không truy cập trực tiếp internal Core.
-
-### Research Isolation
-
-Exploratory research không trở thành production dependency.
-
-### Testability
-
-Core modules có thể test độc lập.
-
-### Reproducibility
-
-Research/evaluation có thể tái tạo theo configuration và metadata.
-
-### Evolvability
-
-Có thể thay đổi UI/client hoặc data source mà không viết lại Risk
-Engine.
-
-------------------------------------------------------------------------
-
-# 39. Architecture North Star
-
-Sigma được tổ chức theo:
-
-``` text
-                    USER
-                      │
-                      ▼
-                 TAIPY / CLIENT
-                      │
-                     HTTP
-                      │
-                      ▼
-                   FASTAPI
-                      │
-                      ▼
-                APPLICATION
-                      │
-        ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
-      DOMAIN        ENGINES       DATA
-        │             │
-        │      ┌──────┼──────┐
-        │      ▼      ▼      ▼
-        │   MODEL  SCENARIO RISK
-        │                    │
-        │                    ▼
-        │                 QUANTUM
-        │
-        └─────────────┬──────────────
-                      ▼
-                RISK INTELLIGENCE
-                      │
-                      ▼
-                DECISION SUPPORT
-```
-
-Nguyên tắc cuối cùng:
-
-> **Sigma Core phải là một Financial Risk Intelligence Engine độc lập
-> với giao diện; API là boundary để productize Core; Taipy là client có
-> thể thay thế; Research là experimental layer; Quantum là computational
-> enhancement layer; và mọi thành phần phải giữ đúng ranh giới trách
-> nhiệm của mình.**
-
-------------------------------------------------------------------------
-
-# 40. Architecture Principle
-
-> **Structure follows responsibility.**
->
-> **Interfaces surround the Core.**
->
-> **Research informs the Core.**
->
-> **Classical establishes the baseline.**
->
-> **Quantum enhances only where justified.**
->
-> **Complexity is introduced only when the system has earned it.**
-
-→ **SIGMA MODULAR RISK INTELLIGENCE ARCHITECTURE**
+> **Cấu trúc đi theo trách nhiệm.**  
+> **Interface bao quanh Core.**  
+> **Research cung cấp tri thức cho Core.**  
+> **Classical thiết lập baseline.**  
+> **Quantum chỉ tăng cường khi có căn cứ.**  
+> **Độ phức tạp chỉ được thêm khi hệ thống thực sự cần.**

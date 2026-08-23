@@ -1,123 +1,102 @@
-# Sigma --- Product Design Document
+# Sigma — Thiết kế sản phẩm
 
-> **Phiên bản:** 0.1\
-> **Trạng thái:** Draft / Internal Baseline\
-> **Sản phẩm:** Sigma Risk Intelligence\
-> **Định hướng trải nghiệm:** Professional Quant / Risk Intelligence
-> Workstation\
-> **Reference Client V1:** Taipy\
-> **Product Interface:** FastAPI + client UI
+**Phiên bản:** 0.2  
+**Trạng thái:** Draft / Internal Baseline  
+**Sản phẩm:** Sigma Risk Intelligence  
+**Định hướng:** Professional Risk Intelligence Workstation  
+**Reference Client V1:** Taipy  
+**Product Interface:** FastAPI + Client UI
 
-------------------------------------------------------------------------
+---
 
-## 1. Mục đích tài liệu
+## 1. Mục đích
 
-`DESIGN.md` định nghĩa trải nghiệm sản phẩm và cách người dùng tương tác
-với Sigma.
+`DESIGN.md` mô tả cách người dùng tương tác với Sigma và cách hệ thống trình bày thông tin rủi ro.
 
-Tài liệu này trả lời:
+Tài liệu tập trung vào:
 
--   Người dùng của Sigma là ai?
--   Họ cần hoàn thành những nhiệm vụ nào?
--   Sigma nên tổ chức thông tin như thế nào?
--   Các màn hình chính gồm những gì?
--   Người dùng đi qua workflow nào?
--   Risk results được trình bày ra sao?
--   Scenario và stress testing được tương tác như thế nào?
--   Classical--Quantum benchmark được trình bày như thế nào?
--   Những nguyên tắc UX/UI nào phải được giữ nhất quán?
+- người dùng và nhu cầu chính;
+- luồng sử dụng;
+- cấu trúc thông tin;
+- màn hình và thành phần giao diện;
+- cách trình bày kết quả rủi ro;
+- scenario và stress testing;
+- Classical–Quantum benchmark;
+- nguyên tắc UX/UI.
 
-Tài liệu này **không** định nghĩa chi tiết implementation của Risk
-Engine, database schema, API internals hoặc technology decisions. Các
-nội dung đó thuộc `ARCHITECTURE.md`, `SCHEMA.md` và `TECH_STACK.md`.
+Tài liệu này không định nghĩa kiến trúc Core, schema dữ liệu, API internals, Risk Engine, Quantum implementation hoặc lựa chọn công nghệ. Các nội dung đó thuộc `ARCHITECTURE.md`, `SCHEMA.md` và `TECH_STACK.md`.
 
-------------------------------------------------------------------------
+---
 
-# 2. Design Vision
+## 2. Định hướng trải nghiệm
 
-Sigma không nên được thiết kế như một consumer finance application,
-trading app hoặc chatbot.
+Sigma không phải consumer finance app, trading app hay chatbot.
 
-Định hướng trải nghiệm của Sigma là:
+Định hướng của Sigma là **Professional Risk Intelligence Workstation**: một môi trường phân tích rủi ro chuyên nghiệp, có mật độ thông tin cao nhưng rõ ràng, minh bạch về giả định và hỗ trợ điều tra.
 
-> **Professional Risk Intelligence Workstation**
+Nguyên tắc trải nghiệm:
 
-Giao diện cần tạo cảm giác:
+- ưu tiên risk;
+- tập trung vào phân tích;
+- thông tin nhiều nhưng có hierarchy rõ;
+- minh bạch về assumptions;
+- hỗ trợ investigation;
+- hạn chế trang trí không có giá trị phân tích;
+- không biến Quantum thành yếu tố trình diễn.
 
--   chuyên nghiệp;
--   phân tích;
--   có mật độ thông tin hợp lý;
--   rõ ràng về assumptions;
--   tập trung vào risk;
--   hỗ trợ investigation;
--   không màu mè;
--   không biến Quantum thành một gimmick trực quan.
+Workflow trọng tâm:
 
-Tham chiếu về information density và workstation-style interface có thể
-lấy cảm hứng từ các hệ thống quant/risk chuyên nghiệp như ORE Studio,
-nhưng Sigma chỉ kế thừa tinh thần workstation và không sao chép scope
-enterprise của các hệ thống đó.
-
-Sigma V1 chỉ tập trung vào:
-
-``` text
+```text
 Portfolio
-    ↓
+   ↓
 Risk
-    ↓
+   ↓
 Scenario
-    ↓
+   ↓
 Stress
-    ↓
+   ↓
 Quantum Benchmark
-    ↓
+   ↓
 Decision Support
 ```
 
-------------------------------------------------------------------------
+Sigma có thể tham khảo tinh thần của các quant/risk workstation chuyên nghiệp, nhưng không sao chép scope enterprise của chúng.
 
-# 3. Design Principles
+---
 
-## 3.1. Risk First
+## 3. Nguyên tắc thiết kế
 
-Người dùng tài chính phải nhìn thấy risk result trước khi nhìn thấy chi
-tiết kỹ thuật.
+### 3.1. Risk First
 
-Primary information:
+Risk result luôn là thông tin ưu tiên.
 
--   VaR;
--   CVaR;
--   volatility;
--   loss distribution;
--   risk contribution;
--   scenario impact.
+Các thông tin chính gồm:
 
-Quantum benchmark là một lớp phân tích bổ sung, không được chiếm vị trí
-của risk result.
+- VaR;
+- CVaR;
+- volatility;
+- loss distribution;
+- risk contribution;
+- scenario impact.
 
-------------------------------------------------------------------------
+Quantum benchmark là lớp phân tích bổ sung, không thay thế risk result.
 
-## 3.2. Analytical Before Decorative
+### 3.2. Phân tích trước trang trí
 
-Mọi thành phần UI phải có mục đích phân tích.
+Mọi thành phần giao diện phải có mục đích.
 
 Không thêm:
 
--   animation chỉ để trang trí;
--   card không có information value;
--   biểu đồ không phục vụ một câu hỏi cụ thể;
--   metric chỉ để làm dashboard "nhiều số".
+- animation chỉ để trang trí;
+- card không có information value;
+- biểu đồ không trả lời câu hỏi phân tích;
+- metric chỉ để làm dashboard nhiều số hơn.
 
-------------------------------------------------------------------------
+### 3.3. Mật độ thông tin có kiểm soát
 
-## 3.3. Information Density có kiểm soát
+Sigma cần có mật độ thông tin cao hơn consumer dashboard nhưng vẫn phải dễ quét:
 
-Sigma cần dense hơn một consumer dashboard nhưng không được trở thành
-một màn hình chứa quá nhiều thông tin không có hierarchy.
-
-Nguyên tắc:
-
-``` text
+```text
 Primary Risk
     ↓
 Key Drivers
@@ -129,18 +108,14 @@ Detailed Metrics
 Technical Details
 ```
 
-------------------------------------------------------------------------
+### 3.4. Progressive Disclosure
 
-## 3.4. Progressive Disclosure
+Thông tin được mở dần theo nhu cầu:
 
-Thông tin được mở dần theo nhu cầu.
-
-Ví dụ:
-
-``` text
+```text
 Risk Overview
     ↓
-Risk Driver
+Risk Drivers
     ↓
 Scenario
     ↓
@@ -149,27 +124,13 @@ Model Assumptions
 Technical Details
 ```
 
-Người dùng không cần nhìn thấy toàn bộ model parameters ngay khi mở
-Sigma.
+Người dùng không cần nhìn thấy toàn bộ tham số mô hình ngay khi mở Sigma.
 
-------------------------------------------------------------------------
+### 3.5. Giải thích trước khi kết luận
 
-## 3.5. Explain Before Conclude
+Risk result cần có khả năng truy ngược về cơ sở tạo ra nó:
 
-Sigma không nên đưa ra một kết luận risk mà không cho người dùng biết cơ
-sở.
-
-Ví dụ:
-
-Không chỉ hiển thị:
-
-``` text
-CVaR 99% = -12.4%
-```
-
-mà phải cho phép người dùng truy cập:
-
-``` text
+```text
 CVaR 99%
     ↓
 Loss Distribution
@@ -181,238 +142,174 @@ Risk Contributors
 Model / Scenario Assumptions
 ```
 
-------------------------------------------------------------------------
+### 3.6. Không tạo cảm giác chính xác giả
 
-## 3.6. No False Precision
+Một giá trị ước lượng không được trình bày như sự thật tuyệt đối.
 
-UI không được làm cho một estimated quantity trông như một sự thật tuyệt
-đối.
+Khi phù hợp, kết quả cần có:
 
-Các kết quả phải có context:
+- confidence level;
+- horizon;
+- scenario count;
+- model;
+- dataset;
+- assumptions;
+- estimation error.
 
--   confidence level;
--   horizon;
--   scenario count;
--   model;
--   dataset;
--   assumptions;
--   estimation error khi phù hợp.
+### 3.7. Minh bạch về Quantum
 
-------------------------------------------------------------------------
+Sigma không mặc định:
 
-## 3.7. Quantum Transparency
-
-Không hiển thị:
-
-``` text
+```text
 Quantum = Better
 ```
 
-như một kết luận mặc định.
+Khi benchmark, UI cần cho phép so sánh trực tiếp:
 
-Thay vào đó:
-
-``` text
-Classical
-Estimate
-Error
-Runtime
-Samples
-
-Quantum
-Estimate
-Error
-Runtime
-Queries
-Qubits
-Depth
-Shots
+```text
+Metric                 Classical    Quantum
+Estimate                  ...          ...
+Error                     ...          ...
+Runtime                   ...          ...
+Samples / Queries         ...          ...
+Qubits                    —            ...
+Depth                     —            ...
+Shots                     —            ...
 ```
 
-Sau đó mới đưa ra benchmark conclusion dựa trên kết quả thực nghiệm.
+Chỉ đưa ra kết luận dựa trên kết quả thực nghiệm.
 
-------------------------------------------------------------------------
+### 3.8. Decision Support
 
-## 3.8. Decision Support, Not Automated Decision
+Sigma hỗ trợ người dùng hiểu và đánh giá risk. Sigma V1 không tự động:
 
-Sigma hỗ trợ người dùng hiểu risk.
+- đặt lệnh;
+- rebalance;
+- thay đổi leverage;
+- hedge position.
 
-Sigma V1 không tự động:
+UI phải phản ánh rõ ranh giới này.
 
--   đặt lệnh;
--   rebalance;
--   thay đổi leverage;
--   hedge position.
+---
 
-UI phải phản ánh boundary này.
+## 4. Người dùng và nhu cầu
 
-------------------------------------------------------------------------
+### Risk Analyst
 
-# 4. Primary Users
+Tập trung vào:
 
-## 4.1. Risk Analyst
+- portfolio risk;
+- VaR/CVaR;
+- stress testing;
+- risk contribution;
+- scenario analysis.
 
-Nhu cầu:
+Workflow:
 
--   portfolio risk;
--   VaR/CVaR;
--   stress testing;
--   risk contribution;
--   scenario analysis.
-
-Ưu tiên UI:
-
-``` text
+```text
 Risk Overview
-→ Risk Drivers
-→ Scenario
-→ Stress
-→ Report
+    ↓
+Risk Drivers
+    ↓
+Scenario
+    ↓
+Stress
+    ↓
+Report
 ```
 
-------------------------------------------------------------------------
+### Portfolio Manager
 
-## 4.2. Portfolio Manager
+Tập trung vào:
 
-Nhu cầu:
+- risk profile;
+- downside;
+- scenario comparison;
+- concentration;
+- decision support.
 
--   hiểu risk profile;
--   xem downside;
--   so sánh scenario;
--   nhận diện concentration;
--   hỗ trợ portfolio decision.
+Workflow:
 
-Ưu tiên:
-
-``` text
+```text
 Portfolio
-→ Risk
-→ Scenario
-→ Decision Support
-```
-
-------------------------------------------------------------------------
-
-## 4.3. Quant / Risk Researcher
-
-Nhu cầu:
-
--   model assumptions;
--   distributions;
--   simulation parameters;
--   Classical baseline;
--   Quantum benchmark;
--   resource metrics.
-
-Ưu tiên:
-
-``` text
+    ↓
 Risk
-→ Model Details
-→ Benchmark
-→ Experiment Evidence
+    ↓
+Scenario
+    ↓
+Decision Support
 ```
 
-------------------------------------------------------------------------
+### Quant / Risk Researcher
 
-## 4.4. Competition / Demonstration User
+Tập trung vào:
 
-Nhu cầu:
+- model assumptions;
+- distributions;
+- simulation parameters;
+- Classical baseline;
+- Quantum benchmark;
+- resource metrics.
 
--   nhanh chóng hiểu Sigma;
--   tạo một portfolio;
--   chạy risk analysis;
--   xem risk output;
--   xem Classical--Quantum comparison.
+Workflow:
 
-Demo flow phải hoàn thành được trong thời gian ngắn và không yêu cầu
-người dùng hiểu toàn bộ internal methodology.
+```text
+Risk
+    ↓
+Model Details
+    ↓
+Benchmark
+    ↓
+Experiment Evidence
+```
 
-------------------------------------------------------------------------
+### Người dùng Demo / Competition
 
-# 5. Information Architecture
+Mục tiêu:
 
-Sigma V1 sử dụng một navigation structure tập trung vào risk workflow:
+- nhanh chóng hiểu Sigma;
+- chọn hoặc tạo portfolio;
+- chạy risk analysis;
+- xem risk output;
+- xem Classical–Quantum comparison.
 
-``` text
+Demo phải ngắn và không yêu cầu người dùng hiểu toàn bộ methodology nội bộ.
+
+---
+
+## 5. Cấu trúc thông tin
+
+Navigation V1:
+
+```text
 SIGMA
 │
 ├── Dashboard
-│
 ├── Portfolios
-│
 ├── Risk Analysis
-│
 ├── Scenario Lab
-│
 ├── Stress Testing
-│
 ├── Quantum Benchmark
-│
 └── Reports
 ```
 
-### Dashboard
+- **Dashboard:** tổng quan portfolio và risk.
+- **Portfolios:** tạo, chọn và kiểm tra portfolio.
+- **Risk Analysis:** phân tích risk metrics và risk drivers.
+- **Scenario Lab:** khám phá scenarios và loss distribution.
+- **Stress Testing:** đánh giá portfolio dưới market shocks.
+- **Quantum Benchmark:** so sánh Classical và Quantum estimation.
+- **Reports:** tổng hợp và xuất kết quả.
 
-Tổng quan portfolio và risk.
+---
 
-### Portfolios
+## 6. Global Analysis Context
 
-Tạo, chọn và kiểm tra portfolio.
+Mỗi risk analysis phải giữ được context:
 
-### Risk Analysis
-
-Phân tích risk metrics và risk drivers.
-
-### Scenario Lab
-
-Khám phá simulated scenarios và loss distribution.
-
-### Stress Testing
-
-Đánh giá portfolio dưới các market shocks.
-
-### Quantum Benchmark
-
-So sánh Classical và Quantum estimation.
-
-### Reports
-
-Tổng hợp và xuất kết quả phân tích.
-
-------------------------------------------------------------------------
-
-# 6. Global Layout
-
-Sigma nên sử dụng layout kiểu workstation:
-
-``` text
-┌─────────────────────────────────────────────────────────────┐
-│ SIGMA   Portfolios  Risk  Scenarios  Quantum  Reports       │
-├───────────────┬─────────────────────────────────────────────┤
-│               │                                             │
-│ Context /     │              Main Workspace                │
-│ Portfolio     │                                             │
-│ Explorer      │                                             │
-│               │                                             │
-│               │                                             │
-├───────────────┴─────────────────────────────────────────────┤
-│ Status / Dataset / Model / Analysis State                   │
-└─────────────────────────────────────────────────────────────┘
-```
-
-Không bắt buộc phải giữ đúng hình thức này ở mọi màn hình, nhưng
-hierarchy cần nhất quán.
-
-------------------------------------------------------------------------
-
-# 7. Global Context
-
-Mỗi risk analysis nên luôn giữ được context:
-
-``` text
+```text
 Portfolio
-Market Dataset
+Dataset
 Analysis Date / Period
 Risk Horizon
 Confidence Level
@@ -422,7 +319,7 @@ Model
 
 Ví dụ:
 
-``` text
+```text
 Portfolio: Balanced Growth
 Dataset: Market Universe V1
 Period: 2018–2025
@@ -432,15 +329,13 @@ Scenarios: 100,000
 Model: Regime-Aware
 ```
 
-Người dùng không nên phải nhớ các setting này từ một màn hình khác.
+Người dùng không nên phải nhớ các thiết lập này từ màn hình khác.
 
-------------------------------------------------------------------------
+---
 
-# 8. Core User Journey
+## 7. Core User Journey
 
-Workflow chính:
-
-``` text
+```text
 Open Sigma
     ↓
 Select / Create Portfolio
@@ -464,83 +359,77 @@ Review Result
 Generate Report
 ```
 
-------------------------------------------------------------------------
+---
 
-# 9. Screen 1 --- Dashboard
+## 8. Dashboard
 
-## Mục tiêu
+### Mục tiêu
 
-Cho người dùng một snapshot nhanh về trạng thái risk hiện tại.
-
-## Nội dung
+Cung cấp snapshot nhanh về trạng thái risk hiện tại.
 
 ### Portfolio Summary
 
--   Portfolio name;
--   portfolio value;
--   number of assets;
--   analysis date.
+- Portfolio name;
+- portfolio value;
+- number of assets;
+- analysis date.
 
 ### Risk KPIs
 
--   VaR 95%;
--   VaR 99%;
--   CVaR 95%;
--   CVaR 99%;
--   volatility;
--   expected loss.
+- VaR 95%;
+- VaR 99%;
+- CVaR 95%;
+- CVaR 99%;
+- volatility;
+- expected loss.
 
 ### Risk Distribution
 
-Biểu đồ loss distribution với:
+Hiển thị loss distribution cùng:
 
--   VaR threshold;
--   CVaR/tail region;
--   expected loss nếu phù hợp.
+- VaR threshold;
+- CVaR / tail region;
+- expected loss khi phù hợp.
 
 ### Risk Contributors
 
-Top contributors:
-
-``` text
+```text
 Asset
 Weight
 Risk Contribution
 ```
 
-### Recent / Selected Scenario
+Có thể kèm scenario hoặc stress result gần nhất khi có.
 
-Hiển thị scenario hoặc stress result gần nhất nếu có.
+---
 
-------------------------------------------------------------------------
+## 9. Portfolio Explorer
 
-# 10. Screen 2 --- Portfolio Explorer
+### Mục tiêu
 
-## Mục tiêu
+Giúp người dùng hiểu và kiểm tra portfolio trước khi chạy risk analysis.
 
-Cho phép người dùng hiểu portfolio trước khi chạy risk.
+### Thông tin đầu vào
 
-## Inputs
+- asset;
+- ticker;
+- weight;
+- position;
+- portfolio value.
 
--   asset;
--   ticker;
--   weight;
--   position;
--   portfolio value.
+### Validation
 
-## Validation
+Cần cảnh báo:
 
-UI phải cảnh báo:
-
--   missing asset;
--   duplicate asset;
--   invalid weight;
--   total weight không hợp lệ;
--   missing market data.
+- thiếu asset;
+- duplicate asset;
+- weight không hợp lệ;
+- tổng weight không hợp lệ;
+- thiếu market data.
 
 Ví dụ:
 
-``` text
+```text
 Total Weight: 97.0%
 
 [!] Portfolio weights do not sum to 100%.
@@ -548,24 +437,24 @@ Total Weight: 97.0%
 
 Không tự động sửa dữ liệu mà không thông báo.
 
-## Visualizations
+### Visualization
 
--   allocation chart;
--   weight table;
--   asset summary;
--   optional correlation preview.
+Có thể gồm:
 
-------------------------------------------------------------------------
+- allocation chart;
+- weight table;
+- asset summary;
+- correlation preview khi có mục đích phân tích.
 
-# 11. Screen 3 --- Risk Analysis
+---
+
+## 10. Risk Analysis
 
 Đây là màn hình trung tâm của Sigma.
 
-## 11.1. Analysis Configuration
+### 10.1. Cấu hình
 
-Người dùng cấu hình:
-
-``` text
+```text
 Confidence Level
 Risk Horizon
 Scenario Count
@@ -573,19 +462,11 @@ Market Period
 Model
 ```
 
-Các advanced settings có thể được ẩn dưới:
+Thiết lập nâng cao đặt dưới `Advanced Configuration`.
 
-``` text
-Advanced Configuration
-```
+### 10.2. Risk Summary
 
-------------------------------------------------------------------------
-
-## 11.2. Risk Summary
-
-Primary metrics:
-
-``` text
+```text
 VaR 95%
 VaR 99%
 CVaR 95%
@@ -594,58 +475,40 @@ Volatility
 Expected Loss
 ```
 
-Mỗi metric cần có:
+Mỗi metric cần có giá trị, đơn vị và context về confidence/horizon; có thể kèm baseline comparison khi phù hợp.
 
--   value;
--   unit;
--   confidence/horizon context;
--   optional comparison với baseline.
+### 10.3. Loss Distribution
 
-------------------------------------------------------------------------
-
-## 11.3. Loss Distribution
-
-Biểu đồ chính của Risk Analysis.
+Đây là visualization chính của Risk Analysis.
 
 Nên thể hiện:
 
-``` text
-Loss Density / Histogram
-        │
-        ├── VaR threshold
-        ├── Tail region
-        └── CVaR region
+```text
+Loss Distribution
+       │
+       ├── VaR Threshold
+       ├── Tail Region
+       └── CVaR Region
 ```
 
-Không dùng màu sắc quá nhiều.
+Không sử dụng quá nhiều annotation.
 
-Tail phải được phân biệt rõ nhưng không gây cảm giác cảnh báo giả.
+### 10.4. Risk Contribution
 
-------------------------------------------------------------------------
-
-## 11.4. Risk Contribution
-
-Hiển thị:
-
-``` text
+```text
 Asset
 Weight
 Risk Contribution
 Contribution %
 ```
 
-Có thể dùng:
+Có thể dùng horizontal bar chart hoặc sortable table.
 
--   horizontal bar chart;
--   sortable table.
-
-------------------------------------------------------------------------
-
-## 11.5. Model Context
+### 10.5. Model Context
 
 Hiển thị ngắn gọn:
 
-``` text
+```text
 Volatility Model
 Regime Model
 Distribution
@@ -653,31 +516,28 @@ Scenario Method
 Scenario Count
 ```
 
-Người dùng có thể mở rộng để xem assumptions.
+Assumptions chi tiết có thể mở rộng khi cần.
 
-------------------------------------------------------------------------
+---
 
-# 12. Screen 4 --- Scenario Lab
+## 11. Scenario Lab
 
-## Mục tiêu
+### Mục tiêu
 
-Cho phép người dùng khám phá phân phối scenario thay vì chỉ nhìn summary
-metrics.
-
-## Main Components
+Cho phép người dùng khám phá phân phối scenario thay vì chỉ xem summary metrics.
 
 ### Scenario Distribution
 
--   portfolio return;
--   portfolio loss;
--   tail;
--   percentile markers.
+Có thể thể hiện:
+
+- portfolio return;
+- portfolio loss;
+- tail;
+- percentile markers.
 
 ### Scenario Table
 
-Các trường có thể gồm:
-
-``` text
+```text
 Scenario ID
 Regime
 Portfolio Return
@@ -687,16 +547,16 @@ Key Driver
 
 ### Filters
 
--   loss percentile;
--   regime;
--   asset;
--   scenario type.
+Có thể lọc theo:
+
+- loss percentile;
+- regime;
+- asset;
+- scenario type.
 
 ### Scenario Detail
 
-Khi chọn một scenario:
-
-``` text
+```text
 Scenario
     ↓
 Portfolio Impact
@@ -706,28 +566,28 @@ Asset Contributions
 Market State
 ```
 
-------------------------------------------------------------------------
+---
 
-# 13. Screen 5 --- Stress Testing
+## 12. Stress Testing
 
-## Mục tiêu
+### Mục tiêu
 
 Đánh giá portfolio dưới các điều kiện bất lợi có chủ đích.
 
-## Scenario Types
+### Loại scenario
 
 V1 có thể hỗ trợ:
 
--   market shock;
--   volatility shock;
--   asset shock;
--   sector shock;
--   historical crisis scenario;
--   custom scenario khi methodology hỗ trợ.
+- market shock;
+- volatility shock;
+- asset shock;
+- sector shock;
+- historical crisis scenario;
+- custom scenario khi methodology hỗ trợ.
 
-## Interaction
+### Workflow
 
-``` text
+```text
 Select Scenario
       ↓
 Configure Shock
@@ -737,37 +597,32 @@ Run
 Compare Baseline vs Stress
 ```
 
-## Result
+### Kết quả
 
-Hiển thị:
+```text
+Metric          Baseline    Stress    Change
 
-``` text
-Metric       Baseline    Stress    Change
-VaR          ...         ...       ...
-CVaR         ...         ...       ...
-Loss         ...         ...       ...
-Volatility   ...         ...       ...
+VaR                 ...        ...       ...
+CVaR                ...        ...       ...
+Loss                ...        ...       ...
+Volatility          ...        ...       ...
 ```
 
-Kèm:
+Kèm theo:
 
--   affected assets;
--   largest contributors;
--   scenario assumptions.
+- affected assets;
+- largest contributors;
+- scenario assumptions.
 
-------------------------------------------------------------------------
+---
 
-# 14. Screen 6 --- Quantum Benchmark Lab
+## 13. Quantum Benchmark Lab
 
-Đây là màn hình dành cho research/technical analysis.
+Đây là màn hình dành cho research và technical analysis, không phải màn hình mặc định của risk workflow.
 
-Không đặt Quantum benchmark làm màn hình mặc định của risk workflow.
+### 13.1. Thiết lập
 
-## 14.1. Benchmark Setup
-
-Hiển thị:
-
-``` text
+```text
 Financial Quantity
 Confidence Level
 Scenario / Distribution
@@ -778,52 +633,49 @@ Shots / Queries
 Noise Setting
 ```
 
-------------------------------------------------------------------------
+### 13.2. So sánh
 
-## 14.2. Comparison
+```text
+Metric                    Classical    Quantum
+Estimate                     ...          ...
+Absolute Error               ...          ...
+Relative Error               ...          ...
+Runtime                       ...          ...
+Samples / Queries             ...          ...
+Qubits                        ...          ...
+Circuit Depth                 ...          ...
+Shots                         ...          ...
+State Preparation Cost        ...          ...
+Oracle Cost                   ...          ...
+```
 
-Bảng chính:
+Chỉ hiển thị metric có ý nghĩa đối với experiment.
 
-  Metric                     Classical   Quantum
-  ------------------------ ----------- ---------
-  Estimate                         ---       ---
-  Absolute Error                   ---       ---
-  Relative Error                   ---       ---
-  Runtime                          ---       ---
-  Samples / Queries                ---       ---
-  Qubits                           ---       ---
-  Circuit Depth                    ---       ---
-  Shots                            ---       ---
-  State Preparation Cost           ---       ---
-  Oracle Cost                      ---       ---
+### 13.3. Kết luận
 
-------------------------------------------------------------------------
-
-## 14.3. Benchmark Conclusion
-
-Kết luận phải được tạo từ experiment result.
+Kết luận phải xuất phát từ kết quả thực nghiệm.
 
 Ví dụ:
 
-``` text
+```text
 Query-efficiency improvement observed.
 
 No end-to-end runtime advantage
 under the current simulator configuration.
 ```
 
-Hoặc:
+hoặc:
 
-``` text
+```text
 Quantum estimator achieved comparable accuracy
 with lower query complexity.
 
 Practical advantage remains unverified.
 ```
 
-Không sử dụng các nhãn:
+Không mặc định sử dụng các kết luận như:
 
-``` text
+```text
 Quantum = Better
 Quantum = Faster
 Quantum = Superior
@@ -831,13 +683,13 @@ Quantum = Superior
 
 nếu benchmark không chứng minh điều đó.
 
-------------------------------------------------------------------------
+---
 
-# 15. Quantum Transparency
+## 14. Minh bạch về Quantum
 
-Khi người dùng mở quantum result, UI nên cho phép xem:
+Khi người dùng mở Quantum result, có thể xem:
 
-``` text
+```text
 Financial Quantity
         ↓
 Mathematical Formulation
@@ -851,12 +703,10 @@ Estimator
 Measurement
 ```
 
-Thông tin technical có thể được đặt trong expandable panel.
+Thông tin kỹ thuật có thể đặt trong phần mở rộng:
 
-Ví dụ:
-
-``` text
-Quantum Details ▼
+```text
+Quantum Details
 
 Qubits: 8
 Depth: 184
@@ -865,149 +715,111 @@ Backend: Aer Simulator
 Noise: Enabled
 ```
 
-Điều này giúp Quantum không trở thành black box.
+Mục tiêu là giúp người dùng hiểu phép tính lượng tử thay vì biến nó thành black box.
 
-------------------------------------------------------------------------
+---
 
-# 16. Screen 7 --- Reports
+## 15. Reports
 
-Report phải tổng hợp được:
+Report cần tổng hợp:
 
 ### Portfolio
 
--   holdings;
--   weights;
--   portfolio value.
+- holdings;
+- weights;
+- portfolio value.
 
 ### Market / Model
 
--   dataset;
--   period;
--   model;
--   assumptions.
+- dataset;
+- period;
+- model;
+- assumptions.
 
 ### Risk
 
--   VaR;
--   CVaR;
--   volatility;
--   expected loss;
--   risk contribution.
+- VaR;
+- CVaR;
+- volatility;
+- expected loss;
+- risk contribution.
 
 ### Scenarios
 
--   selected stress scenarios;
--   loss distribution;
--   key scenario results.
+- selected stress scenarios;
+- loss distribution;
+- key scenario results.
 
 ### Quantum
 
--   benchmark;
--   resource metrics;
--   conclusion.
+- benchmark;
+- resource metrics;
+- conclusion.
 
-Report phải phân biệt rõ:
+Kết quả cần phân biệt:
 
-``` text
+```text
 Observed / Estimated Result
-vs
+          vs
 Interpretation
-vs
+          vs
 Assumption
 ```
 
-------------------------------------------------------------------------
+---
 
-# 17. Visualization Principles
+## 16. Nguyên tắc trực quan hóa
 
-## 17.1. Loss Distribution
-
-Biểu đồ phải ưu tiên:
-
--   distribution shape;
--   VaR;
--   CVaR;
--   tail.
-
-Không nên nhồi quá nhiều annotation.
-
-------------------------------------------------------------------------
-
-## 17.2. Risk Contribution
-
-Ưu tiên horizontal bar chart hoặc table.
-
-Lý do:
-
--   dễ đọc tên asset;
--   dễ xếp hạng;
--   phù hợp với nhiều assets.
-
-------------------------------------------------------------------------
-
-## 17.3. Correlation
-
-Correlation matrix chỉ xuất hiện khi có mục đích phân tích.
-
-Không sử dụng heatmap chỉ vì "dashboard cần thêm chart".
-
-------------------------------------------------------------------------
-
-## 17.4. Scenario Comparison
+### Loss Distribution
 
 Ưu tiên:
 
-``` text
+- hình dạng phân phối;
+- VaR;
+- CVaR;
+- tail.
+
+### Risk Contribution
+
+Ưu tiên horizontal bar chart hoặc table để dễ đọc tên asset và xếp hạng.
+
+### Correlation
+
+Chỉ hiển thị correlation matrix khi có mục đích phân tích rõ ràng.
+
+### Scenario Comparison
+
+Ưu tiên:
+
+```text
 Baseline vs Stress
 ```
 
-hơn là hai biểu đồ riêng biệt khó đối chiếu.
+### Benchmark
 
-------------------------------------------------------------------------
+Classical và Quantum phải được đặt cạnh nhau khi so sánh.
 
-## 17.5. Benchmark
+Không yêu cầu người dùng tự nhớ Classical result.
 
-Classical và Quantum phải được đặt cạnh nhau.
+---
 
-Không dùng một chart chỉ cho Quantum rồi bắt người dùng tự nhớ Classical
-result.
+## 17. Màu sắc và phân cấp thông tin
 
-------------------------------------------------------------------------
+Màu sắc phải có ngữ nghĩa nhất quán:
 
-# 18. Color Semantics
-
-Màu sắc phải có meaning nhất quán.
-
-Ví dụ semantic system:
-
-``` text
-Neutral
-→ normal information
-
-Warning
-→ elevated risk / model warning
-
-Critical
-→ severe risk / tail condition
-
-Positive
-→ improvement / reduction in risk
-
-Quantum
-→ technical/computational identity
+```text
+Neutral    → thông tin thông thường
+Warning    → risk tăng hoặc model warning
+Critical   → severe risk / tail condition
+Positive   → cải thiện hoặc giảm risk
+Quantum    → lớp kỹ thuật / tính toán
 ```
 
-Không sử dụng màu đỏ cho mọi risk metric.
+Không dùng màu đỏ cho mọi risk metric. Một metric âm không nhất thiết là trạng thái critical.
 
-Một metric âm không nhất thiết là "critical".
+Hierarchy:
 
-------------------------------------------------------------------------
-
-# 19. Typography & Information Hierarchy
-
-Ưu tiên hierarchy:
-
-``` text
+```text
 Page Title
     ↓
 Section
@@ -1021,17 +833,15 @@ Chart / Table
 Technical Detail
 ```
 
-Các số quan trọng phải dễ scan.
-
 Technical metadata không được cạnh tranh với primary risk result.
 
-------------------------------------------------------------------------
+---
 
-# 20. Interaction States
+## 18. Trạng thái giao diện
 
-Mọi màn hình có computation phải xử lý ít nhất:
+Mọi màn hình có computation cần xử lý:
 
-``` text
+```text
 Idle
 Loading
 Success
@@ -1040,11 +850,11 @@ Error
 Empty
 ```
 
-## Loading
+### Loading
 
 Ví dụ:
 
-``` text
+```text
 Running Risk Analysis...
 
 Modeling market regime
@@ -1052,35 +862,28 @@ Generating scenarios
 Estimating risk
 ```
 
-Nếu computation gồm nhiều bước, UI nên cho biết stage thay vì chỉ hiển
-thị spinner.
+Chỉ hiển thị stage khi backend cung cấp thông tin đáng tin cậy. Không giả lập progress.
 
-## Success
+### Success
 
-Hiển thị timestamp / analysis context khi phù hợp.
+Hiển thị timestamp và analysis context khi phù hợp.
 
-## Warning
+### Warning
 
 Ví dụ:
 
-``` text
+```text
 Insufficient historical observations
 for reliable regime estimation.
 ```
 
-Warning phải nói rõ:
+Warning cần nói rõ vấn đề, ảnh hưởng và hành động tiếp theo.
 
--   vấn đề gì;
--   ảnh hưởng thế nào;
--   người dùng nên làm gì.
-
-## Error
+### Error
 
 Không hiển thị stack trace cho end user.
 
-Ví dụ:
-
-``` text
+```text
 Risk analysis could not be completed.
 
 Reason:
@@ -1090,65 +893,53 @@ Action:
 Review portfolio data and try again.
 ```
 
-## Empty
+### Empty
 
-Ví dụ:
-
-``` text
+```text
 No portfolio selected.
 
 Create or select a portfolio
 to begin risk analysis.
 ```
 
-------------------------------------------------------------------------
+---
 
-# 21. Long-Running Computation
+## 19. Tác vụ chạy lâu
 
-Một số risk/quantum computation có thể mất thời gian.
+Một số risk hoặc Quantum computation có thể mất thời gian.
 
-UI không được giả định mọi operation hoàn thành ngay.
+Trạng thái:
 
-Với computation dài:
-
-``` text
+```text
 Queued
-  ↓
+   ↓
 Running
-  ↓
+   ↓
 Completed
-  ↓
+   ↓
 Failed
 ```
 
-Nếu backend hỗ trợ progress:
+Nếu backend có progress đáng tin cậy:
 
-``` text
-Data Preparation      ✓
-Risk Modeling         ✓
-Scenario Generation   62%
-Risk Estimation       —
+```text
+Data Preparation       ✓
+Risk Modeling          ✓
+Scenario Generation    62%
+Risk Estimation        —
 ```
 
-Progress chỉ được hiển thị khi backend có thông tin đáng tin cậy.
+Chỉ hiển thị progress thực tế khi backend cung cấp dữ liệu phù hợp.
 
-Không giả lập progress giả chỉ để làm UI sinh động.
+---
 
-------------------------------------------------------------------------
+## 20. Context, Assumptions và Provenance
 
-# 22. Assumptions & Provenance
+Mỗi risk result cần có khả năng truy ngược context.
 
-Risk result phải có khả năng truy ngược context.
+Khu vực `Analysis Context` có thể gồm:
 
-UI nên cung cấp một khu vực:
-
-``` text
-Analysis Context
-```
-
-gồm:
-
-``` text
+```text
 Dataset
 Period
 Frequency
@@ -1159,125 +950,112 @@ Horizon
 Scenario Count
 Model
 Distribution
-Random Seed (nếu có)
+Random Seed
 ```
 
 Mục tiêu:
 
-> Người dùng phải biết một risk number được tạo ra từ điều kiện nào.
+> **Người dùng phải biết một risk number được tạo ra từ điều kiện nào.**
 
-------------------------------------------------------------------------
+Nếu dữ liệu đến từ external source, nên thể hiện:
 
-# 23. Data Freshness
-
-Nếu dữ liệu được lấy từ external source, UI nên thể hiện:
-
-``` text
+```text
 Data Source
 Last Updated
 Data Period
 ```
 
-Không để người dùng hiểu nhầm rằng historical dataset là real-time data.
+Không để người dùng hiểu historical dataset là real-time data.
 
-------------------------------------------------------------------------
+---
 
-# 24. API / UI Boundary
+## 21. Ranh giới API / UI
 
-UI là presentation/client layer.
+UI là presentation và client layer.
 
-Luồng:
-
-``` text
+```text
 User
-  ↓
+ ↓
 Taipy UI
-  ↓
+ ↓
 API Client
-  ↓ HTTP
+ ↓ HTTP
 FastAPI
-  ↓
+ ↓
 Sigma Application / Core
-  ↓
+ ↓
 Result
-  ↓
+ ↓
 FastAPI
-  ↓
+ ↓
 API Client
-  ↓
+ ↓
 Taipy
 ```
 
-UI không được:
+UI không thực hiện business computation và không import trực tiếp:
 
-``` text
-import sigma.risk
-import sigma.quantum
+```text
+sigma.risk
+sigma.quantum
+sigma.modeling
 ```
-
-để trực tiếp thực hiện business computation.
 
 UI chỉ:
 
--   collect input;
--   validate presentation-level input;
--   call API;
--   manage interaction state;
--   render result.
+- thu thập input;
+- validation ở mức giao diện;
+- gọi API;
+- quản lý interaction state;
+- hiển thị kết quả.
 
-Business validation và financial calculation thuộc backend/core.
+Business validation và financial calculation thuộc backend/Core.
 
-------------------------------------------------------------------------
+---
 
-# 25. Separation Between Product UI and Research UI
+## 22. Product UI và Research UI
 
-Sigma có hai nhóm nhu cầu:
+Sigma có hai nhóm nhu cầu.
 
 ### Product Risk UI
 
-Dành cho:
+Dành cho Risk Analyst, Portfolio Manager và financial user.
 
--   Risk Analyst;
--   Portfolio Manager;
--   financial user.
-
-Ưu tiên:
-
-``` text
+```text
 Risk
-→ Scenario
-→ Explanation
-→ Decision Support
+ ↓
+Scenario
+ ↓
+Explanation
+ ↓
+Decision Support
 ```
 
 ### Research / Benchmark UI
 
-Dành cho:
+Dành cho Quant, Quantum Researcher và technical evaluator.
 
--   Quant;
--   Quantum researcher;
--   technical evaluator.
-
-Ưu tiên:
-
-``` text
+```text
 Method
-→ Parameters
-→ Resource
-→ Accuracy
-→ Benchmark
+ ↓
+Parameters
+ ↓
+Resources
+ ↓
+Accuracy
+ ↓
+Benchmark
 ```
 
-Hai nhóm có thể dùng cùng application nhưng không nên trộn toàn bộ
-information vào một dashboard.
+Hai nhóm có thể dùng cùng application nhưng không nên trộn toàn bộ thông tin vào một dashboard.
 
-------------------------------------------------------------------------
+---
 
-# 26. Demo Experience
+## 23. Demo Experience
 
-Competition/demo flow nên ngắn:
+Demo flow:
 
-``` text
+```text
 1. Select Demo Portfolio
         ↓
 2. Run Risk Analysis
@@ -1297,103 +1075,93 @@ Competition/demo flow nên ngắn:
 9. Show Conclusion
 ```
 
-Demo phải cho thấy:
+Demo cần thể hiện:
 
-``` text
+```text
 Financial Problem
-→ Risk Analysis
-→ Quantum Research
-→ Measured Result
+      ↓
+Risk Analysis
+      ↓
+Quantum Research
+      ↓
+Measured Result
 ```
 
-không chỉ:
+Không biến demo thành:
 
-``` text
+```text
 Quantum Circuit
-→ Pretty Animation
+      ↓
+Pretty Animation
 ```
 
-------------------------------------------------------------------------
+---
 
-# 27. Responsive / Display Strategy
+## 24. Display Strategy và khả năng sử dụng
 
-Sigma V1 ưu tiên desktop / large-screen experience.
+Sigma V1 ưu tiên desktop và màn hình lớn vì cần hiển thị:
 
-Lý do:
+- bảng;
+- biểu đồ;
+- portfolio context;
+- benchmark metrics;
+- technical information.
 
--   nhiều bảng;
--   biểu đồ;
--   portfolio context;
--   benchmark metrics;
--   technical information.
+Mobile-first không phải ưu tiên của V1.
 
-Mobile-first không phải priority của V1.
+Về khả năng sử dụng:
 
-Tuy nhiên, information hierarchy vẫn phải rõ để giao diện có thể được
-chuyển sang các client khác trong tương lai.
+- text phải rõ;
+- không phụ thuộc hoàn toàn vào màu sắc;
+- bảng có header rõ;
+- số liệu có đơn vị;
+- biểu đồ có title;
+- error message có hành động rõ;
+- interactive element có trạng thái rõ.
 
-------------------------------------------------------------------------
+---
 
-# 28. Accessibility & Usability
-
-V1 phải chú ý:
-
--   text đủ rõ;
--   không phụ thuộc hoàn toàn vào màu sắc;
--   bảng có header rõ;
--   số liệu có unit;
--   biểu đồ có title;
--   error message có hành động rõ;
--   interactive element có trạng thái rõ.
-
-------------------------------------------------------------------------
-
-# 29. Future Client Independence
+## 25. Độc lập với Client
 
 Taipy là reference client V1, không phải identity của Sigma Core.
 
-Design system phải mô tả **experience và information architecture**,
-không phụ thuộc vào một UI framework cụ thể.
+Design mô tả **trải nghiệm và cấu trúc thông tin**, không phụ thuộc vào một UI framework cụ thể.
 
-Về dài hạn, Sigma có thể có:
-
-``` text
-                Sigma Core
-                    │
-                 FastAPI
-                    │
-       ┌────────────┼────────────┐
-       │            │            │
-     Taipy       Desktop       Other
-     Client       Client       Client
+```text
+              Sigma Core
+                  │
+               FastAPI
+                  │
+       ┌──────────┼──────────┐
+       │          │          │
+     Taipy     Desktop     Other
+     Client     Client     Client
 ```
 
-Điều quan trọng là các client cùng tuân thủ:
+Các client cần nhất quán về:
 
--   information hierarchy;
--   risk terminology;
--   result semantics;
--   interaction contracts.
+- information hierarchy;
+- risk terminology;
+- result semantics;
+- interaction contracts.
 
-------------------------------------------------------------------------
+---
 
-# 30. Design Boundaries
+## 26. Ranh giới của tài liệu
 
 `DESIGN.md` không quyết định:
 
--   module dependency;
--   class structure;
--   database implementation;
--   FastAPI internal architecture;
--   Qiskit implementation;
--   exact Python package configuration;
--   infrastructure deployment.
+- module dependency;
+- class structure;
+- database implementation;
+- FastAPI internal architecture;
+- Qiskit implementation;
+- package configuration;
+- infrastructure deployment.
 
-Những quyết định đó thuộc các tài liệu khác.
+Tài liệu này tập trung vào:
 
-`DESIGN.md` chỉ định nghĩa:
-
-``` text
+```text
 Who uses Sigma
       ↓
 What they need to do
@@ -1405,134 +1173,124 @@ How they interact
 How results are communicated
 ```
 
-------------------------------------------------------------------------
+---
 
-# 31. V1 Design Priorities
+## 27. Ưu tiên thiết kế V1
 
-## P0
+### P0 — Core Experience
 
--   Portfolio Explorer.
--   Risk Analysis.
--   Loss Distribution.
--   VaR/CVaR presentation.
--   Risk Contribution.
--   Scenario/Stress Testing.
--   Clear analysis context.
--   Loading/error/empty states.
+- Portfolio Explorer;
+- Risk Analysis;
+- Loss Distribution;
+- VaR/CVaR presentation;
+- Risk Contribution;
+- Scenario / Stress Testing;
+- Analysis Context;
+- Loading / Error / Empty states.
 
-## P1
+### P1 — Research & Reporting
 
--   Quantum Benchmark Lab.
--   Classical--Quantum comparison.
--   Resource visualization.
--   Reports.
+- Quantum Benchmark Lab;
+- Classical–Quantum comparison;
+- resource visualization;
+- Reports.
 
-## P2
+### P2 — Mở rộng
 
--   Advanced scenario exploration.
--   More detailed risk decomposition.
--   Richer investigation workflows.
--   Additional clients.
+- advanced scenario exploration;
+- detailed risk decomposition;
+- richer investigation workflows;
+- additional clients.
 
-------------------------------------------------------------------------
+---
 
-# 32. Design Success Criteria
-
-Thiết kế V1 được xem là đạt yêu cầu khi:
+## 28. Tiêu chí thành công
 
 ### Clarity
 
-Người dùng có thể hiểu portfolio risk mà không cần đọc technical
-documentation.
+Người dùng có thể hiểu portfolio risk mà không cần đọc technical documentation.
 
 ### Traceability
 
-Người dùng có thể truy ngược:
+Có thể truy ngược:
 
-``` text
+```text
 Risk Result
-→ Scenario
-→ Model
-→ Data
-→ Assumption
+    ↓
+Scenario
+    ↓
+Model
+    ↓
+Data
+    ↓
+Assumption
 ```
-
-ở mức phù hợp.
 
 ### Comparability
 
-Classical và Quantum có thể được so sánh trực tiếp.
+Classical và Quantum có thể được so sánh trực tiếp trên cùng financial quantity.
 
 ### Usability
 
-Người dùng có thể hoàn thành core workflow mà không cần hiểu
-implementation.
+Người dùng hoàn thành core workflow mà không cần hiểu implementation nội bộ.
 
 ### Scientific Honesty
 
-UI không exaggerate quantum performance và không biến research
-hypothesis thành product claim.
+UI không exaggerate Quantum performance và không biến research hypothesis thành product claim.
 
 ### Product Identity
 
-Sigma có cảm giác như một **professional risk intelligence system**,
-không phải một notebook được đưa lên web.
+Sigma phải tạo cảm giác như một **professional risk intelligence system**, không phải một notebook được đưa lên web.
 
-------------------------------------------------------------------------
+---
 
-# 33. North Star Experience
+## 29. North Star Experience
 
-Trải nghiệm cốt lõi của Sigma:
-
-``` text
+```text
 USER
-  │
-  ▼
+ │
+ ▼
 PORTFOLIO
-  │
-  ▼
+ │
+ ▼
 RISK OVERVIEW
-  │
-  ├───────────────┐
-  ▼               ▼
-RISK DRIVERS    LOSS DISTRIBUTION
-  │               │
-  └───────┬───────┘
-          ▼
-       SCENARIO
-          │
-          ▼
-        STRESS
-          │
-          ▼
- CLASSICAL vs QUANTUM
-          │
-          ▼
-    RISK INTELLIGENCE
-          │
-          ▼
-   DECISION SUPPORT
+ │
+ ├───────────────┐
+ ▼               ▼
+RISK DRIVERS   LOSS DISTRIBUTION
+ │               │
+ └───────┬───────┘
+         ▼
+      SCENARIO
+         │
+         ▼
+       STRESS
+         │
+         ▼
+CLASSICAL vs QUANTUM
+         │
+         ▼
+   RISK INTELLIGENCE
+         │
+         ▼
+    DECISION SUPPORT
 ```
 
-Mục tiêu của UI không phải là hiển thị càng nhiều thông tin càng tốt.
+Mục tiêu của UI không phải hiển thị càng nhiều thông tin càng tốt.
 
 Mục tiêu là:
 
-> **Giúp người dùng hiểu risk, hiểu nguyên nhân, khám phá các điều kiện
-> bất lợi và đánh giá một cách minh bạch giá trị của Classical và
-> Quantum Computing.**
+> **Giúp người dùng hiểu risk, hiểu nguyên nhân, khám phá các điều kiện bất lợi và đánh giá minh bạch giá trị của Classical và Quantum Computing.**
 
-------------------------------------------------------------------------
+---
 
-# 34. Design North Star
+## Design North Star
 
-> **Sigma phải nhìn và hoạt động như một Risk Intelligence Workstation:
-> dense nhưng có hierarchy, technical nhưng dễ điều tra, và
-> quantum-aware nhưng không quantum-hyped.**
+> **Sigma phải hoạt động như một Risk Intelligence Workstation: có mật độ thông tin cao nhưng rõ ràng, có chiều sâu kỹ thuật nhưng dễ điều tra, và có Quantum nhưng không Quantum-hyped.**
 
-Trải nghiệm cuối cùng cần kết nối:
+Trải nghiệm cần kết nối:
 
-``` text
+```text
 Financial Understanding
         +
 Risk Analysis

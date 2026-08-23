@@ -1,40 +1,37 @@
-# Sigma --- Roles & Responsibilities
+# Sigma — Vai trò & Trách nhiệm
 
-> **Phiên bản:** 0.1\
-> **Trạng thái:** Draft / Internal Baseline\
-> **Phạm vi:** Định nghĩa role, trách nhiệm, boundary và collaboration\
-> **Sản phẩm:** Sigma Risk Intelligence
+**Phiên bản:** 0.2  
+**Trạng thái:** Draft / Internal Baseline  
+**Phạm vi:** Vai trò, ownership, trách nhiệm và phối hợp  
+**Sản phẩm:** Sigma Risk Intelligence
 
-------------------------------------------------------------------------
+---
 
 ## 1. Mục đích
 
-`ROLES.md` định nghĩa **vai trò chuyên môn** trong đội ngũ Sigma và phạm
-vi trách nhiệm của từng role.
+`ROLES.md` định nghĩa các vai trò chuyên môn trong đội ngũ Sigma, phạm vi trách nhiệm và ranh giới quyết định của từng vai trò.
 
-Tài liệu này bổ sung cho `TEAM.md`:
+Tài liệu bổ sung cho `TEAM.md`:
 
-``` text
+```text
 TEAM.md
 → Ai sở hữu domain nào và team phối hợp ra sao?
 
 ROLES.md
-→ Mỗi role tồn tại để làm gì và chịu trách nhiệm cụ thể ở đâu?
+→ Mỗi role chịu trách nhiệm gì, quyết định gì và phối hợp với ai?
 ```
 
-`ROLES.md` không phải organizational chart và không nhằm mô tả cấp bậc
-nhân sự.
+`ROLES.md` không phải organizational chart và không mô tả cấp bậc.
 
-Một thành viên có thể đảm nhiệm nhiều role tùy quy mô và cách phân công
-thực tế của team.
+Một thành viên có thể đảm nhiệm nhiều role nếu ownership vẫn rõ ràng.
 
-------------------------------------------------------------------------
+---
 
-# 2. Role Model
+## 2. Nguyên tắc ownership
 
 Sigma sử dụng mô hình:
 
-``` text
+```text
 Domain Ownership
         +
 Clear Responsibility
@@ -42,123 +39,95 @@ Clear Responsibility
 Cross-functional Review
 ```
 
-Mỗi role có:
+Mỗi role phải biết:
 
--   phạm vi trách nhiệm;
--   output chính;
--   boundary với role khác;
--   responsibility trong research/product lifecycle.
+- mình sở hữu gì;
+- mình đóng góp vào đâu;
+- thay đổi nào cần review;
+- quyết định nào không được tự đưa ra.
 
-Không role nào được xem là hoàn toàn độc lập với các role còn lại.
+**Ownership không có nghĩa chỉ một người được sửa code.**
 
-------------------------------------------------------------------------
+Ownership nghĩa là người đó chịu trách nhiệm chính để domain của mình đúng, nhất quán và được review.
 
-# 3. Role Overview
+Một concern nên có **một Primary Owner**, nhưng có thể có nhiều collaborator.
 
-Sigma hiện có 6 role chính:
+---
 
-  -----------------------------------------------------------------------
-  Role                                Trọng tâm
-  ----------------------------------- -----------------------------------
-  Team Lead / System & Quantum        System direction & research
-  Research Lead                       direction
+## 3. Các role chính
 
-  Quantitative Finance & Risk         Financial meaning & risk
-  Modelling                           methodology
+| Role | Trọng tâm |
+|---|---|
+| Team Lead / System & Research | System direction, research direction và Quantum strategy |
+| Quantitative Finance & Risk Modeling | Financial meaning và risk methodology |
+| Data & Statistical Modeling | Market data và statistical modeling |
+| Classical Risk Engine | Classical risk computation và baseline |
+| Quantum Computing | Quantum computation và benchmark |
+| Backend, API & Product Integration | Application, API và product integration |
 
-  Data & Statistical Modeling         Data & statistical modeling
-  Engineer                            
+Các role phối hợp theo chuỗi:
 
-  Classical Risk Engine Engineer      Classical risk computation
-
-  Quantum Computing Engineer          Quantum computation
-
-  Backend, API & Product Integration  Product integration & system
-                                      interface
-  -----------------------------------------------------------------------
-
-Có thể hình dung:
-
-``` text
-                    Sigma
-                      │
-       ┌──────────────┼──────────────┐
-       ▼              ▼              ▼
-   Financial         Data          System
-       │              │              │
-       └──────────────┼──────────────┘
-                      ▼
-              Classical Risk
-                      │
-                      ▼
-                   Quantum
-                      │
-                      ▼
-                Benchmark
-                      │
-                      ▼
-              Backend / Product
+```text
+Financial Problem
+      ↓
+Data / Statistical Modeling
+      ↓
+Classical Risk Engine
+      ↓
+Quantum Enhancement
+      ↓
+Benchmark
+      ↓
+Backend / Product
 ```
 
-------------------------------------------------------------------------
+Đây là luồng trách nhiệm chính, không phải dependency bắt buộc giữa mọi role.
 
-# 4. Team Lead / System & Quantum Research Lead
+---
 
-## 4.1. Mục đích của Role
+## 4. Team Lead / System & Research
 
-Đảm bảo Sigma phát triển như **một hệ thống thống nhất**, đồng thời duy
-trì research direction và Quantum strategy phù hợp với financial
-problem.
+### Mục đích
 
-Role này chịu trách nhiệm ở cấp system/research, không thay thế domain
-expertise của các role chuyên môn.
+Đảm bảo Sigma phát triển như một hệ thống thống nhất, đồng thời giữ research direction và Quantum strategy phù hợp với financial problem.
 
-------------------------------------------------------------------------
+Role này chịu trách nhiệm ở cấp system/research, không thay thế chuyên môn của các role khác.
 
-## 4.2. Trách nhiệm chính
+### Trách nhiệm
 
-### System
+**System**
 
--   duy trì system-level technical direction;
--   bảo đảm các module tuân thủ architecture;
--   điều phối các technical boundary;
--   review các thay đổi ảnh hưởng đến toàn hệ thống;
--   giữ consistency giữa product, research và engineering.
+- technical direction cấp hệ thống;
+- architecture consistency;
+- technical boundaries;
+- review thay đổi ảnh hưởng nhiều module;
+- consistency giữa product, research và engineering.
 
-### Research
+**Research**
 
--   định hướng research problem;
--   review research methodology;
--   điều phối Classical--Quantum research;
--   bảo đảm hypothesis và benchmark có scientific basis;
--   review scientific conclusion.
+- research problem;
+- research methodology;
+- Classical–Quantum research direction;
+- hypothesis và benchmark protocol;
+- scientific conclusion review.
 
-### Quantum Strategy
+**Quantum strategy**
 
--   xác định nơi Quantum có thể được nghiên cứu;
--   bảo đảm Quantum không được đưa vào chỉ vì có thể sử dụng;
--   phối hợp với Quantitative Finance và Quantum Computing Engineer;
--   review các claim về Quantum advantage.
+- xác định nơi Quantum đáng được nghiên cứu;
+- tránh đưa Quantum vào chỉ vì có thể sử dụng;
+- review các claim về Quantum advantage.
 
-------------------------------------------------------------------------
+### Không sở hữu riêng
 
-## 4.3. Không sở hữu
+- toàn bộ financial modeling;
+- toàn bộ data engineering;
+- Classical Risk Engine;
+- Quantum implementation;
+- Backend.
 
-Role này không tự động sở hữu:
+### Output chính
 
--   toàn bộ financial modeling;
--   toàn bộ data engineering;
--   toàn bộ Classical Risk Engine;
--   toàn bộ Quantum implementation;
--   toàn bộ Backend.
-
-Các domain này vẫn thuộc owner tương ứng.
-
-------------------------------------------------------------------------
-
-## 4.4. Output chính
-
-``` text
+```text
 System Direction
 Research Direction
 Architecture Decisions
@@ -167,84 +136,52 @@ Research Review
 Quantum Strategy
 ```
 
-------------------------------------------------------------------------
+---
 
-# 5. Quantitative Finance & Risk Modelling
+## 5. Quantitative Finance & Risk Modeling
 
-## 5.1. Mục đích của Role
+### Mục đích
 
-Đảm bảo Sigma giải quyết **đúng financial problem** và các risk
-quantities có financial/statistical meaning rõ ràng.
+Đảm bảo Sigma giải quyết **đúng financial problem** và các risk quantity có financial/statistical meaning rõ ràng.
 
 Đây là role sở hữu financial interpretation của hệ thống.
 
-------------------------------------------------------------------------
+### Trách nhiệm
 
-## 5.2. Trách nhiệm chính
+- financial problem formulation;
+- portfolio risk formulation;
+- return/loss convention;
+- risk horizon;
+- confidence level;
+- VaR;
+- CVaR / Expected Shortfall;
+- risk assumptions;
+- scenario assumptions;
+- financial interpretation của model output.
 
--   financial problem formulation;
--   portfolio risk formulation;
--   return/loss convention;
--   risk horizon;
--   confidence level;
--   VaR;
--   CVaR / Expected Shortfall;
--   risk assumptions;
--   scenario assumptions;
--   financial interpretation của model output.
+### Model Selection
 
-------------------------------------------------------------------------
+Model được lựa chọn dựa trên:
 
-## 5.3. Model Selection
-
-Role này tham gia quyết định model dựa trên:
-
-``` text
+```text
 Financial Problem
-+
+       +
 Data Characteristics
-+
+       +
 Statistical Assumptions
-+
+       +
 Interpretability
-+
+       +
 Practical Utility
 ```
 
-Không chọn model chỉ vì:
+Không chọn model chỉ vì phổ biến hoặc dễ triển khai.
 
--   phổ biến;
--   dễ implement;
--   có sẵn trong library.
+Các phương pháp như GARCH, HMM, Student-t và Monte Carlo chỉ được sử dụng khi có justification phù hợp.
 
-Các phương pháp như:
+### Ranh giới
 
-``` text
-GARCH
-HMM
-Student-t
-Monte Carlo
-```
-
-chỉ được sử dụng khi có justification phù hợp.
-
-------------------------------------------------------------------------
-
-## 5.4. Boundary
-
-### Với Data & Statistical Modeling
-
-``` text
-Data Engineer
-→ Data / Statistical Representation
-
-Quant Finance
-→ Financial Interpretation / Modeling Requirement
-```
-
-### Với Classical Risk
-
-``` text
+```text
 Quant Finance
 → What risk quantity means
 
@@ -252,21 +189,17 @@ Classical Risk
 → How it is computed
 ```
 
-### Với Quantum
-
-``` text
+```text
 Quant Finance
 → Financial quantity / formulation
 
-Quantum Engineer
+Quantum Computing
 → Quantum implementation
 ```
 
-------------------------------------------------------------------------
+### Output chính
 
-## 5.5. Output chính
-
-``` text
+```text
 Financial Formulation
 Risk Definitions
 Model Assumptions
@@ -274,44 +207,39 @@ Risk Methodology
 Financial Interpretation
 ```
 
-------------------------------------------------------------------------
+---
 
-# 6. Data & Statistical Modeling Engineer
+## 6. Data & Statistical Modeling
 
-## 6.1. Mục đích của Role
+### Mục đích
 
-Đảm bảo dữ liệu và statistical modeling layer đủ chính xác, nhất quán và
-có thể truy nguyên để phục vụ risk analysis.
+Đảm bảo dữ liệu và statistical modeling layer đủ chính xác, nhất quán và có thể truy nguyên để phục vụ risk analysis.
 
-------------------------------------------------------------------------
+### Trách nhiệm
 
-## 6.2. Trách nhiệm chính
+**Data**
 
-### Data
+- market data ingestion;
+- validation;
+- cleaning;
+- transformation;
+- return calculation;
+- dataset provenance;
+- data quality checks.
 
--   market data ingestion;
--   validation;
--   cleaning;
--   transformation;
--   return calculation;
--   dataset provenance;
--   data quality checks.
+**Statistical Modeling**
 
-### Statistical Modeling
+- volatility estimation;
+- regime modeling;
+- distribution fitting;
+- statistical diagnostics;
+- chuẩn bị scenario inputs.
 
--   volatility estimation;
--   regime modeling;
--   distribution fitting;
--   statistical diagnostics;
--   preparation của scenario inputs.
+### Data Context
 
-------------------------------------------------------------------------
+Dữ liệu quan trọng cần có:
 
-## 6.3. Data Contract
-
-Dữ liệu quan trọng phải có context phù hợp:
-
-``` text
+```text
 Source
 Dataset Version
 Time Range
@@ -322,27 +250,25 @@ Collection / Snapshot Information
 
 Data phải được validation trước khi đi vào risk modeling.
 
-------------------------------------------------------------------------
+### Ranh giới
 
-## 6.4. Boundary
+Data/Statistical Modeling chịu trách nhiệm về data representation và statistical outputs.
 
-Role này không sở hữu financial meaning của risk quantity.
+Quant Finance chịu trách nhiệm về financial interpretation và methodology.
 
 Ví dụ:
 
-``` text
-Data Engineer
-→ tính / chuẩn bị return series
+```text
+Data / Statistical Modeling
+→ chuẩn bị return series
 
 Quant Finance
 → quyết định return convention phù hợp với methodology
 ```
 
-------------------------------------------------------------------------
+### Output chính
 
-## 6.5. Output chính
-
-``` text
+```text
 Validated Market Data
 Return Series
 Volatility Inputs
@@ -352,38 +278,32 @@ Dataset Metadata
 Statistical Diagnostics
 ```
 
-------------------------------------------------------------------------
+---
 
-# 7. Classical Risk Engine Engineer
+## 7. Classical Risk Engine
 
-## 7.1. Mục đích của Role
+### Mục đích
 
-Xây dựng và duy trì **Classical Risk Engine** --- computational baseline
-của Sigma.
+Xây dựng và duy trì **Classical Risk Engine** — computational baseline của Sigma.
 
-Classical Risk Engine phải có khả năng hoạt động độc lập với Quantum
-layer.
+Classical Risk Engine phải hoạt động độc lập với Quantum layer.
 
-------------------------------------------------------------------------
+### Trách nhiệm
 
-## 7.2. Trách nhiệm chính
+- portfolio risk calculation;
+- scenario processing;
+- Monte Carlo engine;
+- loss distribution;
+- VaR;
+- CVaR;
+- risk contribution;
+- stress testing;
+- computational validation;
+- classical performance measurement.
 
--   portfolio risk calculation;
--   scenario processing;
--   Monte Carlo engine;
--   loss distribution;
--   VaR;
--   CVaR;
--   risk contribution;
--   stress testing;
--   computational validation;
--   classical performance measurement.
+### Pipeline
 
-------------------------------------------------------------------------
-
-## 7.3. Pipeline Ownership
-
-``` text
+```text
 Portfolio
     +
 Model / Market Inputs
@@ -399,40 +319,31 @@ VaR / CVaR
 Risk Intelligence
 ```
 
-------------------------------------------------------------------------
+### Classical Baseline
 
-## 7.4. Classical Baseline
+Baseline phải đủ đáng tin cậy trước khi được dùng để benchmark Quantum:
 
-Classical implementation phải đủ đáng tin cậy trước khi được dùng làm
-benchmark cho Quantum.
-
-Điều này bao gồm:
-
-``` text
+```text
 Financial Correctness
-+
+        +
 Tests
-+
+        +
 Validation
-+
+        +
 Reproducibility
 ```
 
-------------------------------------------------------------------------
-
-## 7.5. Boundary
+### Ranh giới
 
 Classical Risk Engine không:
 
--   định nghĩa financial semantics một mình;
--   phụ thuộc Quantum để chạy;
--   chứa API/UI logic.
+- tự định nghĩa financial semantics;
+- phụ thuộc Quantum để chạy;
+- chứa API/UI logic.
 
-------------------------------------------------------------------------
+### Output chính
 
-## 7.6. Output chính
-
-``` text
+```text
 Scenario Results
 Loss Distribution
 VaR
@@ -442,35 +353,30 @@ Stress Results
 Classical Benchmark Baseline
 ```
 
-------------------------------------------------------------------------
+---
 
-# 8. Quantum Computing Engineer
+## 8. Quantum Computing
 
-## 8.1. Mục đích của Role
+### Mục đích
 
-Thiết kế và triển khai Quantum computational layer cho những phần của
-Sigma đã có financial justification.
+Thiết kế và triển khai Quantum computational layer cho những phần của Sigma đã có financial justification.
 
-------------------------------------------------------------------------
+### Trách nhiệm
 
-## 8.2. Trách nhiệm chính
+- quantum formulation;
+- circuit design;
+- state preparation;
+- oracle construction;
+- amplitude estimation;
+- QAE experiments;
+- quantum simulation;
+- noisy simulation;
+- backend execution;
+- quantum resource measurement.
 
--   quantum formulation;
--   circuit design;
--   state preparation;
--   oracle construction;
--   amplitude estimation;
--   QAE experiments;
--   quantum simulation;
--   noisy simulation;
--   backend execution;
--   quantum resource measurement.
+### Workflow
 
-------------------------------------------------------------------------
-
-## 8.3. Quantum Workflow
-
-``` text
+```text
 Financial Quantity
         ↓
 Quantum Formulation
@@ -488,46 +394,36 @@ Post-processing
 Risk Estimate
 ```
 
-------------------------------------------------------------------------
+### Financial boundary
 
-## 8.4. Financial Boundary
+Quantum Computing không tự quyết định financial semantics.
 
-Quantum Computing Engineer không tự quyết định financial semantics.
-
-Ví dụ:
-
-``` text
+```text
 Quant Finance
 → P(Loss > Threshold) là quantity cần estimate
 
-Quantum Engineer
+Quantum Computing
 → thiết kế cách biểu diễn và estimate quantity đó bằng Quantum
 ```
 
-------------------------------------------------------------------------
+### Benchmark responsibility
 
-## 8.5. Benchmark Responsibility
+Khi chạy benchmark, cần ghi nhận:
 
-Khi chạy Quantum benchmark, role này phải phối hợp để ghi nhận:
+- qubits;
+- circuit depth;
+- gate count;
+- shots;
+- oracle queries;
+- runtime;
+- noise model;
+- backend.
 
-``` text
-Qubits
-Circuit Depth
-Gate Count
-Shots
-Oracle Queries
-Runtime
-Noise Model
-Backend
-```
+Không chỉ báo cáo quantum output mà bỏ qua computational resources.
 
-Không được chỉ báo cáo quantum output mà bỏ qua computational resources.
+### Output chính
 
-------------------------------------------------------------------------
-
-## 8.6. Output chính
-
-``` text
+```text
 Quantum Formulation
 Quantum Circuits
 State Preparation
@@ -538,48 +434,41 @@ Quantum Resource Metrics
 Quantum Benchmark Results
 ```
 
-------------------------------------------------------------------------
+---
 
-# 9. Backend, API & Product Integration
+## 9. Backend, API & Product Integration
 
-## 9.1. Mục đích của Role
+### Mục đích
 
-Đưa các computational capabilities của Sigma thành một **product
-interface có thể sử dụng và tích hợp**.
+Đưa computational capabilities của Sigma thành **product interface có thể sử dụng và tích hợp**.
 
-------------------------------------------------------------------------
+### Trách nhiệm
 
-## 9.2. Trách nhiệm chính
+**Backend**
 
-### Backend
+- application services;
+- application-level workflow orchestration;
+- integration giữa core modules;
+- error handling.
 
--   application services;
--   workflow orchestration ở application level;
--   integration giữa các core modules;
--   error handling.
+**API**
 
-### API
+- FastAPI;
+- endpoint design;
+- request/response schemas;
+- validation;
+- serialization;
+- API documentation.
 
--   FastAPI;
--   endpoint design;
--   request/response schemas;
--   validation;
--   serialization;
--   API documentation.
+**Product Integration**
 
-### Product Integration
+- kết nối UI với API;
+- product-facing workflows;
+- kết nối risk results với presentation layer.
 
--   kết nối UI với API;
--   product-facing workflows;
--   integration giữa risk results và presentation layer.
+### Ranh giới
 
-------------------------------------------------------------------------
-
-## 9.3. Boundary
-
-Architecture chính:
-
-``` text
+```text
 Taipy
   ↓
 FastAPI
@@ -591,7 +480,7 @@ Sigma Core
 
 Không:
 
-``` text
+```text
 Taipy
   ↓
 Direct Core Access
@@ -599,7 +488,7 @@ Direct Core Access
 
 FastAPI không chứa:
 
-``` text
+```text
 VaR Algorithm
 CVaR Algorithm
 Monte Carlo Logic
@@ -608,11 +497,9 @@ Quantum Circuit Logic
 
 Các computation này thuộc Core/domain modules.
 
-------------------------------------------------------------------------
+### Output chính
 
-## 9.4. Output chính
-
-``` text
+```text
 API
 Application Services
 Integration Layer
@@ -621,59 +508,41 @@ API Contracts
 UI ↔ Backend Integration
 ```
 
-------------------------------------------------------------------------
+---
 
-# 10. Role Interaction Matrix
-
-  ---------------------------------------------------------------------------------
-  Concern         Team Lead      Quant       Data   Classical    Quantum    Backend
-                                                         Risk            
-  -------------- ---------- ---------- ---------- ----------- ---------- ----------
-  System              **P**          C          C           C          C          C
-  Architecture                                                           
-
-  Financial               A      **P**          C           C          C         \-
-  Formulation                                                            
-
-  Data Pipeline           C          C      **P**           C          C          C
-
-  Statistical             C          C      **P**           C          C         \-
-  Modeling                                                               
-
-  Classical Risk          C          A          C       **P**          C          C
-
-  Quantum Method          A          C          C           C      **P**          C
-
-  Benchmark           **A**          C          C           P          P          C
-
-  API                     A          C          C           C          C      **P**
-
-  Product                 A          C          C           C          C      **P**
-  Integration                                                            
-
-  Architecture        **P**          C          C           C          C          C
-  Review                                                                 
-  ---------------------------------------------------------------------------------
+## 10. Ma trận trách nhiệm
 
 Trong bảng:
 
-``` text
+```text
 P = Primary Owner
 A = Accountable / Final Review
 C = Collaborator
-- = Không thuộc responsibility chính
+— = Không thuộc responsibility chính
 ```
 
-Một concern có thể có nhiều collaborator nhưng chỉ nên có một primary
-owner.
+| Concern | Team Lead | Quant | Data | Classical Risk | Quantum | Backend |
+|---|---|---|---|---|---|---|
+| System Architecture | **P** | C | C | C | C | C |
+| Financial Formulation | A | **P** | C | C | C | — |
+| Data Pipeline | C | C | **P** | C | C | C |
+| Statistical Modeling | C | C | **P** | C | C | — |
+| Classical Risk | C | A | C | **P** | C | C |
+| Quantum Method | A | C | C | C | **P** | C |
+| Benchmark | **A** | C | C | P | P | C |
+| API | A | C | C | C | C | **P** |
+| Product Integration | A | C | C | C | C | **P** |
+| Architecture Review | **P** | C | C | C | C | C |
 
-------------------------------------------------------------------------
+Nguyên tắc: một concern có thể có nhiều collaborator nhưng chỉ nên có một Primary Owner.
 
-# 11. Cross-Role Interfaces
+---
 
-## 11.1. Finance ↔ Data
+## 11. Ranh giới phối hợp
 
-``` text
+### Finance ↔ Data
+
+```text
 Quant Finance
       ↕
 Data & Statistical Modeling
@@ -681,14 +550,11 @@ Data & Statistical Modeling
 
 Finance xác định requirement và financial interpretation.
 
-Data/Statistical Modeling cung cấp data representation và statistical
-outputs phù hợp.
+Data/Statistical Modeling cung cấp data representation và statistical outputs phù hợp.
 
-------------------------------------------------------------------------
+### Finance ↔ Classical Risk
 
-## 11.2. Finance ↔ Classical Risk
-
-``` text
+```text
 Quant Finance
       ↓
 Risk Definition
@@ -698,11 +564,9 @@ Classical Risk Engine
 Risk Estimate
 ```
 
-------------------------------------------------------------------------
+### Classical Risk ↔ Quantum
 
-## 11.3. Classical Risk ↔ Quantum
-
-``` text
+```text
 Classical Risk
       ↓
 Baseline
@@ -714,28 +578,25 @@ Benchmark
 
 Quantum không thay thế Classical baseline.
 
-------------------------------------------------------------------------
+### Core ↔ Backend
 
-## 11.4. Core ↔ Backend
-
-``` text
+```text
 Core
-  ↓
+ ↓
 Application
-  ↓
+ ↓
 FastAPI
 ```
 
-Backend chịu trách nhiệm integration chứ không tái implement business
-logic.
+Backend chịu trách nhiệm integration, không tái triển khai business logic.
 
-------------------------------------------------------------------------
+---
 
-# 12. Research Lifecycle Ownership
+## 12. Research Lifecycle
 
 Sigma research workflow:
 
-``` text
+```text
 Problem
    ↓
 Hypothesis
@@ -755,308 +616,226 @@ Scientific Conclusion
 Product Evaluation
 ```
 
-Ownership:
+| Giai đoạn | Primary Role |
+|---|---|
+| Problem | Quant + Team Lead |
+| Hypothesis | Team Lead + Quant |
+| Mathematical Formulation | Quant + technical role liên quan |
+| Classical Baseline | Classical Risk |
+| Quantum Method | Quantum Computing |
+| Fair Benchmark | Team Lead + Classical + Quantum |
+| Resource Analysis | Quantum + Classical |
+| Scientific Conclusion | Team Lead + domain owners |
+| Product Evaluation | Backend / Product + Team Lead |
 
-  Giai đoạn                  Primary Role
-  -------------------------- ---------------------------------
-  Problem                    Quant + Team Lead
-  Hypothesis                 Team Lead + Quant
-  Mathematical Formulation   Quant + relevant technical role
-  Classical Baseline         Classical Risk
-  Quantum Method             Quantum Computing
-  Fair Benchmark             Team Lead + Classical + Quantum
-  Resource Analysis          Quantum + Classical
-  Scientific Conclusion      Team Lead + domain owners
-  Product Evaluation         Backend / Product + Team Lead
+---
 
-------------------------------------------------------------------------
+## 13. Ranh giới quyết định
 
-# 13. Decision Boundaries
+### Financial Decision
 
-## Financial Decision
+**Primary:** Quantitative Finance & Risk Modeling  
+**Review:** Team Lead
 
-Primary:
+### Statistical / Data Decision
 
-``` text
-Quantitative Finance & Risk Modelling
-```
+**Primary:** Data & Statistical Modeling  
+**Review:** Quantitative Finance khi decision ảnh hưởng financial interpretation.
 
-Review:
+### Classical Computational Decision
 
-``` text
-Team Lead
-```
+**Primary:** Classical Risk Engine  
+**Review:** Quantitative Finance khi thay đổi risk methodology.
 
-------------------------------------------------------------------------
+### Quantum Computational Decision
 
-## Statistical/Data Decision
+**Primary:** Quantum Computing  
+**Review:** Quantitative Finance + Team Lead
 
-Primary:
+### API / Product Decision
 
-``` text
-Data & Statistical Modeling Engineer
-```
+**Primary:** Backend, API & Product Integration  
+**Review:** Team Lead nếu thay đổi architecture hoặc contract quan trọng.
 
-Review:
+---
 
-``` text
-Quantitative Finance
-```
+## 14. Những quyết định không được tự ý thực hiện
 
-khi decision ảnh hưởng financial interpretation.
-
-------------------------------------------------------------------------
-
-## Classical Computational Decision
-
-Primary:
-
-``` text
-Classical Risk Engine Engineer
-```
-
-Review:
-
-``` text
-Quantitative Finance
-```
-
-khi thay đổi risk methodology.
-
-------------------------------------------------------------------------
-
-## Quantum Computational Decision
-
-Primary:
-
-``` text
-Quantum Computing Engineer
-```
-
-Review:
-
-``` text
-Quantitative Finance
-+
-Team Lead
-```
-
-------------------------------------------------------------------------
-
-## API/Product Decision
-
-Primary:
-
-``` text
-Backend, API & Product Integration
-```
-
-Review:
-
-``` text
-Team Lead
-```
-
-nếu thay đổi architecture hoặc contract quan trọng.
-
-------------------------------------------------------------------------
-
-# 14. What Roles Must Not Do
-
-## Team Lead
+### Team Lead
 
 Không trở thành bottleneck bằng cách tự làm mọi domain.
 
-## Quant Finance
+### Quantitative Finance
 
-Không tự implement toàn bộ infrastructure/API.
+Không tự quyết định toàn bộ infrastructure hoặc API implementation.
 
-## Data Engineer
+### Data & Statistical Modeling
 
 Không tự thay đổi financial semantics mà không thống nhất với Quant.
 
-## Classical Risk Engineer
+### Classical Risk Engine
 
-Không coi Classical implementation là "ground truth" chỉ vì nó chạy
-được.
+Không coi Classical implementation là “ground truth” chỉ vì nó chạy được.
 
-## Quantum Engineer
+### Quantum Computing
 
-Không claim Quantum advantage chỉ từ theoretical speedup hoặc
-circuit-level result.
+Không claim Quantum advantage chỉ từ theoretical speedup hoặc circuit-level result.
 
-## Backend Engineer
+### Backend / Product Integration
 
-Không đưa financial computation vào API layer chỉ để implementation
-nhanh hơn.
+Không đưa financial computation vào API layer chỉ để implementation nhanh hơn.
 
-------------------------------------------------------------------------
+---
 
-# 15. Collaboration Rules
+## 15. Quy tắc phối hợp
 
 Khi một thay đổi vượt qua boundary của một role:
 
-``` text
+```text
 Primary Owner
-        +
+      +
 Affected Owner
-        +
+      +
 Review
 ```
 
 Ví dụ:
 
-### Thay đổi loss convention
+**Thay đổi loss convention**
 
-``` text
+```text
 Quant
-+
+  +
 Classical Risk
-+
+  +
 Quantum
 ```
 
-### Thay đổi market-data schema
+**Thay đổi market-data schema**
 
-``` text
+```text
 Data
-+
+  +
 Quant
-+
+  +
 Affected Consumers
 ```
 
-### Thay đổi API contract
+**Thay đổi API contract**
 
-``` text
+```text
 Backend
-+
+  +
 Affected Core / UI Owners
 ```
 
-### Thay đổi Quantum benchmark protocol
+**Thay đổi Quantum benchmark protocol**
 
-``` text
+```text
 Quantum
-+
+  +
 Classical Risk
-+
+  +
 Quant
-+
+  +
 Team Lead
 ```
 
-------------------------------------------------------------------------
+---
 
-# 16. Ownership vs Implementation
+## 16. Role Evolution
 
-Ownership không có nghĩa:
+Một thành viên có thể đảm nhiệm nhiều role nếu ownership vẫn rõ.
 
-> "Chỉ người này mới được sửa code."
+Ví dụ:
 
-Ownership nghĩa:
-
-> "Người này chịu trách nhiệm chính để domain đó đúng, coherent và được
-> review."
-
-Thành viên khác có thể đóng góp code, review hoặc research vào domain
-đó.
-
-------------------------------------------------------------------------
-
-# 17. Role Evolution
-
-Role có thể mở rộng hoặc thu hẹp theo giai đoạn phát triển.
-
-Ví dụ một thành viên có thể đồng thời đảm nhiệm:
-
-``` text
+```text
 Data
-+
+  +
 Statistical Modeling
 ```
 
 hoặc:
 
-``` text
+```text
 Backend
-+
+  +
 Product Integration
 ```
 
-Điều này không phá vỡ role model miễn là ownership vẫn rõ.
+Không cần tạo role mới chỉ vì một task mới xuất hiện.
 
 Role mới chỉ nên được tạo khi có:
 
-``` text
+```text
 New Responsibility
-+
+        +
 Sustained Workload
-+
+        +
 Clear Ownership Need
 ```
 
-------------------------------------------------------------------------
+---
 
-# 18. Definition of Done by Role
+## 17. Definition of Done theo role
 
-## Team Lead
+### Team Lead
 
-``` text
+```text
 Direction clear
 Architecture coherent
 Research claim reviewed
 ```
 
-## Quant Finance
+### Quantitative Finance
 
-``` text
+```text
 Financial formulation explicit
 Assumptions explicit
 Risk interpretation validated
 ```
 
-## Data / Statistical Modeling
+### Data / Statistical Modeling
 
-``` text
+```text
 Data validated
 Model inputs reproducible
 Statistical assumptions documented
 ```
 
-## Classical Risk
+### Classical Risk
 
-``` text
+```text
 Calculation correct
 Tests pass
 Baseline reproducible
 ```
 
-## Quantum
+### Quantum
 
-``` text
+```text
 Quantum formulation explicit
 Resources measured
 Benchmark reproducible
 ```
 
-## Backend / Product
+### Backend / Product
 
-``` text
+```text
 API contract clear
 Integration tested
 Product workflow functional
 ```
 
-------------------------------------------------------------------------
+---
 
-# 19. Role North Star
+## 18. Role North Star
 
 Các role không tồn tại để tối ưu từng module riêng lẻ.
 
-Mục tiêu chung là:
+Mục tiêu chung:
 
-``` text
+```text
 Correct Financial Problem
         ↓
 Reliable Data
@@ -1072,24 +851,24 @@ Fair Benchmark
 Usable Product
 ```
 
-------------------------------------------------------------------------
+---
 
-# 20. Final Principle
+## 19. Final Principle
 
 > **Clear ownership, shared responsibility for system integrity.**
 
 Mỗi role phải biết:
 
-``` text
+```text
 What I own
 What I contribute to
 What I must review
 What I must not decide alone
 ```
 
-Và toàn đội phải cùng giữ một nguyên tắc:
+Toàn đội cùng giữ:
 
-``` text
+```text
 Financial Correctness
         +
 Scientific Rigor
@@ -1100,39 +879,3 @@ Product Utility
         ↓
 SIGMA
 ```
-
-------------------------------------------------------------------------
-
-# 21. Final Role Map
-
-``` text
-                         SIGMA
-                           │
-             ┌─────────────┴─────────────┐
-             │                           │
-       SYSTEM / RESEARCH            FINANCIAL DOMAIN
-             │                           │
-       Team Lead                  Quant Finance
-             │                           │
-             └─────────────┬─────────────┘
-                           │
-              ┌────────────┴────────────┐
-              ▼                         ▼
-            DATA                    CLASSICAL RISK
-              │                         │
-              └────────────┬────────────┘
-                           ▼
-                        QUANTUM
-                           │
-                           ▼
-                       BENCHMARK
-                           │
-                           ▼
-                  BACKEND / PRODUCT
-                           │
-                           ▼
-                 RISK INTELLIGENCE
-```
-
-> **Mỗi role có một trách nhiệm rõ ràng. Tất cả role cùng chịu trách
-> nhiệm cho sự đúng đắn của Sigma.**

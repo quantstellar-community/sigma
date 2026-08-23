@@ -1,117 +1,87 @@
-# Sigma --- Technology Stack
+# Sigma — Công nghệ Sử dụng
 
-> **Phiên bản:** 0.1\
-> **Trạng thái:** Draft / Internal Baseline\
-> **Phạm vi:** Runtime, API, UI, Data, Modeling, Quantum, Testing và
-> Development Tooling\
-> **Sản phẩm:** Sigma Risk Intelligence
+**Phiên bản:** 0.2  
+**Trạng thái:** Draft / Internal Baseline  
+**Phạm vi:** Runtime, API, UI, Data, Modeling, Quantum, Testing và Development Tooling  
+**Sản phẩm:** Sigma Risk Intelligence
 
-------------------------------------------------------------------------
+---
 
 ## 1. Mục đích
 
-`TECH_STACK.md` định nghĩa các công nghệ được lựa chọn cho Sigma V1, vai
-trò của từng công nghệ và boundary sử dụng chúng.
+`TECH_STACK.md` định nghĩa công nghệ Sigma V1 sử dụng, vai trò của từng công nghệ và boundary của chúng.
 
-Tài liệu này trả lời:
+Tài liệu trả lời:
 
--   Sigma sử dụng ngôn ngữ và runtime nào?
--   API được xây dựng bằng gì?
--   UI/reference client sử dụng gì?
--   Financial/ML computation sử dụng ecosystem nào?
--   Quantum layer sử dụng gì?
--   Testing và development tooling ra sao?
--   Công nghệ nào là bắt buộc, công nghệ nào là optional?
--   Những công nghệ nào **cố tình chưa đưa vào V1**?
+- Sigma dùng runtime và công cụ phát triển nào?
+- API và UI sử dụng gì?
+- Financial / statistical computation dùng ecosystem nào?
+- Quantum layer dùng gì?
+- Công nghệ nào là bắt buộc, optional hoặc chưa cần?
+- Vì sao một số công nghệ chưa được đưa vào V1?
 
-Tài liệu này không thay thế `ARCHITECTURE.md`, `SCHEMA.md` hoặc
-`RULES.md`.
+`TECH_STACK.md` không thay thế:
 
-------------------------------------------------------------------------
+```text
+ARCHITECTURE.md → System Structure
+SCHEMA.md       → Data Meaning
+RULES.md        → Constraints
+```
 
-# 2. Technology Philosophy
+---
 
-Technology selection của Sigma tuân theo:
+# 2. Nguyên tắc lựa chọn công nghệ
 
-``` text
+Technology selection đi theo:
+
+```text
 Financial Requirement
-        ↓
+      ↓
 Architectural Requirement
-        ↓
+      ↓
 Technical Requirement
-        ↓
+      ↓
 Technology Selection
 ```
 
 Không chọn technology chỉ vì:
 
--   đang phổ biến;
--   "enterprise";
--   có nhiều stars;
--   có quantum branding;
--   làm architecture trông phức tạp hơn.
+- phổ biến;
+- nhiều stars;
+- có “enterprise” branding;
+- có quantum branding;
+- làm architecture trông phức tạp hơn.
 
-Nguyên tắc:
+> **Dùng công nghệ đơn giản nhất đáp ứng đúng requirement thực tế.**
 
-> **Use the simplest technology that satisfies the actual requirement.**
-
-------------------------------------------------------------------------
+---
 
 # 3. V1 Technology Overview
 
-  -----------------------------------------------------------------------
-  Layer                   Technology              Vai trò
-  ----------------------- ----------------------- -----------------------
-  Language                Python 3.12.x           Runtime chính
+| Layer | Technology | Vai trò |
+|---|---|---|
+| Runtime | Python 3.12.x | Runtime chính |
+| Environment / Dependencies | `uv` | Python, virtual environment, dependencies, lockfile |
+| API | FastAPI | Product API |
+| API Server | Uvicorn | ASGI server |
+| UI | Taipy | Reference client V1 |
+| Numerical | NumPy | Numerical primitives |
+| Data | pandas | Tabular / time-series data |
+| Scientific | SciPy | Statistical / numerical methods |
+| Statistical Modeling | statsmodels | Classical statistical models khi phù hợp |
+| ML | scikit-learn | Classical ML / evaluation khi cần |
+| Visualization | Plotly | Interactive analytical charts |
+| Quantum | Qiskit | Quantum circuits / algorithms |
+| Quantum Simulation | Qiskit Aer | Local / noisy simulation |
+| Testing | pytest | Unit / integration / evaluation |
+| Formatting / Linting | Ruff | Code formatting và linting |
+| Type Checking | Pyright | Static type checking |
+| Documentation | Markdown + Mermaid | Project documentation |
+| Version Control | Git | Source control |
 
-  Package / Environment   `uv`                    Dependency &
-                                                  environment management
+Package versions cụ thể phải được quản lý trong `pyproject.toml` và lockfile. Bảng này mô tả **vai trò**, không thay thế dependency configuration.
 
-  API                     FastAPI                 Product API
-
-  API Server              Uvicorn                 ASGI server
-
-  UI                      Taipy                   Reference client V1
-
-  DataFrame               pandas                  Tabular financial data
-
-  Numerical Computing     NumPy                   Numerical primitives
-
-  Scientific Computing    SciPy                   Statistical/numerical
-                                                  methods
-
-  Visualization           Plotly                  Interactive charts
-
-  Statistical Modeling    statsmodels             Classical statistical
-                                                  models khi phù hợp
-
-  ML                      scikit-learn            Classical ML /
-                                                  evaluation khi cần
-
-  Quantum SDK             Qiskit                  Quantum circuit /
-                                                  algorithm
-                                                  implementation
-
-  Quantum Simulation      Qiskit Aer              Local simulation
-
-  Testing                 pytest                  Unit/integration tests
-
-  Formatting              Ruff                    Formatting
-
-  Linting                 Ruff                    Linting
-
-  Type Checking           Pyright                 Static type checking
-
-  Documentation           Markdown + Mermaid      Project documentation
-
-  Version Control         Git                     Source control
-  -----------------------------------------------------------------------
-
-Các package cụ thể phải được pin/lock trong project dependency
-configuration; bảng này mô tả vai trò, không thay thế
-`pyproject.toml`/lockfile.
-
-------------------------------------------------------------------------
+---
 
 # 4. Python Runtime
 
@@ -119,26 +89,26 @@ configuration; bảng này mô tả vai trò, không thay thế
 
 Sigma V1 sử dụng:
 
-``` text
+```text
 Python 3.12.x
 ```
 
-Python là runtime chính cho:
+Python là runtime chung cho:
 
--   Core;
--   Data;
--   Modeling;
--   Risk;
--   Quantum;
--   FastAPI;
--   Taipy;
--   Research.
+```text
+Core
+Data
+Modeling
+Risk
+Quantum
+FastAPI
+Taipy
+Research
+```
 
-### Lý do
+Lý do chính là Python cung cấp một ecosystem thống nhất cho:
 
-Python phù hợp với toàn bộ ecosystem hiện tại của Sigma:
-
-``` text
+```text
 Financial Computing
 +
 Scientific Computing
@@ -152,46 +122,39 @@ API
 Research
 ```
 
-------------------------------------------------------------------------
+## 4.2. Version Policy
 
-## 4.2. Python Version Policy
+Project phải pin version phù hợp với development environment, ví dụ qua:
 
-Project phải pin minor/patch version phù hợp với development
-environment.
-
-Ví dụ:
-
-``` text
+```text
 .python-version
 ```
 
-được dùng để đảm bảo team sử dụng cùng Python runtime.
+Không upgrade Python giữa chừng chỉ vì có version mới.
 
-Không upgrade Python giữa chừng chỉ vì có version mới hơn.
+Runtime upgrade phải được xem như một thay đổi dependency và cần verification.
 
-Upgrade phải được xem như dependency/runtime change và cần verification.
+---
 
-------------------------------------------------------------------------
-
-# 5. Package & Environment Management --- uv
+# 5. Package & Environment — uv
 
 Sigma sử dụng:
 
-``` text
+```text
 uv
 ```
 
 cho:
 
--   Python version management;
--   virtual environment;
--   dependency management;
--   lockfile;
--   reproducible development environment.
+- Python version management;
+- virtual environment;
+- dependency management;
+- lockfile;
+- reproducible development environment.
 
-Primary workflow:
+Workflow chính:
 
-``` text
+```text
 uv python
 uv venv
 uv add
@@ -199,18 +162,17 @@ uv sync
 uv run
 ```
 
-Dependency installation phải thông qua project configuration và lockfile
-thay vì cài package thủ công ngoài environment.
+Dependency phải được quản lý qua project configuration và lockfile thay vì cài thủ công ngoài environment.
 
-------------------------------------------------------------------------
+---
 
 # 6. API Stack
 
 ## 6.1. FastAPI
 
-FastAPI là product API boundary của Sigma.
+FastAPI là product API boundary:
 
-``` text
+```text
 Client
   ↓ HTTP
 FastAPI
@@ -222,44 +184,43 @@ Sigma Core
 
 FastAPI chịu trách nhiệm:
 
--   routing;
--   request/response;
--   validation;
--   serialization;
--   API documentation;
--   dependency wiring.
+- routing;
+- request / response;
+- validation;
+- serialization;
+- API documentation;
+- dependency wiring.
 
 FastAPI không chịu trách nhiệm:
 
--   VaR implementation;
--   CVaR implementation;
--   Monte Carlo engine;
--   regime modeling;
--   QAE circuit logic.
+```text
+VaR / CVaR
+Monte Carlo
+Regime Modeling
+QAE Logic
+```
 
-------------------------------------------------------------------------
+Financial computation thuộc Core.
 
 ## 6.2. Uvicorn
 
 Uvicorn là ASGI server cho FastAPI.
 
-Development:
+Development có thể chạy:
 
-``` text
+```text
 uv run uvicorn sigma.api.main:app --reload
 ```
 
-Production/deployment configuration có thể thay đổi theo environment.
+Deployment configuration có thể thay đổi theo environment.
 
-------------------------------------------------------------------------
+---
 
-# 7. UI Stack --- Taipy
+# 7. UI — Taipy
 
-Taipy là **reference client V1** của Sigma.
+Taipy là **reference client V1**:
 
-Architecture:
-
-``` text
+```text
 Taipy
   ↓ HTTP
 FastAPI
@@ -269,71 +230,62 @@ Sigma Core
 
 Taipy chịu trách nhiệm:
 
--   dashboard;
--   portfolio interaction;
--   risk visualization;
--   scenario exploration;
--   stress testing interface;
--   quantum benchmark presentation.
+- dashboard;
+- portfolio interaction;
+- risk visualization;
+- scenario exploration;
+- stress testing interface;
+- quantum benchmark presentation.
 
 Taipy không chứa:
 
-``` text
+```text
 Financial Business Logic
 Risk Engine
 Quantum Engine
 ```
 
-------------------------------------------------------------------------
-
-# 8. Why Taipy
+### Vì sao Taipy?
 
 Taipy phù hợp với V1 vì:
 
--   Python-native;
--   phù hợp với data/analytics application;
--   cho phép xây interactive UI nhanh;
--   phù hợp với prototype/product interface;
--   có thể giao tiếp với FastAPI qua HTTP.
-
-Tuy nhiên:
+- Python-native;
+- phù hợp với data / analytics application;
+- xây interactive UI nhanh;
+- phù hợp cho prototype và product interface;
+- giao tiếp được với FastAPI qua HTTP.
 
 > **Taipy là client, không phải Sigma Core.**
 
-Nếu tương lai thay Taipy bằng một client khác, Core và API contract
-không nên phải được viết lại.
+Nếu thay Taipy trong tương lai, Core và API contract không nên phải viết lại.
 
-------------------------------------------------------------------------
+---
 
-# 9. Data Stack
+# 8. Data & Numerical Stack
 
-## 9.1. NumPy
+## NumPy
 
-NumPy là numerical foundation cho:
+Dùng cho:
 
--   arrays;
--   vectorized computation;
--   numerical operations;
--   numerical representation.
+- arrays;
+- vectorized computation;
+- numerical operations;
+- numerical representation.
 
-NumPy được sử dụng ở low-level computational boundaries khi phù hợp.
+## pandas
 
-------------------------------------------------------------------------
+Dùng cho:
 
-## 9.2. pandas
+- market data;
+- time series;
+- preprocessing;
+- dataset inspection;
+- return calculation;
+- data transformation.
 
-pandas dùng cho:
+Luồng cơ bản:
 
--   tabular market data;
--   time series;
--   preprocessing;
--   dataset inspection;
--   return calculation;
--   data transformation.
-
-Ví dụ:
-
-``` text
+```text
 Market Data
     ↓
 pandas
@@ -341,84 +293,72 @@ pandas
 Validated Time Series
 ```
 
-pandas không phải financial domain model.
+pandas không phải financial domain model. Core domain objects không nên phụ thuộc vào DataFrame representation nếu không cần.
 
-Core domain objects không nên phụ thuộc vào DataFrame representation nếu
-không cần thiết.
+## SciPy
 
-------------------------------------------------------------------------
+Dùng khi methodology cần:
 
-## 9.3. SciPy
+- statistical distributions;
+- numerical optimization;
+- numerical routines;
+- statistical computation.
 
-SciPy được sử dụng cho:
+Chỉ sử dụng phần phù hợp với methodology.
 
--   statistical distributions;
--   numerical optimization;
--   numerical routines;
--   statistical computation.
+---
 
-Chỉ sử dụng module phù hợp với methodology.
+# 9. Statistical & Financial Modeling
 
-------------------------------------------------------------------------
+## statsmodels
 
-# 10. Statistical / Financial Modeling
+`statsmodels` là lựa chọn cho classical statistical modeling khi cần, chẳng hạn:
 
-## 10.1. statsmodels
+- statistical estimation;
+- time-series models;
+- econometric analysis.
 
-`statsmodels` là một lựa chọn cho classical statistical modeling khi
-methodology cần.
+Không mặc định mọi volatility hoặc regime model đều phải dùng `statsmodels`.
 
-Có thể sử dụng cho:
+## Volatility / GARCH
 
--   statistical estimation;
--   time-series models;
--   econometric analysis.
+Nếu Sigma sử dụng GARCH hoặc volatility methodology khác, package phải được chọn dựa trên:
 
-Không mặc định mọi volatility/regime model đều phải dùng statsmodels.
-
-------------------------------------------------------------------------
-
-## 10.2. GARCH / Volatility
-
-Nếu Sigma sử dụng GARCH hoặc volatility methodology khác, package được
-lựa chọn dựa trên:
-
--   model correctness;
--   API stability;
--   compatibility;
--   testing;
--   reproducibility.
+```text
+Model Correctness
+API Stability
+Compatibility
+Testing
+Reproducibility
+```
 
 Không chọn package chỉ vì tiện import.
 
-------------------------------------------------------------------------
+---
 
-# 11. Machine Learning
+# 10. Machine Learning — scikit-learn
 
-## scikit-learn
+`scikit-learn` được dùng khi Sigma cần:
 
-`scikit-learn` là classical ML toolkit khi Sigma cần:
-
--   baseline models;
--   preprocessing;
--   evaluation;
--   clustering/classification/regression;
--   model comparison.
+- baseline models;
+- preprocessing;
+- evaluation;
+- clustering / classification / regression;
+- model comparison.
 
 ML không phải core identity của Sigma V1.
 
-Sigma là **Risk Intelligence Engine**, vì vậy ML chỉ được thêm khi có
-financial/statistical justification.
+> ML chỉ được thêm khi có financial/statistical justification.
 
-------------------------------------------------------------------------
+---
 
-# 12. Visualization --- Plotly
+# 11. Visualization — Plotly
 
-Plotly được dùng cho interactive visualization.
+Plotly dùng cho interactive analytical visualization.
 
-Primary use cases:
+Các use case chính:
 
-``` text
+```text
 Loss Distribution
 Risk Contribution
 Scenario Analysis
@@ -430,32 +370,32 @@ Visualization phải phục vụ analysis.
 
 Không thêm chart chỉ để dashboard có nhiều biểu đồ.
 
-------------------------------------------------------------------------
+---
 
-# 13. Quantum Stack
+# 12. Quantum Stack
 
-## 13.1. Qiskit
+## 12.1. Qiskit
 
 Qiskit là primary quantum SDK của Sigma V1.
 
 Vai trò:
 
--   quantum circuit construction;
--   quantum algorithm implementation;
--   state preparation;
--   oracle implementation;
--   amplitude estimation;
--   measurement.
+- quantum circuit construction;
+- quantum algorithm implementation;
+- state preparation;
+- oracle implementation;
+- amplitude estimation;
+- measurement.
 
-Qiskit nằm trong:
+Quantum code thuộc:
 
-``` text
+```text
 src/sigma/quantum/
 ```
 
-không lan sang:
+Không lan sang:
 
-``` text
+```text
 domain/
 risk/
 api/
@@ -464,32 +404,25 @@ ui/
 
 nếu không có architectural reason.
 
-------------------------------------------------------------------------
+## 12.2. Qiskit Aer
 
-## 13.2. Qiskit Aer
+Qiskit Aer dùng cho local quantum simulation:
 
-Qiskit Aer dùng cho local quantum simulation.
-
-Các use cases:
-
--   ideal simulation;
--   noisy simulation;
--   circuit validation;
--   algorithm debugging;
--   benchmark experiments.
+- ideal simulation;
+- noisy simulation;
+- circuit validation;
+- algorithm debugging;
+- benchmark experiments.
 
 Simulator result phải được phân biệt với hardware result.
 
-------------------------------------------------------------------------
+---
 
-# 14. Quantum Hardware Boundary
+# 13. Quantum Hardware Boundary
 
-V1 không architecture-lock Sigma vào một quantum hardware provider duy
-nhất.
+V1 không khóa Sigma vào một quantum hardware provider.
 
-Conceptual interface:
-
-``` text
+```text
 Quantum Method
       ↓
 Quantum Backend
@@ -497,9 +430,9 @@ Quantum Backend
       └── Hardware
 ```
 
-Điều này cho phép benchmark:
+Có thể benchmark:
 
-``` text
+```text
 Ideal
 Noisy Simulator
 Hardware
@@ -507,15 +440,15 @@ Hardware
 
 mà không thay đổi financial problem formulation.
 
-Hardware integration chỉ được thêm khi research/product requirement cần.
+Hardware integration chỉ được thêm khi research hoặc product requirement cần.
 
-------------------------------------------------------------------------
+---
 
-# 15. Quantum Resource Measurement
+# 14. Quantum Resource Measurement
 
-Quantum stack phải hỗ trợ thu thập khi phù hợp:
+Khi phù hợp, quantum benchmark phải có khả năng ghi nhận:
 
-``` text
+```text
 Qubits
 Circuit Depth
 Gate Count
@@ -526,18 +459,15 @@ Noise Model
 Backend
 ```
 
-Các metrics này là một phần của benchmark evidence, không chỉ là
-debugging information.
+Đây là benchmark evidence, không chỉ là debugging information.
 
-------------------------------------------------------------------------
+---
 
-# 16. Testing Stack --- pytest
+# 15. Testing — pytest
 
 `pytest` là testing framework chính.
 
-Structure:
-
-``` text
+```text
 tests/
 ├── unit/
 ├── integration/
@@ -548,103 +478,101 @@ tests/
 
 Kiểm tra:
 
--   domain behavior;
--   numerical functions;
--   risk calculations;
--   quantum helper logic.
+- domain behavior;
+- numerical functions;
+- risk calculations;
+- quantum helper logic.
 
 ### Integration
 
 Kiểm tra:
 
--   application workflows;
--   API;
--   module interaction.
+- application workflows;
+- API;
+- module interaction.
 
 ### Evaluation
 
-Kiểm tra:
+Đánh giá:
 
--   model behavior;
--   Classical baseline;
--   Quantum benchmark;
--   accuracy;
--   resource behavior.
+- model behavior;
+- Classical baseline;
+- Quantum benchmark;
+- accuracy;
+- resource behavior.
 
-------------------------------------------------------------------------
+---
 
-# 17. Formatting & Linting --- Ruff
+# 16. Formatting & Linting — Ruff
 
-Ruff được sử dụng làm primary tool cho:
+Ruff là tool chính cho:
 
-``` text
+```text
 Formatting
 Linting
 ```
 
 Mục tiêu:
 
--   consistent code style;
--   fast feedback;
--   giảm toolchain fragmentation.
+- code style nhất quán;
+- feedback nhanh;
+- giảm toolchain fragmentation.
 
-Không thêm nhiều formatter/linter khác nếu Ruff đã đáp ứng requirement.
+Không thêm formatter/linter khác nếu Ruff đã đáp ứng requirement.
 
-------------------------------------------------------------------------
+---
 
-# 18. Type Checking --- Pyright
+# 17. Type Checking — Pyright
 
-Pyright được sử dụng cho static type checking.
+Pyright dùng cho static type checking.
 
 Mục tiêu:
 
--   phát hiện interface mismatch;
--   tăng reliability;
--   làm rõ module contracts;
--   giảm runtime errors.
+- phát hiện interface mismatch;
+- làm rõ module contracts;
+- tăng reliability;
+- giảm runtime errors.
 
-Type checking phải hỗ trợ architecture, không biến code thành type
-ceremony không cần thiết.
+Type checking phải hỗ trợ architecture, không trở thành type ceremony không cần thiết.
 
-------------------------------------------------------------------------
+---
 
-# 19. Documentation Stack
+# 18. Documentation — Markdown & Mermaid
 
 Documentation sử dụng:
 
-``` text
+```text
 Markdown
 +
 Mermaid
 ```
 
-Mermaid được dùng cho:
+Mermaid phù hợp cho:
 
--   architecture diagrams;
--   data flow;
--   dependency relationships;
--   system context;
--   sequence/workflow khi cần.
+- architecture;
+- data flow;
+- dependency relationships;
+- system context;
+- workflow / sequence khi cần.
 
-Không lưu diagram architecture chính dưới dạng image nếu Mermaid có thể
-biểu diễn rõ ràng.
+Ưu điểm:
 
-Lợi ích:
+```text
+Version-controlled
+Diffable
+Editable
+Reproducible
+```
 
--   version controlled;
--   diffable;
--   editable;
--   reproducible.
+Không cần lưu architecture diagram chính dưới dạng image nếu Mermaid biểu diễn đủ rõ.
 
-------------------------------------------------------------------------
+---
 
-# 20. Git
+# 19. Version Control — Git
 
-Git là version control system.
+Git track:
 
-Git phải track:
-
-``` text
+```text
 Source
 Tests
 Docs
@@ -654,23 +582,21 @@ Research Experiment Definitions
 
 Không commit:
 
-``` text
+```text
 Secrets
-Local virtual environments
-Generated caches
-Large unmanaged datasets
-Temporary artifacts
+Local Virtual Environments
+Generated Caches
+Large Unmanaged Datasets
+Temporary Artifacts
 ```
 
-------------------------------------------------------------------------
+---
 
-# 21. Data Source Boundary
+# 20. Data Source Boundary
 
-Data provider không được trở thành core dependency.
+Data provider không trở thành core dependency.
 
-Conceptual:
-
-``` text
+```text
 Data Source
     ↓
 Data Adapter / Loader
@@ -680,50 +606,49 @@ Sigma Data Contract
 Modeling
 ```
 
-Điều này cho phép thay đổi provider mà không viết lại Risk Engine.
+Mục tiêu là thay đổi provider mà không phải viết lại Risk Engine.
 
-Nguồn dữ liệu cụ thể có thể thay đổi theo:
+Data source cụ thể có thể thay đổi theo:
 
--   availability;
--   license;
--   cost;
--   data quality;
--   project stage.
+- availability;
+- license;
+- cost;
+- data quality;
+- project stage.
 
-`TECH_STACK.md` không khóa Sigma vào một vendor dữ liệu duy nhất.
+Sigma V1 không khóa vào một vendor dữ liệu duy nhất.
 
-------------------------------------------------------------------------
+---
 
-# 22. Configuration Stack
+# 21. Configuration
 
-Configuration sử dụng file-based configuration + environment variables
-khi phù hợp.
+Configuration dùng file-based configuration và environment variables khi phù hợp.
 
 Ví dụ:
 
-``` text
+```text
 configs/
 ├── default.yaml
 └── benchmark.yaml
 ```
 
-Environment variables dùng cho:
+Environment variables dành cho:
 
-``` text
-API keys
+```text
+API Keys
 Credentials
-Environment-specific configuration
+Environment-specific Configuration
 ```
 
 Không commit secrets.
 
-------------------------------------------------------------------------
+---
 
-# 23. Dependency Categories
+# 22. Dependency Categories
 
-Dependencies của Sigma nên được phân nhóm:
+Dependencies nên được phân nhóm:
 
-``` text
+```text
 Runtime
 Development
 Research
@@ -734,7 +659,7 @@ Ví dụ:
 
 ### Runtime
 
-``` text
+```text
 fastapi
 uvicorn
 numpy
@@ -746,32 +671,28 @@ taipy
 
 ### Research / Quantum
 
-``` text
+```text
 qiskit
 qiskit-aer
 ```
 
 ### Development
 
-``` text
+```text
 pytest
 ruff
 pyright
 ```
 
-Không phải mọi research dependency đều phải trở thành production
-dependency.
+Không phải research dependency nào cũng trở thành production dependency.
 
-------------------------------------------------------------------------
+---
 
-# 24. Production vs Research Dependencies
+# 23. Production vs Research Dependencies
 
-Một dependency chỉ được đưa vào production runtime khi production code
-thực sự cần nó.
+Một dependency chỉ vào production runtime khi production code thực sự cần nó.
 
-Ví dụ:
-
-``` text
+```text
 research/
     ↓
 experimental package
@@ -779,36 +700,34 @@ experimental package
 
 không có nghĩa:
 
-``` text
+```text
 src/sigma/
     ↓
 must depend on package
 ```
 
-Điều này giúp giảm dependency footprint.
+Mục tiêu là giữ production dependency footprint nhỏ.
 
-------------------------------------------------------------------------
+---
 
-# 25. Dependency Selection Rules
+# 24. Quy tắc thêm Dependency
 
-Một package mới chỉ nên được thêm khi có:
+Package mới chỉ nên được thêm khi có:
 
-1.  Requirement rõ.
-2.  Use case thực tế.
-3.  Compatibility với Python 3.12.
-4.  Compatibility với architecture.
-5.  Maintenance/quality chấp nhận được.
-6.  Không có giải pháp đơn giản hơn bằng dependency hiện có.
+1. Requirement rõ.
+2. Use case thực tế.
+3. Compatibility với Python 3.12.
+4. Compatibility với architecture.
+5. Maintenance / quality chấp nhận được.
+6. Không có giải pháp đơn giản hơn bằng dependency hiện có.
 
-------------------------------------------------------------------------
+---
 
-# 26. Dependency Locking
-
-Development environment phải reproducible.
+# 25. Dependency Locking
 
 Flow:
 
-``` text
+```text
 pyproject.toml
       ↓
 uv lock
@@ -818,16 +737,15 @@ uv.lock
 uv sync
 ```
 
-Lockfile phải được commit vào repository nếu project workflow sử dụng
-lockfile để reproducible environment.
+Nếu project sử dụng lockfile cho reproducibility, `uv.lock` phải được commit.
 
-------------------------------------------------------------------------
+---
 
-# 27. Environment Structure
+# 26. Environment
 
 Conceptual environments:
 
-``` text
+```text
 Local Development
         ↓
 Research / Experiment
@@ -837,17 +755,15 @@ Demo
 Production
 ```
 
-V1 có thể sử dụng cùng Python project environment với dependency
-groups/extras khi phù hợp thay vì tạo nhiều repository/environment phức
-tạp.
+V1 có thể dùng cùng Python project với dependency groups/extras khi phù hợp thay vì tạo nhiều repository/environment phức tạp.
 
-------------------------------------------------------------------------
+---
 
-# 28. Local Development
+# 27. Local Development
 
 Developer setup nên tối giản:
 
-``` text
+```text
 Python
 uv
 Git
@@ -855,7 +771,7 @@ Git
 
 Sau đó:
 
-``` text
+```text
 uv sync
 ```
 
@@ -863,17 +779,15 @@ và chạy application bằng `uv run`.
 
 Không yêu cầu Docker để bắt đầu development nếu application không cần.
 
-------------------------------------------------------------------------
+---
 
-# 29. API Documentation
+# 28. API Documentation
 
 FastAPI cung cấp API schema/documentation tự động.
 
-API contract phải được xem là integration boundary.
+API contract phải phản ánh:
 
-Documentation phải phản ánh:
-
-``` text
+```text
 Request
 Response
 Validation
@@ -882,37 +796,35 @@ Error
 
 Không expose implementation internals không cần thiết.
 
-------------------------------------------------------------------------
+---
 
-# 30. Logging
+# 29. Logging
 
-V1 sử dụng application logging phù hợp với Python runtime.
+Application logging phục vụ:
 
-Logging cần phục vụ:
-
--   debugging;
--   failed computation;
--   API errors;
--   benchmark execution;
--   important runtime events.
+- debugging;
+- failed computation;
+- API errors;
+- benchmark execution;
+- important runtime events.
 
 Không log:
 
-``` text
-API keys
+```text
+API Keys
 Passwords
-Sensitive credentials
+Sensitive Credentials
 ```
 
-------------------------------------------------------------------------
+---
 
-# 31. Observability
+# 30. Observability
 
-V1 chưa cần một distributed observability stack.
+V1 chưa cần distributed observability stack.
 
 Theo dõi trước:
 
-``` text
+```text
 Application Errors
 API Errors
 Execution Time
@@ -920,16 +832,15 @@ Benchmark Metadata
 Experiment Results
 ```
 
-Nếu workload tăng và có evidence cần observability nâng cao, stack có
-thể được mở rộng sau.
+Nếu workload tăng và có evidence cần observability nâng cao, stack có thể mở rộng sau.
 
-------------------------------------------------------------------------
+---
 
-# 32. Deployment Stack
+# 31. Deployment
 
 V1 ưu tiên deployment đơn giản:
 
-``` text
+```text
 Taipy Client
       ↓
 FastAPI
@@ -941,7 +852,7 @@ Data / Quantum Backend
 
 Không mặc định cần:
 
-``` text
+```text
 Kubernetes
 Kafka
 Service Mesh
@@ -949,78 +860,78 @@ Airflow
 Prefect
 ```
 
-chỉ để deployment "trông enterprise".
+chỉ để deployment trông “enterprise”.
 
-------------------------------------------------------------------------
+---
 
-# 33. Async / Background Computation
+# 32. Async / Background Computation
 
-Nếu một computation trở nên long-running:
+Nếu computation trở thành long-running, ví dụ:
 
-``` text
+```text
 Risk Analysis
 Quantum Benchmark
 Large Scenario Generation
 ```
 
-thì có thể bổ sung asynchronous execution.
+có thể bổ sung asynchronous execution.
 
-Nhưng V1 không mặc định xây job orchestration platform.
+V1 không mặc định xây job orchestration platform.
 
-Decision phải dựa trên:
+Quyết định phải dựa trên:
 
-``` text
+```text
 Measured Runtime
 User Experience
 Concurrency
 Workload
 ```
 
-------------------------------------------------------------------------
+---
 
-# 34. Technology Boundaries
+# 33. Technology Boundaries
 
-``` text
+```text
 Taipy
-  → UI only
+  → UI
 
 FastAPI
-  → API only
+  → API
 
 pandas
-  → Data manipulation
+  → Data Manipulation
 
 NumPy / SciPy
-  → Numerical computation
+  → Numerical Computation
 
-statsmodels / sklearn
-  → Classical statistical / ML methods
+statsmodels / scikit-learn
+  → Classical Statistical / ML Methods
 
 Qiskit / Aer
-  → Quantum computation
+  → Quantum Computation
 
 pytest
   → Testing
 
 Ruff
-  → Formatting / linting
+  → Formatting / Linting
 
 Pyright
-  → Type checking
+  → Type Checking
 
 uv
-  → Environment / dependencies
+  → Environment / Dependencies
 ```
 
 Technology phải được sử dụng trong boundary phù hợp.
 
-------------------------------------------------------------------------
+---
 
-# 35. Technologies Intentionally Not Required in V1
+# 34. Công nghệ chưa cần trong V1
 
 Các công nghệ sau **không phải default dependency**:
 
-``` text
+```text
 Docker
 Kubernetes
 Kafka
@@ -1032,111 +943,110 @@ PostgreSQL
 Spark
 Ray
 MLflow
-Cloud-specific orchestration
+Cloud-specific Orchestration
 ```
 
 Điều này không có nghĩa Sigma không bao giờ sử dụng chúng.
 
-Nghĩa là:
+Chỉ có nghĩa:
 
-> **Chưa có requirement đủ mạnh để đưa chúng vào V1.**
+> **Hiện chưa có requirement đủ mạnh để đưa chúng vào V1.**
 
-------------------------------------------------------------------------
+---
 
-# 36. Why No Database Is Locked Yet
+# 35. Chưa khóa Database
 
-Sigma V1 cần persistence nhưng `TECH_STACK.md` không nên khóa physical
-database trước khi workload và persistence requirements được xác định
-đầy đủ.
+`SCHEMA.md` đã định nghĩa logical data model.
 
-Logical data model đã được định nghĩa trong:
+`TECH_STACK.md` không khóa physical database trước khi persistence requirements được xác định đầy đủ.
 
-``` text
-SCHEMA.md
+Database có thể được quyết định dựa trên:
+
+```text
+Persistence Requirements
+Concurrency
+Deployment
+Data Volume
+Query Patterns
 ```
 
-Physical storage có thể được quyết định sau dựa trên:
+---
 
--   persistence requirements;
--   concurrency;
--   deployment;
--   data volume;
--   query patterns.
-
-------------------------------------------------------------------------
-
-# 37. Why No MLOps Platform Yet
+# 36. Chưa cần MLOps Platform
 
 Sigma V1 không phải ML platform.
 
-Nếu model training/deployment trở thành production requirement lớn, có
-thể xem xét MLOps tooling.
+Nếu model training/deployment trở thành production requirement lớn, có thể xem xét MLOps tooling.
 
 Hiện tại:
 
-``` text
+```text
 Research
-→ Experiment
-→ Evaluation
-→ Core
+    ↓
+Experiment
+    ↓
+Evaluation
+    ↓
+Core
 ```
 
 là đủ.
 
-------------------------------------------------------------------------
+---
 
-# 38. Why No Workflow Orchestrator Yet
+# 37. Chưa cần Workflow Orchestrator
 
-Sigma V1 không cần workflow orchestration platform chỉ để chạy:
+V1 không cần orchestration platform chỉ để chạy:
 
-``` text
+```text
 Data
-→ Modeling
-→ Scenario
-→ Risk
+  ↓
+Modeling
+  ↓
+Scenario
+  ↓
+Risk
 ```
 
-Application layer có thể orchestrate workflow.
+Application layer có thể điều phối workflow.
 
-Nếu sau này xuất hiện:
+Chỉ đánh giá orchestration khi xuất hiện:
 
--   scheduled pipelines;
--   distributed jobs;
--   data dependencies;
--   retry-heavy workflows;
+- scheduled pipelines;
+- distributed jobs;
+- data dependencies;
+- retry-heavy workflows.
 
-thì mới đánh giá orchestration technology.
+---
 
-------------------------------------------------------------------------
+# 38. Technology Decision Matrix
 
-# 39. Technology Decision Matrix
+| Requirement | Choice | Lý do |
+|---|---|---|
+| General runtime | Python 3.12 | Unified ecosystem |
+| Dependency management | uv | Fast, reproducible |
+| API | FastAPI | Clear API boundary |
+| UI | Taipy | Python-native analytics UI |
+| Numerical | NumPy | Core numerical primitives |
+| Data | pandas | Financial time-series / data manipulation |
+| Statistics | SciPy / statsmodels | Scientific / statistical methods |
+| ML | scikit-learn | Classical ML baseline |
+| Visualization | Plotly | Interactive analytical charts |
+| Quantum | Qiskit | Quantum SDK |
+| Simulation | Qiskit Aer | Local / noisy simulation |
+| Testing | pytest | Python testing ecosystem |
+| Lint / format | Ruff | Unified fast tooling |
+| Type checking | Pyright | Static analysis |
+| Docs | Markdown / Mermaid | Version-controlled documentation |
+| VCS | Git | Collaboration / versioning |
 
-  Requirement             Choice                Reason
-  ----------------------- --------------------- -----------------------------------------
-  General runtime         Python 3.12           Unified ecosystem
-  Dependency management   uv                    Fast, reproducible
-  API                     FastAPI               Clear API boundary
-  UI                      Taipy                 Python-native analytics UI
-  Numerical               NumPy                 Core numerical primitives
-  Data                    pandas                Financial time-series/data manipulation
-  Statistics              SciPy / statsmodels   Scientific/statistical methods
-  ML                      scikit-learn          Classical ML baseline
-  Visualization           Plotly                Interactive analytical charts
-  Quantum                 Qiskit                Quantum SDK
-  Simulation              Qiskit Aer            Local/noisy simulation
-  Testing                 pytest                Python testing ecosystem
-  Lint/format             Ruff                  Unified fast tooling
-  Type checking           Pyright               Static analysis
-  Docs                    Markdown/Mermaid      Version-controlled documentation
-  VCS                     Git                   Collaboration/versioning
+---
 
-------------------------------------------------------------------------
+# 39. Technology Evolution
 
-# 40. Technology Evolution Rules
+Technology changes đi theo:
 
-Technology changes phải tuân theo:
-
-``` text
+```text
 Requirement
     ↓
 Evaluate Current Stack
@@ -1156,19 +1066,19 @@ Update Documentation
 
 Không thay technology chỉ vì:
 
-``` text
+```text
 Newer
 More Popular
 More Enterprise
 ```
 
-------------------------------------------------------------------------
+---
 
-# 41. Upgrade Policy
+# 40. Upgrade Policy
 
 Dependency upgrade quan trọng phải kiểm tra:
 
-``` text
+```text
 Compatibility
 Tests
 Scientific Results
@@ -1179,7 +1089,7 @@ API Contracts
 
 Đặc biệt với:
 
-``` text
+```text
 NumPy
 SciPy
 pandas
@@ -1188,15 +1098,15 @@ Taipy
 FastAPI
 ```
 
-các upgrade có thể ảnh hưởng behavior hoặc compatibility.
+vì upgrade có thể ảnh hưởng behavior hoặc compatibility.
 
-------------------------------------------------------------------------
+---
 
-# 42. Reproducibility Stack
+# 41. Reproducibility Stack
 
-Reproducibility của Sigma dựa trên:
+Reproducibility dựa trên:
 
-``` text
+```text
 Python Version
 +
 uv.lock
@@ -1214,42 +1124,35 @@ Random Seed
 Quantum Backend Configuration
 ```
 
-Không cần mọi experiment phải có mọi field, nhưng experiment quan trọng
-phải có đủ context để tái lập.
+Không phải experiment nào cũng cần mọi field, nhưng experiment quan trọng phải có đủ context để tái lập.
 
-------------------------------------------------------------------------
+---
 
-# 43. Security Rules
+# 42. Security
 
-Technology stack phải hỗ trợ nguyên tắc:
-
-``` text
-Secrets outside source code
-```
+Secrets phải nằm ngoài source code.
 
 API credentials:
 
-``` text
+```text
 Environment Variables
 ```
 
-không:
+Không:
 
-``` text
+```text
 hard-coded in Python
 hard-coded in notebook
 committed in config
 ```
 
-------------------------------------------------------------------------
+---
 
-# 44. Performance Philosophy
+# 43. Performance Philosophy
 
 Sigma không optimize prematurely.
 
-Flow:
-
-``` text
+```text
 Correctness
     ↓
 Profile
@@ -1261,71 +1164,65 @@ Optimize
 Measure Again
 ```
 
-Không dùng:
+Không dùng distributed infrastructure để giải quyết bottleneck chưa được đo.
 
-``` text
-Distributed Infrastructure
-```
+---
 
-để giải quyết một bottleneck chưa được đo.
+# 44. Technology Stack Success Criteria
 
-------------------------------------------------------------------------
+Technology stack V1 đạt yêu cầu khi:
 
-# 45. Technology Stack Success Criteria
+- developer setup environment reproducibly;
+- Core chạy độc lập với UI;
+- API có boundary rõ;
+- Classical Risk Engine không phụ thuộc Quantum;
+- Quantum research có simulator;
+- testing có unit / integration / evaluation;
+- documentation được version-control;
+- dependency footprint không phình vì premature infrastructure;
+- stack có thể evolve khi workload thực sự thay đổi.
 
-Technology stack V1 được xem là đạt yêu cầu khi:
+---
 
--   developer có thể setup environment reproducibly;
--   Core chạy độc lập với UI;
--   API có boundary rõ;
--   Classical Risk Engine không phụ thuộc Quantum;
--   Quantum research có simulator;
--   testing có unit/integration/evaluation layers;
--   documentation được version-control;
--   dependencies không bị phình do premature infrastructure;
--   stack có thể evolve khi workload thực sự thay đổi.
+# 45. Final Stack
 
-------------------------------------------------------------------------
-
-# 46. Final Stack
-
-``` text
-                    SIGMA
-                      │
-             ┌────────┴────────┐
-             │                 │
-          CLIENT             API
-          Taipy            FastAPI
-             │                 │
-             └────────┬────────┘
-                      ▼
-                 SIGMA CORE
-                      │
-       ┌──────────────┼──────────────┐
-       ▼              ▼              ▼
-     Data          Modeling        Risk
-       │              │              │
-       └──────────────┼──────────────┘
-                      ▼
-                  Scenarios
-                      │
-          ┌───────────┴───────────┐
-          ▼                       ▼
-     Classical                 Quantum
-                               Qiskit
-                               Aer
-          │                       │
-          └───────────┬───────────┘
-                      ▼
-                 Benchmark
-                      │
-                      ▼
-               Risk Intelligence
+```text
+                         SIGMA
+                           │
+                 ┌─────────┴─────────┐
+                 │                   │
+               CLIENT               API
+               Taipy              FastAPI
+                 │                   │
+                 └─────────┬─────────┘
+                           ▼
+                       SIGMA CORE
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+            Data        Modeling       Risk
+              │            │            │
+              └────────────┼────────────┘
+                           ▼
+                       Scenarios
+                           │
+                 ┌─────────┴─────────┐
+                 ▼                   ▼
+             Classical            Quantum
+                                  Qiskit
+                                  Aer
+                 │                   │
+                 └─────────┬─────────┘
+                           ▼
+                       Benchmark
+                           │
+                           ▼
+                    Risk Intelligence
 ```
 
 Development foundation:
 
-``` text
+```text
 Python 3.12
     +
 uv
@@ -1339,30 +1236,27 @@ Ruff
 Pyright
 ```
 
-------------------------------------------------------------------------
+---
 
-# 47. Technology North Star
+# 46. Technology North Star
 
-> **Sigma uses Python as the unified computational ecosystem, FastAPI as
-> the stable product boundary, Taipy as a replaceable reference client,
-> classical scientific libraries as the baseline, and Qiskit as a
-> controlled computational enhancement layer.**
+> **Sigma dùng Python làm computational ecosystem thống nhất, FastAPI làm product boundary ổn định, Taipy làm reference client có thể thay thế, classical scientific libraries làm baseline và Qiskit làm computational enhancement layer được kiểm soát.**
 
 Không technology nào là product identity.
 
 Product identity là:
 
-``` text
+```text
 Financial Risk Intelligence
 ```
 
 Technology chỉ là phương tiện để xây dựng nó.
 
-------------------------------------------------------------------------
+---
 
-# 48. Final Principle
+# 47. Final Principle
 
-``` text
+```text
 Requirement
     ↓
 Architecture
@@ -1376,15 +1270,15 @@ Measurement
 
 Không:
 
-``` text
+```text
 Technology
     ↓
 Find a problem for it
 ```
 
-Và đặc biệt:
+Đặc biệt:
 
-``` text
+```text
 Quantum Technology
     ↓
 Financial Problem
@@ -1392,9 +1286,9 @@ Financial Problem
 
 không phải hướng của Sigma.
 
-Hướng đúng là:
+Hướng đúng:
 
-``` text
+```text
 Financial Problem
     ↓
 Scientific Formulation

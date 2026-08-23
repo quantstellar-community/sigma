@@ -1,70 +1,71 @@
-# Sigma --- Workflow
+# Sigma — Quy trình Vận hành
 
-> **Phiên bản:** 0.1\
-> **Trạng thái:** Draft / Internal Baseline\
-> **Phạm vi:** Product workflow, risk analysis workflow, research
-> workflow và Classical--Quantum benchmark workflow\
-> **Sản phẩm:** Sigma Risk Intelligence
+**Phiên bản:** 0.2  
+**Trạng thái:** Draft / Internal Baseline  
+**Phạm vi:** Product workflow, risk analysis, research và Classical–Quantum benchmark  
+**Sản phẩm:** Sigma Risk Intelligence
 
-------------------------------------------------------------------------
+---
 
 ## 1. Mục đích
 
-`WORKFLOW.md` mô tả cách Sigma vận hành từ **financial input → modeling
-→ risk estimation → benchmark → decision-support output**.
+`WORKFLOW.md` mô tả cách một yêu cầu đi qua Sigma:
 
-Tài liệu này trả lời:
-
-> **Một yêu cầu phân tích rủi ro đi qua Sigma như thế nào?**
-
-Đồng thời định nghĩa workflow nghiên cứu để Classical và Quantum được
-phát triển và đánh giá theo cùng một financial problem.
-
-Các workflow trong tài liệu này được xây dựng trên định hướng hiện tại
-của Sigma: V1 là **Regime-Aware Portfolio Risk Intelligence Engine**,
-với pipeline từ market data → returns/features → volatility/regime
-modeling → scenario generation → loss distribution → classical/quantum
-estimation → VaR/CVaR → API → dashboard. fileciteturn16file13
-
-------------------------------------------------------------------------
-
-# 2. Workflow Philosophy
-
-Sigma không bắt đầu bằng:
-
-``` text
-Chọn một Quantum Algorithm
-        ↓
-Tìm financial problem để áp dụng
+```text
+Financial Input
+      ↓
+Data Validation
+      ↓
+Modeling
+      ↓
+Scenario Generation
+      ↓
+Risk Estimation
+      ↓
+Classical / Quantum Benchmark
+      ↓
+Risk Intelligence
+      ↓
+Decision Support
+      ↓
+API / Client
 ```
 
-Sigma bắt đầu bằng:
+Tài liệu cũng định nghĩa research workflow để Classical và Quantum được phát triển, benchmark và đánh giá trên cùng một financial problem.
 
-``` text
+Sigma V1 tập trung vào **Regime-Aware Portfolio Risk Intelligence Engine**.
+
+---
+
+# 2. Nguyên tắc Workflow
+
+Sigma không bắt đầu bằng việc chọn Quantum algorithm.
+
+```text
 Financial Problem
-        ↓
+      ↓
 Financial Formulation
-        ↓
+      ↓
 Classical Baseline
-        ↓
+      ↓
 Quantum Where Justified
-        ↓
+      ↓
 Fair Benchmark
-        ↓
+      ↓
 Measured Value
-        ↓
+      ↓
 Risk Intelligence
 ```
 
-Đây là nguyên tắc xuyên suốt mọi workflow của Sigma.
+Quantum là **computational enhancement layer**, không thay thế toàn bộ financial modeling pipeline.
 
-------------------------------------------------------------------------
+---
 
-# 3. Product-Level Workflow
+# 3. Product Workflow
 
 Workflow tổng thể:
 
-``` text
+```text
 Market Data
     ↓
 Data Validation & Preprocessing
@@ -96,34 +97,28 @@ API
 Dashboard / Client
 ```
 
-Trong đó Quantum là **computational enhancement layer**, không phải một
-workflow thay thế toàn bộ financial modeling pipeline.
+---
 
-------------------------------------------------------------------------
-
-# 4. Workflow A --- Data Preparation
+# 4. Data Preparation
 
 ## 4.1. Input
 
-Sigma có thể nhận market data từ data provider hoặc dataset đã được
-chuẩn bị.
+Sigma có thể nhận market data từ data provider hoặc dataset đã chuẩn bị.
 
-Các dữ liệu quan trọng có thể bao gồm:
+Dữ liệu chính có thể gồm:
 
-``` text
+```text
 Price History
 Volume / Market Variables khi cần
 Portfolio Holdings / Weights
 Analysis Parameters
 ```
 
-------------------------------------------------------------------------
-
 ## 4.2. Validation
 
-Trước khi modeling, data phải được kiểm tra:
+Trước modeling, kiểm tra:
 
-``` text
+```text
 Asset Identity
 Timestamp Ordering
 Duplicates
@@ -133,43 +128,37 @@ Frequency
 Adjustment Policy
 ```
 
-Nếu dữ liệu không đạt yêu cầu:
+Nếu validation thất bại:
 
-``` text
+```text
 Data
-  ↓
+ ↓
 Validation
-  ↓
+ ↓
 FAIL
-  ↓
+ ↓
 Không chạy Risk Engine
 ```
 
-Không được để lỗi data silently đi vào financial model.
-
-------------------------------------------------------------------------
+Không để lỗi dữ liệu silently đi vào financial model.
 
 ## 4.3. Preprocessing
 
-Workflow:
-
-``` text
+```text
 Raw Market Data
-        ↓
+      ↓
 Cleaning
-        ↓
+      ↓
 Alignment
-        ↓
+      ↓
 Adjustment / Transformation
-        ↓
+      ↓
 Validated Dataset
 ```
 
-Return convention phải được xác định rõ.
+Return convention phải được xác định rõ:
 
-Ví dụ:
-
-``` text
+```text
 Price
   ↓
 Simple Return
@@ -177,122 +166,105 @@ Simple Return
 
 hoặc:
 
-``` text
+```text
 Price
   ↓
 Log Return
 ```
 
-Không được để các module tự chọn convention khác nhau.
+Các module phải dùng cùng convention.
 
-------------------------------------------------------------------------
+---
 
-# 5. Workflow B --- Return & Statistical Modeling
+# 5. Return & Statistical Modeling
 
-Sau khi data được validation:
+Sau validation:
 
-``` text
+```text
 Validated Market Data
-        ↓
+      ↓
 Returns
-        ↓
+      ↓
 Volatility
-        ↓
+      ↓
 Correlation / Covariance
-        ↓
+      ↓
 Market Dynamics
 ```
 
 Các output này là nền cho risk modeling.
 
-------------------------------------------------------------------------
-
 ## 5.1. Volatility
 
-Sigma có thể sử dụng:
+Có thể sử dụng historical volatility, conditional volatility, GARCH hoặc methodology phù hợp khác.
 
--   historical volatility;
--   conditional volatility;
--   GARCH hoặc methodology phù hợp khác.
-
-Model được lựa chọn dựa trên financial/statistical justification, không
-phải mặc định.
-
-------------------------------------------------------------------------
+Model phải có financial/statistical justification.
 
 ## 5.2. Market Regime
 
 Nếu sử dụng regime-aware methodology:
 
-``` text
+```text
 Returns / Volatility
-        ↓
+      ↓
 Regime Model
-        ↓
+      ↓
 Inferred Market Regime
 ```
 
 Ví dụ:
 
-``` text
+```text
 Low Volatility
 High Volatility
 Stress
 ```
 
-Regime là **model output**, không được coi là ground truth nếu được suy
-ra từ dữ liệu.
-
-------------------------------------------------------------------------
+Regime là **model output**, không phải ground truth nếu được suy ra từ dữ liệu.
 
 ## 5.3. Distribution
 
-Workflow:
-
-``` text
+```text
 Historical Data
-        ↓
+      ↓
 Statistical Model
-        ↓
+      ↓
 Probability Distribution
-        ↓
+      ↓
 Scenario Inputs
 ```
 
-Có thể xem xét fat-tail distribution như Student-t khi dữ liệu và
-methodology phù hợp.
+Có thể sử dụng fat-tail distribution như Student-t khi phù hợp.
 
 Nếu distribution phụ thuộc regime:
 
-``` text
+```text
 P(Return | Regime)
 ```
 
 thì conditioning theo regime phải được giữ trong workflow.
 
-------------------------------------------------------------------------
+---
 
-# 6. Workflow C --- Portfolio Risk Context
+# 6. Portfolio Risk Context
 
 Market distribution chưa phải portfolio risk.
 
-Sigma phải kết hợp:
-
-``` text
+```text
 Market / Distribution Inputs
 +
 Portfolio Holdings / Weights
-        ↓
+      ↓
 Portfolio Return
-        ↓
+      ↓
 Portfolio P&L
-        ↓
+      ↓
 Portfolio Loss
 ```
 
-Portfolio risk analysis phải xác định rõ:
+Mỗi analysis phải xác định rõ:
 
-``` text
+```text
 Portfolio
 Currency
 Horizon
@@ -301,83 +273,70 @@ Weights / Exposure
 Model Configuration
 ```
 
-------------------------------------------------------------------------
+---
 
-# 7. Workflow D --- Scenario Generation
+# 7. Scenario Generation
 
-Scenario generation là cầu nối giữa statistical modeling và risk
-estimation.
+Scenario generation là cầu nối giữa statistical modeling và risk estimation.
 
-``` text
+```text
 Distribution / Market Model
-        ↓
+      ↓
 Scenario Configuration
-        ↓
+      ↓
 Scenario Set
 ```
 
 Scenario có thể đến từ:
 
-``` text
+```text
 Monte Carlo
 Historical Scenarios
 Stress Scenarios
 Other Explicitly Defined Methods
 ```
 
-Các scenario phải giữ method và configuration phù hợp để có thể truy
-nguyên.
-
-------------------------------------------------------------------------
+Method và configuration phải được lưu để có thể truy nguyên.
 
 ## 7.1. Monte Carlo
 
-Workflow classical:
-
-``` text
+```text
 Distribution
-      ↓
+    ↓
 Random Sampling
-      ↓
+    ↓
 Simulated Market Scenarios
-      ↓
+    ↓
 Portfolio P&L
-      ↓
+    ↓
 Portfolio Loss
 ```
 
-Số lượng scenarios là modeling parameter và cần được lựa chọn/đánh giá
-dựa trên accuracy/convergence, không phải một con số tùy tiện.
-
-------------------------------------------------------------------------
+Scenario count là modeling parameter và phải được lựa chọn/đánh giá dựa trên accuracy hoặc convergence.
 
 ## 7.2. Stress Testing
 
-Stress workflow:
-
-``` text
+```text
 Base Portfolio
-      ↓
+    ↓
 Stress Definition
-      ↓
+    ↓
 Market Shock
-      ↓
+    ↓
 Revaluation
-      ↓
+    ↓
 Portfolio Loss
-      ↓
+    ↓
 Risk Impact
 ```
 
 Stress scenario phải được phân biệt với stochastic Monte Carlo scenario.
 
-------------------------------------------------------------------------
+---
 
-# 8. Workflow E --- Loss Distribution
+# 8. Loss Distribution
 
-Sau khi scenario được tạo:
-
-``` text
+```text
 Scenario
     ↓
 Portfolio Revaluation / P&L
@@ -387,18 +346,9 @@ Loss
 Loss Distribution
 ```
 
-Ví dụ conceptual:
+Từ loss distribution, Sigma có thể tính:
 
-``` text
-Scenario 1 → Loss 18,500
-Scenario 2 → Gain / negative loss
-Scenario 3 → Loss 42,100
-...
-```
-
-Từ distribution này Sigma có thể tính:
-
-``` text
+```text
 VaR
 CVaR / Expected Shortfall
 Expected Loss
@@ -409,47 +359,43 @@ Risk Contribution
 
 Loss convention phải nhất quán trong toàn workflow.
 
-------------------------------------------------------------------------
+---
 
-# 9. Workflow F --- Classical Risk Estimation
+# 9. Classical Risk Estimation
 
 Classical Risk Engine là baseline bắt buộc.
 
-``` text
+```text
 Portfolio
     +
 Scenario Set
-        ↓
+      ↓
 Portfolio Losses
-        ↓
+      ↓
 Loss Distribution
-        ↓
+      ↓
 Classical Risk Estimator
-        ↓
+      ↓
 VaR / CVaR / Other Metrics
 ```
 
 Classical engine phải chạy độc lập với Quantum.
 
-Nếu Quantum unavailable:
-
-``` text
+```text
 Quantum unavailable
-        ↓
+      ↓
 Classical Risk Analysis
-        ↓
+      ↓
 Still Functional
 ```
 
-------------------------------------------------------------------------
+---
 
-# 10. Workflow G --- Quantum Risk Estimation
+# 10. Quantum Risk Estimation
 
 Quantum không nhận raw financial data trực tiếp.
 
-Workflow:
-
-``` text
+```text
 Financial Data
       ↓
 Financial Modeling
@@ -473,117 +419,98 @@ Quantum Risk Estimate
 
 Ví dụ financial quantity:
 
-``` text
+```text
 P(Loss > Threshold)
 ```
 
-hoặc một expected value / tail quantity được formulation rõ ràng.
+hoặc expected value / tail quantity được formulation rõ ràng.
 
 Quantum chỉ giải computational subproblem phù hợp.
 
-------------------------------------------------------------------------
+---
 
-# 11. Workflow H --- Quantum Architecture Comparison
+# 11. Quantum Architecture Comparison
 
-Sigma không chỉ benchmark:
-
-``` text
-Monte Carlo vs QAE
-```
-
-mà nên xem xét các architecture có boundary rõ.
+Sigma cần phân biệt rõ các architecture.
 
 ## A. Pure Classical
 
-``` text
+```text
 Historical Data
-    ↓
+      ↓
 Classical Modeling
-    ↓
+      ↓
 Classical Scenario Generation
-    ↓
+      ↓
 Classical Monte Carlo
-    ↓
+      ↓
 VaR / CVaR
 ```
 
 Đây là baseline.
 
-------------------------------------------------------------------------
-
 ## B. Naive Hybrid
 
-``` text
+```text
 Historical Data
-    ↓
+      ↓
 Classical Modeling
-    ↓
+      ↓
 Classical Scenarios
-    ↓
+      ↓
 Quantum State Loading
-    ↓
+      ↓
 QAE / Estimator
-    ↓
+      ↓
 VaR / CVaR
 ```
 
-Architecture này đặc biệt quan trọng để kiểm tra
-state-preparation/loading overhead.
-
-------------------------------------------------------------------------
+Architecture này dùng để đánh giá state-preparation/loading overhead.
 
 ## C. Quantum / Co-designed Scenario Architecture
 
-``` text
+```text
 Historical Data
-    ↓
+      ↓
 Classical Parameter Estimation
-    ↓
+      ↓
 Quantum Scenario / Distribution Representation
-    ↓
+      ↓
 Quantum Estimation
-    ↓
+      ↓
 VaR / CVaR
 ```
 
-Architecture này chỉ được sử dụng khi có mathematical và computational
-justification.
+Chỉ sử dụng khi có mathematical và computational justification.
 
-Mục tiêu không phải chứng minh C luôn tốt hơn A/B.
+Mục tiêu không phải chứng minh C luôn tốt hơn A/B, mà xác định:
 
-Mục tiêu là xác định:
+> **Trong điều kiện nào quantum speedup có thể tồn tại sau toàn bộ financial pipeline?**
 
-> **Trong điều kiện nào quantum speedup có thể tồn tại sau toàn bộ
-> financial pipeline?**
+---
 
-Tài liệu nghiên cứu Sigma cũng xác định đây là câu hỏi quan trọng hơn
-việc chỉ so sánh circuit-level QAE với Monte Carlo.
-fileciteturn16file5
-
-------------------------------------------------------------------------
-
-# 12. Workflow I --- Classical--Quantum Benchmark
+# 12. Classical–Quantum Benchmark
 
 Classical và Quantum phải estimate cùng một financial quantity.
 
-``` text
-                SAME FINANCIAL PROBLEM
-                         │
-             ┌───────────┴───────────┐
-             ▼                       ▼
-        Classical                Quantum
-             │                       │
-             ▼                       ▼
-       Risk Estimate            Risk Estimate
-             │                       │
-             └───────────┬───────────┘
-                         ▼
-                     Benchmark
+```text
+            SAME FINANCIAL PROBLEM
+                     │
+          ┌──────────┴──────────┐
+          ▼                     ▼
+      Classical              Quantum
+          │                     │
+          ▼                     ▼
+     Risk Estimate         Risk Estimate
+          │                     │
+          └──────────┬──────────┘
+                     ▼
+                 Benchmark
 ```
 
 Phải giữ phù hợp:
 
-``` text
+```text
 Portfolio
 Dataset
 Model Context
@@ -593,40 +520,34 @@ Confidence Level
 Scenario Context
 ```
 
-------------------------------------------------------------------------
-
 ## 12.1. Accuracy
 
 Có thể ghi nhận:
 
-``` text
+```text
 Estimate
 Absolute Error
 Relative Error
 Convergence
 ```
 
-Cùng một metric definition phải được dùng cho hai phương pháp.
+Metric definition phải giống nhau giữa hai phương pháp.
 
-------------------------------------------------------------------------
-
-## 12.2. Classical Resource Metrics
+## 12.2. Classical Resources
 
 Ví dụ:
 
-``` text
+```text
 Number of Samples
 Runtime
 Memory
 ```
 
-------------------------------------------------------------------------
-
-## 12.3. Quantum Resource Metrics
+## 12.3. Quantum Resources
 
 Khi phù hợp:
 
-``` text
+```text
 Qubits
 Circuit Depth
 Gate Count
@@ -637,19 +558,13 @@ Noise Model
 Backend
 ```
 
-------------------------------------------------------------------------
-
 ## 12.4. End-to-End Cost
 
-Benchmark không được chỉ đo:
+Không chỉ đo quantum circuit runtime.
 
-``` text
-QAE circuit runtime
-```
+Phải xem xét:
 
-mà bỏ qua:
-
-``` text
+```text
 Data Preparation
 +
 State Preparation
@@ -663,15 +578,15 @@ Post-processing
 
 Nếu một overhead nằm ngoài benchmark boundary, phải nói rõ.
 
-------------------------------------------------------------------------
+---
 
-# 13. Workflow J --- Scientific Conclusion
+# 13. Scientific Conclusion
 
-Sau benchmark, Sigma phải kết luận dựa trên evidence.
+Kết luận phải dựa trên evidence.
 
-Các outcome đều hợp lệ:
+Ba outcome đều hợp lệ:
 
-``` text
+```text
 Quantum Advantage
 Quantum No Advantage
 Inconclusive
@@ -679,42 +594,37 @@ Inconclusive
 
 Ví dụ:
 
-``` text
+```text
 Theoretical query advantage observed.
+
 No practical end-to-end runtime advantage
 under the tested conditions.
 ```
 
-Hoặc:
+hoặc:
 
-``` text
+```text
 Classical remains preferable at the evaluated
 portfolio scale and backend constraints.
 ```
 
 Không thay đổi methodology chỉ để tạo Quantum win.
 
-------------------------------------------------------------------------
+---
 
-# 14. Workflow K --- Risk Intelligence
+# 14. Risk Intelligence
 
 Risk output không dừng ở một con số.
 
-Sigma nên biến:
-
-``` text
+```text
 Risk Estimate
-```
-
-thành:
-
-``` text
+      ↓
 Risk Intelligence
 ```
 
-Bao gồm:
+Có thể gồm:
 
-``` text
+```text
 Risk Summary
 Risk Drivers
 Scenario Impact
@@ -725,7 +635,7 @@ Uncertainty / Limitations
 
 Ví dụ:
 
-``` text
+```text
 VaR 95%
 CVaR 99%
 Volatility
@@ -734,15 +644,13 @@ Worst Scenarios
 Quantum Benchmark Status
 ```
 
-------------------------------------------------------------------------
+---
 
-# 15. Workflow L --- Decision Support
+# 15. Decision Support
 
-Decision support có thể đưa ra insight rule-based.
+Decision support có thể đưa ra insight rule-based, ví dụ:
 
-Ví dụ:
-
-``` text
+```text
 Portfolio concentration is high.
 
 NVDA contributes the largest share of tail risk.
@@ -755,26 +663,23 @@ provide lower end-to-end runtime under the tested setup.
 
 Đây là:
 
-``` text
+```text
 Decision Support
 ```
 
 không phải:
 
-``` text
+```text
 Investment Advice
 ```
 
-Sigma không biến risk analytics thành automatic trading recommendation
-trong V1.
+Sigma V1 không biến risk analytics thành automatic trading recommendation.
 
-------------------------------------------------------------------------
+---
 
-# 16. Workflow M --- Stress Testing
+# 16. Stress Testing
 
-Stress workflow:
-
-``` text
+```text
 User
  ↓
 Select / Define Stress
@@ -790,24 +695,24 @@ Loss Distribution / Risk Impact
 Compare with Base Case
 ```
 
-UI có thể cho phép custom scenario như:
+Có thể hỗ trợ:
 
-``` text
-Market shock
-Volatility shock
-Sector shock
-Historical crisis scenario
+```text
+Market Shock
+Volatility Shock
+Sector Shock
+Historical Crisis Scenario
 ```
 
-Nhưng stress assumptions phải được hiển thị rõ.
+Stress assumptions phải được hiển thị rõ.
 
-------------------------------------------------------------------------
+---
 
-# 17. Workflow N --- API Product Flow
+# 17. API Product Flow
 
 Sau khi Core computation ổn định:
 
-``` text
+```text
 Client
   ↓
 FastAPI
@@ -826,16 +731,15 @@ Risk Result
 API Response
 ```
 
-FastAPI chịu trách nhiệm integration boundary, không sở hữu financial
-computation.
+FastAPI là integration boundary, không sở hữu financial computation.
 
-------------------------------------------------------------------------
+---
 
-# 18. Workflow O --- UI Flow
+# 18. UI Flow
 
 Taipy là reference client V1.
 
-``` text
+```text
 User
   ↓
 Taipy
@@ -857,27 +761,27 @@ Visualization
 
 UI ưu tiên:
 
-``` text
+```text
 Risk
-→ Drivers
-→ Scenario
-→ Stress
-→ Quantum Benchmark
+  ↓
+Drivers
+  ↓
+Scenario
+  ↓
+Stress
+  ↓
+Quantum Benchmark
 ```
 
 Không đặt Quantum lên trước financial risk.
 
-Tài liệu UI của Sigma cũng định hướng một **Risk Intelligence
-Workstation** với các khu vực Portfolio, Risk, Scenario, Stress, Quantum
-và Classical-vs-Quantum comparison. fileciteturn16file0
+---
 
-------------------------------------------------------------------------
-
-# 19. Workflow P --- Research Lifecycle
+# 19. Research Lifecycle
 
 Research workflow chính thức:
 
-``` text
+```text
 Problem
     ↓
 Hypothesis
@@ -897,37 +801,25 @@ Scientific Conclusion
 Engineering / Product Evaluation
 ```
 
-Mỗi bước phải có output rõ.
-
-------------------------------------------------------------------------
-
 ## 19.1. Problem
 
 Ví dụ:
 
-> Có thể estimate một tail-risk quantity bằng Quantum với
-> computational/resource profile có ý nghĩa hơn Classical trong một điều
-> kiện xác định hay không?
-
-------------------------------------------------------------------------
+> Có thể estimate một tail-risk quantity bằng Quantum với computational/resource profile có ý nghĩa hơn Classical trong một điều kiện xác định hay không?
 
 ## 19.2. Hypothesis
 
 Ví dụ:
 
-> Quantum amplitude estimation có thể giảm sample/query complexity cho
-> một risk estimation problem cụ thể, nhưng practical benefit phụ thuộc
-> mạnh vào state preparation, oracle và backend constraints.
+> Quantum amplitude estimation có thể giảm sample/query complexity cho một risk estimation problem cụ thể, nhưng practical benefit phụ thuộc mạnh vào state preparation, oracle và backend constraints.
 
 Hypothesis không được trình bày như fact.
-
-------------------------------------------------------------------------
 
 ## 19.3. Mathematical Formulation
 
 Phải xác định:
 
-``` text
+```text
 Input
 Quantity
 Distribution
@@ -936,27 +828,15 @@ Estimator
 Assumptions
 ```
 
-------------------------------------------------------------------------
-
 ## 19.4. Classical Baseline
 
-Phải xây Classical baseline trước.
-
-Ví dụ:
-
-``` text
-Monte Carlo
-```
-
-với configuration được ghi nhận.
-
-------------------------------------------------------------------------
+Phải xây Classical baseline trước, ví dụ Monte Carlo với configuration được ghi nhận.
 
 ## 19.5. Quantum Method
 
 Sau baseline mới triển khai:
 
-``` text
+```text
 State Preparation
 Oracle
 QAE / IAE / MLAE
@@ -964,19 +844,15 @@ QAE / IAE / MLAE
 
 theo formulation đã xác định.
 
-------------------------------------------------------------------------
-
 ## 19.6. Fair Benchmark
 
 Classical và Quantum phải được đánh giá trên cùng financial problem.
 
-------------------------------------------------------------------------
-
 ## 19.7. Resource Analysis
 
-Phải xem xét:
+Xem xét:
 
-``` text
+```text
 Accuracy
 Runtime
 Queries
@@ -989,26 +865,20 @@ Noise
 Scalability
 ```
 
-------------------------------------------------------------------------
-
 ## 19.8. Scientific Conclusion
 
-Kết luận phải trả lời:
+Phải trả lời:
 
-``` text
+```text
 Hypothesis supported?
 Under which conditions?
 What overhead dominates?
 What remains uncertain?
 ```
 
-------------------------------------------------------------------------
-
 ## 19.9. Product Evaluation
 
-Cuối cùng:
-
-``` text
+```text
 Research Result
       ↓
 Practical Utility
@@ -1016,15 +886,15 @@ Practical Utility
 Product Relevance
 ```
 
-Một research result tốt không nhất thiết trở thành production feature.
+Research result tốt không nhất thiết trở thành production feature.
 
-------------------------------------------------------------------------
+---
 
-# 20. Workflow Q --- Research → Production
+# 20. Research → Production
 
-Research và production không chạy cùng boundary.
+Research và production có boundary khác nhau.
 
-``` text
+```text
 research/
     ↓
 Explore
@@ -1042,7 +912,7 @@ src/sigma/
 
 Không:
 
-``` text
+```text
 Notebook
     ↓
 Copy-paste
@@ -1050,63 +920,60 @@ Copy-paste
 API
 ```
 
-Research notebook có thể fail, thử nhiều phương pháp và chứa exploratory
-code.
-
 Production Core phải có:
 
-``` text
+```text
 Clear Interface
 Tests
 Documentation
 Reproducibility
 ```
 
-------------------------------------------------------------------------
+---
 
-# 21. Workflow R --- Error Handling
+# 21. Error Handling
 
-Nếu lỗi xảy ra:
+## Input Validation Error
 
-``` text
+```text
 Input Validation Error
-        ↓
-Return actionable API error
+      ↓
+Actionable API Error
 ```
 
-Nếu modeling không thể chạy:
+## Modeling Failure
 
-``` text
+```text
 Model Failure
-        ↓
+      ↓
 Do not produce misleading Risk Result
 ```
 
-Nếu Quantum backend unavailable:
+## Quantum Failure
 
-``` text
+```text
 Quantum Failure
-        ↓
+      ↓
 Classical Risk Still Available
 ```
 
-Nếu benchmark incomplete:
+## Incomplete Benchmark
 
-``` text
+```text
 Incomplete Benchmark
-        ↓
+      ↓
 Mark as Inconclusive
 ```
 
 Không biến missing result thành fabricated result.
 
-------------------------------------------------------------------------
+---
 
-# 22. Workflow S --- Reproducibility
+# 22. Reproducibility
 
-Một analysis quan trọng phải có context:
+Analysis quan trọng phải có context phù hợp:
 
-``` text
+```text
 Code Version
 Dataset Version
 Configuration
@@ -1117,11 +984,9 @@ Quantum Backend
 Noise Configuration
 ```
 
-khi các thông tin đó áp dụng.
-
 Workflow:
 
-``` text
+```text
 Analysis Request
       ↓
 Resolved Configuration
@@ -1133,9 +998,9 @@ Result
 Metadata / Artifact
 ```
 
-Mục tiêu là có thể truy nguyên:
+Mục tiêu:
 
-``` text
+```text
 Result
   ↓
 Analysis
@@ -1145,20 +1010,20 @@ Configuration
 Dataset / Model
 ```
 
-------------------------------------------------------------------------
+---
 
-# 23. Workflow T --- Benchmark Artifact
+# 23. Benchmark Artifact
 
-Một benchmark result không được chỉ là:
+Benchmark result không nên chỉ là:
 
-``` text
+```text
 Classical = 0.047
 Quantum = 0.049
 ```
 
-Artifact nên giữ context:
+Artifact nên giữ:
 
-``` text
+```text
 Problem
 Dataset
 Configuration
@@ -1171,18 +1036,18 @@ Noise
 Conclusion
 ```
 
-Điều này giúp benchmark có scientific value thay vì chỉ là một bảng số.
+Benchmark vì vậy có scientific value thay vì chỉ là một bảng số.
 
-------------------------------------------------------------------------
+---
 
-# 24. Workflow U --- End-to-End Example
+# 24. End-to-End Example
 
 Một analysis điển hình:
 
-``` text
+```text
 1. User selects portfolio
         ↓
-2. User selects time horizon / confidence level
+2. User selects horizon / confidence level
         ↓
 3. Data is loaded
         ↓
@@ -1211,14 +1076,13 @@ Một analysis điển hình:
 15. Taipy displays risk / scenario / benchmark
 ```
 
-------------------------------------------------------------------------
+---
 
-# 25. What Does Not Belong in the Core Workflow
+# 25. Không thuộc Core Workflow
 
-Sigma V1 không đưa các hoạt động sau vào core workflow nếu chưa có
-requirement:
+Sigma V1 không đưa các capability sau vào core workflow nếu chưa có requirement:
 
-``` text
+```text
 Dynamic Volatility Targeting
 Automatic Rebalancing
 Dynamic Leverage
@@ -1226,88 +1090,99 @@ Trading Execution
 Autonomous Portfolio Optimization
 ```
 
-Các capability này thuộc decision/strategy layer rộng hơn và không phải
-core risk measurement workflow.
+Đây là strategy/decision capabilities rộng hơn, không phải core risk measurement workflow.
 
-------------------------------------------------------------------------
+---
 
 # 26. Workflow Boundaries
 
 ### Data
 
-``` text
+```text
 Source
-→ Validation
-→ Modeling Input
+  ↓
+Validation
+  ↓
+Modeling Input
 ```
 
 ### Modeling
 
-``` text
+```text
 Returns
-→ Volatility
-→ Regime
-→ Distribution
+  ↓
+Volatility
+  ↓
+Regime
+  ↓
+Distribution
 ```
 
 ### Scenarios
 
-``` text
+```text
 Distribution
-→ Scenario
+  ↓
+Scenario
 ```
 
 ### Risk
 
-``` text
+```text
 Scenario
-→ Loss
-→ Risk Metrics
+  ↓
+Loss
+  ↓
+Risk Metrics
 ```
 
 ### Quantum
 
-``` text
+```text
 Financial Quantity
-→ Quantum Representation
-→ Estimation
+  ↓
+Quantum Representation
+  ↓
+Estimation
 ```
 
 ### Product
 
-``` text
+```text
 Risk Result
-→ API
-→ Client
+  ↓
+API
+  ↓
+Client
 ```
 
 Các boundary này phải được giữ ổn định khi implementation phát triển.
 
-------------------------------------------------------------------------
+---
 
 # 27. Workflow Ownership
 
-  Workflow                        Primary Owner                       Collaborators
-  ------------------------------- ----------------------------------- -------------------
-  Data Validation                 Data & Statistical Modeling         Quant
-  Return / Statistical Modeling   Data & Statistical Modeling         Quant
-  Financial Formulation           Quantitative Finance                Team Lead
-  Scenario Generation             Classical Risk Engine               Data + Quant
-  Classical Risk                  Classical Risk Engine               Quant
-  Quantum Estimation              Quantum Computing                   Quant + Classical
-  Benchmark                       Team Lead + Classical + Quantum     Quant
-  API Integration                 Backend / Product                   Core Owners
-  UI Flow                         Backend / Product                   Team
-  Research Methodology            Team Lead + relevant domain owner   Team
-  Product Evaluation              Team Lead + Backend / Product       Domain Owners
+| Workflow | Primary Owner | Collaborators |
+|---|---|---|
+| Data Validation | Data & Statistical Modeling | Quantum |
+| Return / Statistical Modeling | Data & Statistical Modeling | Quantum |
+| Financial Formulation | Quantitative Finance | Team Lead |
+| Scenario Generation | Classical Risk Engine | Data + Quant |
+| Classical Risk | Classical Risk Engine | Quantum |
+| Quantum Estimation | Quantum Computing | Quant + Classical |
+| Benchmark | Team Lead + Classical + Quantum | Quant |
+| API Integration | Backend / Product | Core Owners |
+| UI Flow | Backend / Product | Team |
+| Research Methodology | Team Lead + domain owner | Team |
+| Product Evaluation | Team Lead + Backend / Product | Domain Owners |
 
-------------------------------------------------------------------------
+---
 
 # 28. Workflow Integrity Rules
 
 Mọi workflow quan trọng phải tuân thủ:
 
-``` text
+```text
 No Unvalidated Data
 No Hidden Financial Assumptions
 No Unverified Strong Claims
@@ -1317,15 +1192,15 @@ No Direct UI → Core Coupling
 No Research Notebook → Production Copy-Paste
 ```
 
-Các rule chi tiết nằm trong `RULES.md`.
+Chi tiết nằm trong `RULES.md`.
 
-------------------------------------------------------------------------
+---
 
 # 29. Workflow Decision Tree
 
 Khi thêm một computation mới:
 
-``` text
+```text
 Is there a financial problem?
         │
        No
@@ -1360,7 +1235,7 @@ Can it be benchmarked fairly?
         │
        No
         ↓
-   Refine protocol
+  Refine protocol
         │
        Yes
         ↓
@@ -1371,14 +1246,12 @@ Measure end-to-end cost
 Evaluate product utility
 ```
 
-------------------------------------------------------------------------
+---
 
-# 30. Final Workflow
+# 30. Sigma Workflow
 
-Workflow chuẩn của Sigma có thể rút gọn thành:
-
-``` text
-                 SIGMA WORKFLOW
+```text
+                    SIGMA WORKFLOW
 
 Market Data
      ↓
@@ -1396,31 +1269,31 @@ Scenario Generation
      ↓
 Portfolio Loss Distribution
      ↓
-┌───────────────────────────────┐
-│                               │
-▼                               ▼
-Classical Risk              Quantum Risk
-MC / VaR / CVaR             State / Oracle / QAE
-│                               │
-└───────────────┬───────────────┘
-                ▼
-       Classical–Quantum
-           Benchmark
-                ↓
-         Risk Intelligence
-                ↓
-         Decision Support
-                ↓
+┌──────────────────────────────┐
+│                              │
+▼                              ▼
+Classical Risk             Quantum Risk
+MC / VaR / CVaR            State / Oracle / QAE
+│                              │
+└──────────────┬───────────────┘
+               ▼
+      Classical–Quantum
+          Benchmark
+               ↓
+       Risk Intelligence
+               ↓
+        Decision Support
+               ↓
               API
-                ↓
-        Taipy / Other Client
+               ↓
+       Taipy / Other Client
 ```
 
-------------------------------------------------------------------------
+---
 
-# 31. Final Research Workflow
+# 31. Research Workflow
 
-``` text
+```text
 Problem
   ↓
 Hypothesis
@@ -1440,35 +1313,31 @@ Scientific Conclusion
 Product Evaluation
 ```
 
-Đây là workflow nghiên cứu chuẩn của Sigma.
+Đây là research workflow chuẩn của Sigma.
 
-------------------------------------------------------------------------
+---
 
 # 32. North Star
 
-> **Sigma không tối ưu cho việc tạo ra một Quantum result. Sigma tối ưu
-> cho việc tạo ra một Risk Intelligence result đáng tin cậy và đo lường
-> được giá trị của Quantum khi Quantum thực sự có lý do để xuất hiện.**
+> **Sigma không tối ưu cho việc tạo ra một Quantum result. Sigma tối ưu cho việc tạo ra một Risk Intelligence result đáng tin cậy và đo lường được giá trị của Quantum khi Quantum thực sự có lý do để xuất hiện.**
 
-Do đó:
-
-``` text
+```text
 Financial Problem
-        ↓
+      ↓
 Correct Data
-        ↓
+      ↓
 Sound Modeling
-        ↓
+      ↓
 Reliable Classical Risk
-        ↓
+      ↓
 Justified Quantum Enhancement
-        ↓
+      ↓
 Fair Benchmark
-        ↓
+      ↓
 Measured Value
-        ↓
+      ↓
 Risk Intelligence
-        ↓
+      ↓
 Product
 ```
 
