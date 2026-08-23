@@ -659,9 +659,11 @@ yêu cầu phù hợp, bao gồm:
 
 ------------------------------------------------------------------------
 
-## Định hướng
+## License
 
-> **Sigma không xây Quantum để chứng minh Quantum.**
->
-> Sigma xây dựng **Financial Risk Intelligence** và sử dụng Quantum ở
-> những nơi Quantum thực sự tạo ra giá trị có thể đo lường.
+Copyright © 2026 Quantstellar Technologies.
+
+This project is proprietary software.
+All rights reserved.
+
+See [LICENSE](./LICENSE) for the full license terms.

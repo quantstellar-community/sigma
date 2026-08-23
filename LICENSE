@@ -1,184 +1,189 @@
 QUANTSTELLAR PROPRIETARY LICENSE
-Version 1.0
 
-Copyright (c) 2026 Quantstellar.
+Copyright © 2026 Quantstellar Technologies.
 All rights reserved.
 
-1. DEFINITIONS
 
-“Software” means the source code, object code, documentation, models,
-algorithms, configurations, scripts, research implementations, interfaces,
-and other materials distributed with or as part of this repository.
+1. GRANT OF RIGHTS
 
-“Copyright Holder” means Quantstellar and/or the individual or legal entity
-that lawfully owns the intellectual property rights in the Software.
+Subject to the terms and conditions of this License, Quantstellar Technologies
+("Quantstellar") retains all rights, title, and interest in and to the Software.
 
-“User” means any person or entity accessing or obtaining the Software.
+Except for the limited rights expressly granted under a separate written
+agreement executed by Quantstellar, no license or other right is granted to
+any person or entity under any patent, copyright, trademark, trade secret, or
+other intellectual property right of Quantstellar.
 
-2. OWNERSHIP
 
-The Software and all associated intellectual property rights are and remain
-the property of the Copyright Holder, except for third-party components,
-libraries, datasets, or other materials that are subject to their own
-licenses or rights.
+2. PROPRIETARY NATURE
 
-Nothing in this License transfers ownership of the Software or any
-intellectual property rights to the User.
+The Software is proprietary software and constitutes intellectual property of
+Quantstellar.
 
-3. LICENSE GRANT
+The Software is not distributed under an open-source license, and no right to
+use, reproduce, modify, distribute, or otherwise exploit the Software is
+granted except as expressly authorized in writing by Quantstellar or otherwise
+required by applicable law.
 
-Subject to the terms of this License, the Copyright Holder grants the User
-a limited, revocable, non-exclusive, non-transferable, non-sublicensable
-license to access and use the Software solely for personal, educational,
-academic, research, evaluation, or non-commercial purposes.
 
-No rights are granted beyond those expressly stated in this License.
+3. RESTRICTIONS
 
-4. RESTRICTIONS
+Unless expressly authorized in writing by Quantstellar, no person or entity
+may:
 
-Unless expressly authorized in writing by the Copyright Holder, the User
-must not:
+(a) reproduce, copy, or otherwise duplicate the Software;
 
-a. use the Software for commercial purposes;
+(b) modify, adapt, translate, or create derivative works of the Software;
 
-b. sell, rent, lease, sublicense, or otherwise commercially exploit the
-   Software;
+(c) distribute, publish, sublicense, sell, lease, rent, or otherwise transfer
+    the Software or any portion thereof;
 
-c. redistribute or publish the Software or substantial portions of it;
+(d) make the Software available to any third party;
 
-d. modify, adapt, translate, or create derivative works of the Software
-   for redistribution or commercial use;
+(e) incorporate the Software or any substantial portion thereof into any other
+    software, product, or service;
 
-e. incorporate the Software or substantial portions of it into a commercial
-   product, service, platform, or system;
+(f) use the Software for commercial or other operational purposes; or
 
-f. use the Software to provide a commercial hosted, SaaS, API, or managed
-   service;
+(g) remove, alter, or obscure any copyright, proprietary, attribution, or
+    other notices contained in the Software.
 
-g. remove or alter copyright, attribution, license, or proprietary notices;
+Nothing in this Section shall be construed to prohibit any activity that
+cannot lawfully be restricted under applicable law.
 
-h. represent the Software or derivative works as being owned or developed
-   by the User or another party;
 
-i. attempt to circumvent technical, access, or licensing restrictions
-   associated with the Software.
+4. SOURCE CODE AND REPOSITORY ACCESS
 
-5. RESEARCH AND ACADEMIC USE
+Access to, viewing, downloading, or otherwise obtaining the Software or its
+source code does not constitute a transfer of ownership or a grant of any
+license or other intellectual property right.
 
-The User may use the Software for legitimate academic, educational, and
-non-commercial research purposes, provided that appropriate attribution is
-given to the Copyright Holder.
+The publication or availability of a repository containing the Software,
+whether public or private, shall not by itself constitute authorization to
+use, reproduce, modify, distribute, or otherwise exploit the Software.
 
-Publication of research results derived from the Software does not transfer
-ownership of the Software or its underlying intellectual property.
 
-Any use of the Software in a commercial research project, commercial
-publication, commercial service, or funded commercial development requires
-prior written permission from the Copyright Holder.
+5. OWNERSHIP
 
-6. COMMERCIAL LICENSING
+All rights, title, and interest in and to the Software, including all
+associated source code, object code, architecture, designs, algorithms,
+documentation, and other proprietary materials, remain with Quantstellar,
+except for materials owned by third parties and subject to their respective
+rights and licenses.
 
-Commercial use of the Software may be permitted under a separate written
-license or commercial agreement issued by the Copyright Holder.
+No ownership interest or intellectual property right is transferred to any
+recipient of the Software by virtue of access to or possession of the
+Software.
 
-Such an agreement may define, among other matters:
 
-- permitted fields of use;
-- territory;
-- duration;
-- number of users or deployments;
-- distribution rights;
-- modification rights;
-- support and maintenance;
-- fees or royalties;
-- confidentiality;
-- intellectual property rights.
+6. THIRD-PARTY MATERIALS
 
-A separate commercial agreement supersedes this License only to the extent
-expressly stated in that agreement.
+The Software may include, incorporate, depend upon, or be distributed with
+software, libraries, data, documentation, or other materials owned or licensed
+by third parties.
 
-7. INTELLECTUAL PROPERTY
+Such third-party materials are not governed by this License unless expressly
+stated otherwise and remain subject to their respective licenses and terms.
 
-All copyrights, trade secrets, know-how, proprietary methodologies,
-software implementations, research artifacts, and other intellectual
-property contained in or associated with the Software remain with their
-respective lawful owners.
+Nothing in this License shall be construed to restrict rights expressly
+granted under an applicable third-party license.
 
-This License does not grant any patent license, trademark license, or other
-intellectual property right except for the limited copyright license
-expressly stated herein.
 
-8. THIRD-PARTY MATERIALS
+7. TRADEMARKS
 
-The Software may contain or depend upon third-party software, libraries,
-datasets, models, APIs, or other materials.
+This License does not grant any right to use the trademarks, service marks,
+trade names, logos, product names, or other marks of Quantstellar.
 
-Such materials are not necessarily covered by this License and remain
-subject to their respective licenses and terms.
+"Quantstellar" and any associated trademarks, names, logos, and product names
+remain the property of their respective owners and may not be used without
+prior authorization, except as permitted by applicable law.
 
-Nothing in this License is intended to override or restrict rights granted
-by applicable third-party licenses.
 
-9. ATTRIBUTION
+8. RESERVATION OF RIGHTS
 
-Where permitted use under this License requires attribution, the User must
-retain reasonable copyright and proprietary notices and identify
-Quantstellar as the Copyright Holder.
+All rights not expressly granted under this License are reserved by
+Quantstellar.
 
-10. DISCLAIMER
+No right, license, or permission shall be implied by estoppel, exhaustion,
+course of dealing, or otherwise.
 
-THE SOFTWARE IS PROVIDED “AS IS” AND “AS AVAILABLE”, WITHOUT WARRANTIES OF
-ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE, NON-INFRINGEMENT,
-ACCURACY, OR RELIABILITY.
 
-THE COPYRIGHT HOLDER DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE,
-SECURE, AVAILABLE, OR SUITABLE FOR ANY PARTICULAR PURPOSE.
+9. TERMINATION
+
+Any rights expressly granted under this License shall automatically terminate
+upon a material breach of its terms.
+
+Upon termination, the affected recipient shall cease all activities requiring
+rights granted under this License and shall, where legally required, destroy
+or return copies of the Software in its possession or control.
+
+Termination shall be without prejudice to any other rights or remedies
+available to Quantstellar under applicable law.
+
+
+10. DISCLAIMER OF WARRANTY
+
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE SOFTWARE IS PROVIDED
+"AS IS" AND "AS AVAILABLE", WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE.
+
+QUANTSTELLAR DISCLAIMS ALL WARRANTIES, INCLUDING, WITHOUT LIMITATION,
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, TITLE,
+NON-INFRINGEMENT, ACCURACY, RELIABILITY, AND AVAILABILITY.
+
+QUANTSTELLAR DOES NOT WARRANT THAT THE SOFTWARE WILL BE ERROR-FREE, SECURE,
+UNINTERRUPTED, OR SUITABLE FOR ANY PARTICULAR PURPOSE.
+
 
 11. LIMITATION OF LIABILITY
 
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE COPYRIGHT HOLDER
-SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL,
-EXEMPLARY, OR LOSS-OF-PROFIT DAMAGES ARISING FROM OR RELATED TO THE USE OF
-THE SOFTWARE.
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, QUANTSTELLAR SHALL NOT BE
+LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, EXEMPLARY, OR
+PUNITIVE DAMAGES, OR FOR ANY LOSS OF PROFITS, REVENUE, DATA, BUSINESS,
+GOODWILL, OR OTHER ECONOMIC LOSS ARISING OUT OF OR RELATING TO THE SOFTWARE
+OR THIS LICENSE, REGARDLESS OF THE THEORY OF LIABILITY AND EVEN IF
+QUANTSTELLAR HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
 
-12. TERMINATION
 
-The rights granted under this License automatically terminate if the User
-violates any material term of this License.
+12. APPLICABLE LAW
 
-Upon termination, the User must cease all uses of the Software that are no
-longer authorized and, where legally required, remove or destroy copies of
-the Software under the User’s control.
+This License shall be governed by and construed in accordance with the laws
+applicable to the parties and the relevant transaction, without regard to
+conflict-of-law principles.
 
-Termination does not affect rights or obligations that by their nature are
-intended to survive termination.
+Any rights or obligations that cannot lawfully be excluded, limited, or
+waived under applicable law shall remain unaffected.
 
-13. RESERVATION OF RIGHTS
 
-All rights not expressly granted under this License are reserved by the
-Copyright Holder.
+13. ENTIRE AGREEMENT
 
-Nothing in this License shall be interpreted as granting any implied,
-estoppel-based, or other rights not expressly stated herein.
+This License constitutes the entire agreement concerning the rights granted
+with respect to the Software, except where a separate written agreement
+expressly governs such rights.
 
-14. GOVERNING LAW
+In the event of a conflict between this License and a separate written
+agreement executed by Quantstellar, the terms of the separate written
+agreement shall prevail to the extent of the conflict.
 
-This License shall be interpreted and enforced in accordance with the
-applicable laws and jurisdiction agreed upon by the Copyright Holder.
 
-If no separate written agreement specifies otherwise, the parties shall
-seek to resolve disputes through good-faith negotiation before pursuing
-formal legal remedies.
+14. SEVERABILITY
 
-15. CONTACT
+If any provision of this License is determined to be invalid, unlawful, or
+unenforceable, that provision shall be enforced to the maximum extent
+permitted by applicable law, and the remaining provisions shall remain in full
+force and effect.
 
-For commercial licensing, permissions, partnership, or other inquiries,
-contact the Copyright Holder through the official Quantstellar contact
-channel.
 
----
+15. NO WAIVER
 
-QUANTSTELLAR
-Proprietary Software
-All Rights Reserved.
+The failure of Quantstellar to enforce any provision of this License shall
+not constitute a waiver of that provision or of the right to enforce it at
+any later time.
+
+
+Copyright © 2026 Quantstellar Technologies.
+All rights reserved.
+
+Proprietary software. Unauthorized use, reproduction, modification,
+distribution, or exploitation is prohibited except as expressly authorized
+by Quantstellar or permitted by applicable law.
