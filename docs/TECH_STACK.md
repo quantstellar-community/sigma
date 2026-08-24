@@ -618,6 +618,22 @@ Data source cụ thể có thể thay đổi theo:
 
 Sigma V1 không khóa vào một vendor dữ liệu duy nhất.
 
+Quyết định V1 cho market data:
+
+| Nguồn | Vai trò |
+|---|---|
+| yfinance | Development / fallback / bootstrap research |
+| Alpha Vantage | Primary reference source (free tier, refresh định kỳ trên snapshot) |
+| FRED | Future — macro/risk factors cho regime & stress |
+
+Nguyên tắc vận hành V1:
+
+- Provider chỉ được gọi ở giai đoạn download; Risk Engine chạy trên local snapshot, không gọi API lúc runtime.
+- Snapshot lưu Parquet kèm metadata sidecar đầy đủ provenance (provider, symbol, frequency, price field, retrieved_at, date range, checksum).
+- Provider abstraction không được thiết kế trước trên giấy; interface chung chỉ được extract khi có ít nhất hai implementation thật (xem RULE-071).
+- Universe research ban đầu nhỏ (8–12 assets) để giữ covariance và Monte Carlo nhẹ.
+- API key nằm trong `.env` (xem `.env.example`), không commit secrets.
+
 ---
 
 # 21. Configuration

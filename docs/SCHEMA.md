@@ -1,6 +1,6 @@
 # Sigma — Mô hình Dữ liệu
 
-**Phiên bản:** 0.2  
+**Phiên bản:** 0.3  
 **Trạng thái:** Draft / Internal Baseline  
 **Phạm vi:** Logical Domain & Data Schema  
 **Sản phẩm:** Sigma Risk Intelligence
@@ -277,6 +277,13 @@ và:
 | `volume` | Decimal | Volume nếu có |
 | `dataset_id` | Identifier | Dataset source |
 
+Semantic của price fields phải rõ ràng:
+
+- `close` là giá giao dịch thô (raw) tại thời điểm quan sát;
+- `adjusted_close` là giá đã điều chỉnh split/dividend.
+
+Return luôn được tính từ `adjusted_close`, không tính từ `close` thô.
+
 Provider không nhất thiết cung cấp toàn bộ field. Schema phải phân biệt:
 
 ```text
@@ -311,6 +318,35 @@ Return_t
 ```
 
 Return convention phải explicit và nhất quán giữa các module.
+
+## 7.4. CorporateAction
+
+Sự kiện doanh nghiệp ảnh hưởng chuỗi giá phải được lưu tách biệt, không impute ngầm.
+
+| Field | Kiểu | Ý nghĩa |
+|---|---|---|
+| `asset_id` | Identifier | Asset |
+| `timestamp` | Timestamp | Ngày hiệu lực (ex-date) |
+| `action_type` | Enum | Dividend / Split |
+| `amount` | Decimal | Số tiền cổ tức hoặc hệ số split |
+| `dataset_id` | Identifier | Dataset source |
+
+## 7.5. Calendar & Missing Data Policy
+
+Quy ước bắt buộc cho market data:
+
+```text
+Trading calendar : NYSE (exchange calendar)
+Exchange timezone: America/New_York
+Stored timestamps: timezone-aware UTC
+```
+
+Chính sách dữ liệu thiếu:
+
+- Cấm forward-fill giá trước khi tính return — ffill tạo return giả bằng 0 và làm nhiễu volatility model.
+- Ngày thiếu do lịch giao dịch được xử lý bằng calendar alignment, không phải impute.
+- Missing observation bất thường phải được validation flag, không được impute âm thầm.
+- Asset bị delisted hoặc chuỗi bị cắt cụt phải được flag rõ ràng.
 
 ---
 
@@ -942,19 +978,17 @@ Mọi monetary value phải có currency.
 
 **Return**
 
-```text
-Simple Return
-```
+Simple return là **canonical representation** cho portfolio aggregation,
+historical simulation, P&L/loss và VaR/CVaR.
 
-hoặc:
-
-```text
-Log Return
-```
+Log return là **derived representation** (`r = ln(1 + R)`), dùng cho các
+model cần temporal aggregation (GARCH, HMM/regime). Mọi conversion giữa
+hai representation phải explicit và được ghi nhận.
 
 **Loss**
 
-Phải có loss convention nhất quán.
+Loss convention: `Loss > 0` nghĩa là tổn thất. Nếu representation nội bộ
+dùng `P&L < 0`, conversion sang loss phải explicit.
 
 **Time**
 
