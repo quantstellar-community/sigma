@@ -25,6 +25,21 @@ dependencies = [
 dev = [
     "ipykernel>=7.3.0",
     "jupyterlab>=4.6.3",
+    "pyright>=1.1.411",
     "pytest>=9.1.1",
     "ruff>=0.16.4",
 ]
+
+[build-system]
+requires = ["uv_build>=0.9,<1"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "sigma"
+module-root = "src"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+extend-exclude = ["research"]

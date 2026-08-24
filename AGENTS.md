@@ -17,13 +17,14 @@ uv run pytest                    # run tests
 uv run pytest tests/unit/test_foo.py::test_bar   # single test (standard pytest, no custom config/markers exist yet)
 uv run ruff check .
 uv run ruff format --check .
+uv run pyright                   # type checking (in dev deps since 2026-08)
 uv run uvicorn sigma.api.main:app --reload      # FastAPI dev server
+make check                       # pre-PR gate: lint + format + type + test
 ```
 
 Gotchas:
-- **Makefile is empty** — no make targets exist despite the file being present.
-- `pyright` is referenced in docs but is **not in dev dependencies**; don't assume `uv run pyright` works.
-- No `[tool.ruff]` / `[tool.pytest.ini_options]` sections in `pyproject.toml` — all defaults.
+- Makefile has standard targets (`sync`, `test`, `lint`, `format`, `format-fix`, `type`, `check`, `run`) but **make is not installed by default on Windows** — use the raw `uv run ...` commands there.
+- No `[tool.pytest.ini_options]` beyond `testpaths` / no `[tool.pyright]` in `pyproject.toml` — defaults. `[tool.ruff]` only excludes `research/` from linting (notebooks are exploratory, never runtime code).
 - `pyproject.toml` has **no `[build-system]`**, so the package isn't installable; imports of `sigma.*` rely on path setup until packaging is added.
 - No CI workflows, no pre-commit config.
 
