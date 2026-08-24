@@ -1,6 +1,6 @@
 # Sigma — Công nghệ Sử dụng
 
-**Phiên bản:** 0.2  
+**Phiên bản:** 0.3  
 **Trạng thái:** Draft / Internal Baseline  
 **Phạm vi:** Runtime, API, UI, Data, Modeling, Quantum, Testing và Development Tooling  
 **Sản phẩm:** Sigma Risk Intelligence
@@ -618,12 +618,13 @@ Data source cụ thể có thể thay đổi theo:
 
 Sigma V1 không khóa vào một vendor dữ liệu duy nhất.
 
-Quyết định V1 cho market data:
+Quyết định V1 cho market data (cập nhật theo ADR-0004):
 
 | Nguồn | Vai trò |
 |---|---|
-| yfinance | Development / fallback / bootstrap research |
-| Alpha Vantage | Primary reference source (free tier, refresh định kỳ trên snapshot) |
+| yfinance | **Provider giá duy nhất của V1** — adjusted daily prices + full history |
+| Alpha Vantage | ❌ Bị loại — free tier không có adjusted close (đã đo thực nghiệm) |
+| FMP | ❌ Bị loại cho giá — free tier chỉ raw OHLCV, 5 năm; giữ key cho fundamentals sau này |
 | FRED | Future — macro/risk factors cho regime & stress |
 
 Nguyên tắc vận hành V1:

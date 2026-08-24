@@ -59,6 +59,11 @@ Tại thời điểm quyết định, repo chưa có implementation nào; toàn 
 
 ### D1 — Provider strategy: đa nguồn, chuẩn hóa về một contract
 
+> **Cập nhật 2026-08-24 (ADR-0004):** đánh giá thực nghiệm cho thấy free tier
+> của Alpha Vantage/FMP không cung cấp adjusted close — yfinance trở thành
+> provider giá duy nhất của V1. Bảng vai trò dưới đây được thay thế bởi
+> bảng trong TECH_STACK.md §20.
+
 ```text
 Alpha Vantage (free tier) → primary reference source
 yfinance                  → development / fallback / bootstrap
