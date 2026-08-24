@@ -76,7 +76,7 @@ observations trộn nhiều `dataset_id`; một asset còn <2 dòng sau alignmen
 | Trường hợp | Xử lý |
 |---|---|
 | Ngày đầu mỗi chuỗi | Drop, báo cáo trong AlignmentReport |
-| Gap bất thường giữa ngày | Return tính qua gap bằng giá gần nhất; snapshot đã qua validation gate là lớp chặn chính. Calendar-completeness check có thể bổ sung vào gate sau |
+| Gap bất thường giữa ngày | **Đã chặn từ đầu vào**: validation gate kiểm tra NYSE calendar completeness bằng QuantLib — ngày giao dịch bị thiếu → `DataValidationError`, pipeline dừng (cập nhật sau phiên đánh giá ban đầu) |
 | Asset <2 dòng sau align | Raise ModelingError |
 
 ## 4. Phạm vi
