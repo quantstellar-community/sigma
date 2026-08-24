@@ -1,4 +1,4 @@
-.PHONY: sync test lint format format-fix type check run
+.PHONY: sync test lint format format-fix type check run download
 
 sync:
 	uv sync
@@ -22,3 +22,6 @@ check: lint format type test
 
 run:
 	uv run uvicorn sigma.api.main:app --reload
+
+download:
+	uv run python -m sigma.data.download --universe configs/universe.yaml

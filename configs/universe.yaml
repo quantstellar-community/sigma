@@ -1,0 +1,22 @@
+# Sigma research universe V1 (ADR-0001 §D7, ADR-0003 D1)
+universe:
+  name: research-universe-v1
+  frequency: 1d
+  calendar: NYSE
+  timezone: America/New_York
+  period:
+    start: 2015-01-01
+
+assets:
+  - { asset_id: equity-aapl-us, symbol: AAPL, asset_type: EQUITY, currency: USD }
+  - { asset_id: equity-msft-us, symbol: MSFT, asset_type: EQUITY, currency: USD }
+  - { asset_id: equity-nvda-us, symbol: NVDA, asset_type: EQUITY, currency: USD }
+  - { asset_id: equity-amzn-us, symbol: AMZN, asset_type: EQUITY, currency: USD }
+  - { asset_id: equity-googl-us, symbol: GOOGL, asset_type: EQUITY, currency: USD }
+  - { asset_id: equity-meta-us, symbol: META, asset_type: EQUITY, currency: USD }
+  - { asset_id: equity-jpm-us, symbol: JPM, asset_type: EQUITY, currency: USD }
+  - { asset_id: equity-xom-us, symbol: XOM, asset_type: EQUITY, currency: USD }
+  - { asset_id: etf-spy-us, symbol: SPY, asset_type: ETF, currency: USD }
+  - { asset_id: etf-qqq-us, symbol: QQQ, asset_type: ETF, currency: USD }
+  - { asset_id: etf-gld-us, symbol: GLD, asset_type: ETF, currency: USD }
+  - { asset_id: etf-tlt-us, symbol: TLT, asset_type: ETF, currency: USD }

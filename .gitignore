@@ -1,6 +1,31 @@
-.venv/
+# --- Secrets & environments ---
 .env
+.venv/
 venv/
 .codex/
-cache/
+
+# --- Python artifacts ---
 __pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+cache/
+
+# --- Tooling caches ---
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# --- Market data snapshots (local only; reproducible via configs/ + ADR-0001) ---
+data/raw/
+data/processed/
+data/artifacts/
+
+# --- Research / Jupyter ---
+.ipynb_checkpoints/
+
+# --- OS ---
+.DS_Store
+Thumbs.db
