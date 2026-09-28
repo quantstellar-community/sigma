@@ -19,9 +19,7 @@ cache/
 htmlcov/
 
 # --- Market data snapshots (local only; reproducible via configs/ + ADR-0001) ---
-data/raw/
-data/processed/
-data/artifacts/
+/data/
 
 # --- Research / Jupyter ---
 .ipynb_checkpoints/

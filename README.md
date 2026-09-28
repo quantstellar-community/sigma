@@ -1,202 +1,126 @@
-# Sigma
+# SIGMA
 
-## Hybrid Quantum-Classical Risk Intelligence
-
-Sigma là một dự án nghiên cứu và kỹ thuật nhằm xây dựng **Financial Risk
-Intelligence Engine** kết hợp mô hình tài chính, phương pháp thống kê,
-tính toán cổ điển và tính toán lượng tử.
-
-Mục tiêu của Sigma không phải sử dụng Quantum chỉ vì Quantum, mà là xây
-dựng một hệ thống phân tích rủi ro có khả năng:
-
-``` text
-Dữ liệu tài chính
-        ↓
-Mô hình hóa tài chính
-        ↓
-Sinh kịch bản
-        ↓
-Phân phối lãi/lỗ của danh mục
-        ↓
-VaR / CVaR / Stress Testing
-        ↓
-Đánh giá Classical – Quantum
-        ↓
-Risk Intelligence
-        ↓
-Hỗ trợ ra quyết định
+```text
+███████╗ ██╗  ██████╗ ███╗   ███╗  █████╗
+██╔════╝ ██║ ██╔════╝ ████╗ ████║ ██╔══██╗
+███████╗ ██║ ██║  ███╗ ██╔████╔██║ ███████║
+╚════██║ ██║ ██║   ██║ ██║╚██╔╝██║ ██╔══██║
+███████║ ██║ ╚██████╔╝ ██║ ╚═╝ ██║ ██║  ██║
+╚══════╝ ╚═╝  ╚═════╝  ╚═╝     ╚═╝ ╚═╝  ╚═╝
 ```
 
-> **Triết lý:** Classical First → Quantum Where Justified → Fair
-> Benchmark → Measure Real Value
+**Hybrid Quantum–Classical Risk Intelligence**
 
-**Trạng thái:** Sigma đang ở giai đoạn phát triển nền tảng và nghiên
-cứu. Kiến trúc, quy trình phân tích và các thành phần cốt lõi được phát
-triển từng bước hướng tới một hệ thống có thể kiểm chứng, mở rộng và
-tích hợp.
+Sigma is a research and engineering effort to build a **Financial Risk Intelligence Engine** that combines financial modeling, statistical methods, classical computation, and quantum computing — not for the sake of using quantum, but to build a risk analysis system that is verifiable, reproducible, and practically useful.
 
-------------------------------------------------------------------------
+> **Classical First → Quantum Where Justified → Fair Benchmark → Measure Real Value**
 
-## Tổng quan
+---
 
-Tài chính là bài toán ra quyết định dưới điều kiện không chắc chắn.
-Sigma tập trung vào việc biến dữ liệu thị trường và thông tin danh mục
-thành những chỉ số và phân tích rủi ro có thể giải thích được.
+## Overview
 
-Sigma hướng tới việc giúp trả lời các câu hỏi như:
+Finance is decision-making under uncertainty. Sigma turns market data and portfolio information into explainable risk metrics and analysis.
 
--   Danh mục hiện đang chịu những loại rủi ro nào?
--   Những kịch bản nào có thể tạo ra tổn thất lớn?
--   Rủi ro ở phần đuôi của phân phối lớn đến mức nào?
--   Những tài sản hoặc yếu tố nào đóng góp nhiều nhất vào rủi ro?
--   Phương pháp Classical và Quantum khác nhau thế nào về độ chính xác,
-    chi phí tính toán và tính khả thi thực tế?
+Sigma is built to answer questions such as:
 
-Quantum được xem là **lớp tăng cường tính toán**, không phải bản chất
-duy nhất của sản phẩm.
+- What risks is this portfolio currently exposed to?
+- Which scenarios could produce large losses?
+- How large is the tail risk of the loss distribution?
+- Which assets or factors contribute most to risk?
+- How do classical and quantum methods compare in accuracy, computational cost, and practical feasibility?
 
-------------------------------------------------------------------------
+The V1 focus is a **Regime-Aware Portfolio Risk Intelligence Engine**:
 
-## Mục tiêu và nguyên tắc
+```mermaid
+flowchart TD
+    DATA["Market Data + Portfolio"] --> VALIDATE["Data Validation"]
+    VALIDATE --> RETURNS["Returns / Features"]
+    RETURNS --> VOL["Volatility Modeling"]
+    VOL --> REGIME["Market Regime"]
+    REGIME --> DIST["Regime-Aware Distribution"]
+    DIST --> SCENARIO["Scenario Generation"]
+    SCENARIO --> LOSS["Portfolio Loss Distribution"]
+    LOSS --> CLASSICAL["Classical Risk Engine"]
+    LOSS --> QUANTUM["Quantum Risk Module"]
+    CLASSICAL --> RISK["VaR / CVaR / Stress"]
+    QUANTUM --> RISK
+    RISK --> INTEL["Risk Intelligence"]
+    INTEL --> API["FastAPI"]
+    API --> CLIENT["Reference Client"]
+```
 
-Sigma được phát triển theo các nguyên tắc sau.
+---
+
+## Design Principles
 
 ### Classical First
 
-Mọi phương pháp Quantum phải có phương pháp Classical phù hợp để làm cơ
-sở so sánh.
+Every quantum method must have a corresponding classical method as a benchmark baseline. Classical risk analysis is the foundation of Sigma and must work independently of quantum capability.
 
 ### Quantum Where Justified
 
-Quantum chỉ được sử dụng khi có một bài toán tài chính rõ ràng và có lý
-do hợp lý để nghiên cứu đóng góp của Quantum.
+Quantum is treated as a **computational enhancement layer**, not the essence of the product. It is introduced only when there is a clear financial problem and a sound reason to study its contribution.
 
 ### Fair Benchmark
 
-Classical và Quantum phải được đánh giá trên cùng bài toán tài chính, dữ
-liệu, danh mục, mức tin cậy, thời hạn và các điều kiện thực nghiệm phù
-hợp.
+Classical and quantum methods are evaluated on the **same financial problem, data, portfolio, confidence level, horizon, and experimental conditions**.
 
-### Không tuyên bố Quantum Advantage khi chưa đủ bằng chứng
+### No Unsubstantiated Quantum Advantage Claims
 
-Không coi theoretical speedup hoặc kết quả ở cấp độ mạch lượng tử là
-bằng chứng cho quantum advantage của toàn bộ hệ thống.
+Theoretical speedups or circuit-level results are not evidence of end-to-end quantum advantage. Evaluation considers accuracy, runtime, sampling/query cost, state preparation cost, oracle cost, qubit count, circuit depth, shots, noise effects, and scalability.
 
-Khi đánh giá Quantum, cần xem xét cả:
+### Reproducibility
 
--   Độ chính xác
--   Thời gian chạy
--   Chi phí lấy mẫu hoặc truy vấn
--   Chi phí chuẩn bị trạng thái
--   Chi phí oracle
--   Số qubit
--   Độ sâu mạch
--   Số shots
--   Ảnh hưởng của nhiễu
--   Khả năng mở rộng
+Results must be traceable to their data, model, configuration, code version, and experiment.
 
-### Tái lập được
+### Measured Value
 
-Kết quả nghiên cứu và kết quả phân tích rủi ro cần có đủ thông tin để
-truy nguyên về:
+A method is only meaningful to the product when it produces measurable practical value — not just a technical demonstration.
 
-``` text
-Dữ liệu
-   ↓
-Mô hình
-   ↓
-Cấu hình
-   ↓
-Phiên bản mã nguồn
-   ↓
-Thí nghiệm
+---
+
+## Key Features
+
+- **Regime-aware modeling** — volatility and market regime modeling feeding a regime-aware distribution
+- **Scenario generation** — Monte Carlo and stress scenario engines
+- **Portfolio loss distribution** — scenario propagation into portfolio P&L and loss
+- **Risk metrics** — VaR, CVaR / Expected Shortfall, Expected Loss, Stress Loss, Risk Contribution
+- **Quantum estimation** — Quantum Monte Carlo and Quantum Amplitude Estimation as a research layer
+- **Classical–Quantum benchmark** — fair, documented comparison on identical problem settings
+- **API-first architecture** — a stable FastAPI boundary between the core and any client
+
+---
+
+## Architecture
+
+Sigma V1 is organized as a **modular monolith** with an **API-first** design.
+
+```text
+Client
+  ↓ HTTP
+FastAPI
+  ↓
+Application Layer
+  ↓
+Sigma Core
+  ├── Domain
+  ├── Data
+  ├── Modeling
+  ├── Scenarios
+  ├── Risk
+  └── Quantum
 ```
 
-### Giá trị thực tế
+Architectural boundaries:
 
-Một phương pháp chỉ có ý nghĩa đối với sản phẩm khi nó tạo ra giá trị
-thực tế có thể đo lường, không chỉ tạo ra một minh họa kỹ thuật.
+- UI / clients interact with the system **only through the HTTP API**
+- FastAPI is the integration boundary and holds no financial computation
+- The Classical Risk Engine operates independently of the quantum layer
+- Risk concepts are independent of how they are estimated
+- Qiskit code stays within the quantum module; core financial logic does not depend on it
+- Domain and core modules do not depend on FastAPI, the UI framework, or quantum SDKs
 
-------------------------------------------------------------------------
-
-# Sigma V1
-
-## Regime-Aware Portfolio Risk Intelligence Engine
-
-Phạm vi chính của Sigma V1 là xây dựng một **Regime-Aware Portfolio Risk
-Intelligence Engine**.
-
-Hệ thống tập trung vào phân tích rủi ro danh mục, mô phỏng các kịch bản
-thị trường và ước lượng các đại lượng rủi ro như VaR và CVaR.
-
-### Quy trình tổng quát
-
-``` text
-Dữ liệu thị trường + Danh mục
-            ↓
-       Kiểm tra dữ liệu
-            ↓
-      Returns / Features
-            ↓
-  Mô hình hóa Volatility
-       và Market Regime
-            ↓
-   Phân phối theo Regime
-            ↓
-      Sinh kịch bản
-            ↓
-   Phân phối lãi/lỗ danh mục
-            ↓
-    ┌────────┴────────┐
-    ↓                 ↓
-Classical          Quantum
-Risk Engine        Risk Module
-    ↓                 ↓
-    └────────┬────────┘
-             ↓
-  Đánh giá Classical – Quantum
-             ↓
- VaR / CVaR / Stress / Risk Intelligence
-             ↓
-            API
-             ↓
-       Taipy / Client
-```
-
-### Đầu vào
-
-Sigma V1 có thể sử dụng:
-
--   Dữ liệu giá hoặc lợi suất lịch sử;
--   Mã tài sản và thời gian;
--   Vị thế hoặc tỷ trọng danh mục;
--   Ngày định giá;
--   Thời hạn rủi ro;
--   Mức tin cậy;
--   Cấu hình sinh kịch bản;
--   Cấu hình mô hình.
-
-### Đầu ra
-
-Sigma V1 tập trung vào:
-
--   Phân phối lãi/lỗ của danh mục;
--   VaR;
--   CVaR / Expected Shortfall;
--   Expected Loss;
--   Kết quả stress testing;
--   Risk Contribution;
--   Phân tích kịch bản;
--   Thông tin mô hình và cấu hình;
--   Kết quả đánh giá Classical -- Quantum khi có áp dụng.
-
-------------------------------------------------------------------------
-
-# Kiến trúc
-
-Sigma V1 được tổ chức theo hướng **modular monolith** và **API-first**.
-
-``` mermaid
+```mermaid
 flowchart LR
     A["Market Data + Portfolio"] --> B["Data Validation"]
     B --> C["Financial Modeling"]
@@ -207,463 +131,137 @@ flowchart LR
     F --> H["Risk Intelligence"]
     G --> H
     H --> I["FastAPI"]
-    I --> J["Taipy / Client"]
+    I --> J["Reference Client"]
 ```
 
-Ranh giới chính:
+The reference client for V1 is a Taipy-based dashboard, but it is a replaceable client — the core and API contract do not depend on it.
 
-``` text
-Taipy / Client
-      ↓
-   FastAPI
-      ↓
-Application Layer
-      ↓
-   Sigma Core
-   ├── Data
-   ├── Modeling
-   ├── Scenarios
-   ├── Risk
-   └── Quantum
-```
+---
 
-Một số nguyên tắc kiến trúc quan trọng:
+## Repository Structure
 
--   Giao diện không chứa logic tài chính cốt lõi.
--   FastAPI là ranh giới tích hợp của hệ thống.
--   Classical Risk Engine có thể hoạt động độc lập với Quantum.
--   Quantum layer không tự định nghĩa các khái niệm tài chính.
--   Logic tài chính và tính toán được tách khỏi lớp trình bày.
-
-------------------------------------------------------------------------
-
-# Quy trình phân tích rủi ro
-
-Sigma chuyển dữ liệu tài chính thành thông tin rủi ro theo chuỗi:
-
-``` text
-Market Data
-    ↓
-Validated Data
-    ↓
-Returns
-    ↓
-Volatility
-    ↓
-Market Regime
-    ↓
-Distribution
-    ↓
-Scenarios
-    ↓
-Portfolio P&L / Loss
-    ↓
-Loss Distribution
-    ↓
-Risk Estimation
-```
-
-Các đại lượng rủi ro trọng tâm gồm:
-
-``` text
-VaR
-CVaR / Expected Shortfall
-Expected Loss
-Stress Loss
-Risk Contribution
-```
-
-Quy ước về lãi/lỗ và bối cảnh tính toán rủi ro phải được xác định rõ
-trong từng phân tích.
-
-------------------------------------------------------------------------
-
-# Classical Risk Engine
-
-Classical Risk Engine là **baseline bắt buộc** và là nền tảng tính toán
-của Sigma V1.
-
-Nó chịu trách nhiệm cho:
-
--   Xử lý kịch bản;
--   Tính P&L và loss của danh mục;
--   Monte Carlo;
--   Xây dựng phân phối lãi/lỗ;
--   VaR;
--   CVaR;
--   Stress Testing;
--   Risk Contribution.
-
-Classical Risk Engine phải có khả năng hoạt động độc lập:
-
-``` text
-Quantum không khả dụng
-        ↓
-Classical Risk Analysis
-        ↓
-Hệ thống vẫn hoạt động
-```
-
-Điều này giúp Sigma duy trì khả năng phân tích rủi ro ngay cả khi
-Quantum chưa phù hợp, chưa khả dụng hoặc không tạo ra lợi ích rõ ràng.
-
-------------------------------------------------------------------------
-
-# Quantum Research Layer
-
-Quantum được xem là **lớp tăng cường tính toán** cho các bài toán phù
-hợp.
-
-Hướng nghiên cứu ưu tiên của Sigma V1 là:
-
-``` text
-Quantum Monte Carlo
-        +
-Quantum Amplitude Estimation
-```
-
-Một quy trình Quantum điển hình có thể được biểu diễn như:
-
-``` text
-Đại lượng tài chính cần ước lượng
-            ↓
-Công thức hóa bài toán Quantum
-            ↓
-Chuẩn bị trạng thái
-            ↓
-Oracle
-            ↓
-Amplitude Estimation
-            ↓
-Ước lượng rủi ro
-```
-
-Quantum không nhận dữ liệu tài chính thô và tự thay thế toàn bộ quy
-trình mô hình hóa tài chính.
-
-Ví dụ, một đại lượng mục tiêu có thể được xây dựng dưới dạng:
-
-``` text
-P(Loss > Threshold)
-```
-
-hoặc một kỳ vọng được công thức hóa rõ ràng.
-
-### Các hướng kiến trúc
-
-**Classical thuần túy**
-
-``` text
-Data
-  ↓
-Classical Modeling
-  ↓
-Classical Scenarios
-  ↓
-Classical Risk
-```
-
-**Hybrid cơ bản**
-
-``` text
-Data
-  ↓
-Classical Modeling
-  ↓
-Classical Scenarios
-  ↓
-Quantum State Preparation
-  ↓
-QAE
-  ↓
-Risk Estimate
-```
-
-**Kiến trúc đồng thiết kế Classical -- Quantum**
-
-``` text
-Data
-  ↓
-Classical Parameter Estimation
-  ↓
-Quantum Distribution / Scenario Representation
-  ↓
-Quantum Estimation
-  ↓
-Risk Estimate
-```
-
-Không có kiến trúc nào được mặc định là tốt nhất. Việc lựa chọn phải dựa
-trên bài toán, chi phí tính toán và kết quả thực nghiệm.
-
-------------------------------------------------------------------------
-
-# Classical -- Quantum Benchmark
-
-Mọi so sánh phải đặt Classical và Quantum trên **cùng một bài toán tài
-chính**.
-
-Các điều kiện quan trọng gồm:
-
-``` text
-Cùng danh mục
-Cùng dữ liệu
-Cùng đại lượng rủi ro
-Cùng thời hạn
-Cùng mức tin cậy
-Cùng bối cảnh mô hình phù hợp
-```
-
-Các tiêu chí đánh giá có thể bao gồm:
-
--   Độ chính xác;
--   Sai số tuyệt đối / tương đối;
--   Thời gian chạy;
--   Chi phí lấy mẫu / truy vấn;
--   Số qubit;
--   Độ sâu mạch;
--   Số shots;
--   Chi phí oracle;
--   Chi phí chuẩn bị trạng thái;
--   Ảnh hưởng của nhiễu;
--   Khả năng mở rộng.
-
-Kết quả benchmark có thể cho thấy:
-
-``` text
-Quantum Advantage
-```
-
-nhưng cũng có thể cho thấy:
-
-``` text
-Quantum No Advantage
-```
-
-hoặc:
-
-``` text
-Inconclusive
-```
-
-Một kết quả Quantum không vượt Classical vẫn là một kết quả nghiên cứu
-có giá trị nếu thí nghiệm được thiết kế và đánh giá đúng.
-
-------------------------------------------------------------------------
-
-# Quy trình nghiên cứu
-
-Các đóng góp nghiên cứu quan trọng của Sigma nên đi theo:
-
-``` text
-Problem
-   ↓
-Hypothesis
-   ↓
-Mathematical Formulation
-   ↓
-Classical Baseline
-   ↓
-Quantum Method
-   ↓
-Fair Benchmark
-   ↓
-Resource / Ablation Analysis
-   ↓
-Scientific Conclusion
-   ↓
-Product Evaluation
-```
-
-Sigma không bắt đầu bằng câu hỏi:
-
-> "Có Quantum algorithm nào để dùng không?"
-
-Mà bắt đầu bằng:
-
-> "Bottleneck tài chính nào đáng giải quyết, và Quantum có thể đóng góp
-> gì?"
-
-------------------------------------------------------------------------
-
-# Công nghệ
-
-Sigma V1 sử dụng Python làm hệ sinh thái tính toán chính.
-
-Các công nghệ chính:
-
-``` text
-Python 3.12
-uv
-FastAPI
-Taipy
-NumPy
-pandas
-SciPy
-statsmodels / scikit-learn
-Qiskit
-Qiskit Aer
-pytest
-Ruff
-Pyright
-Git
-```
-
-Danh sách công nghệ có thể thay đổi khi yêu cầu kỹ thuật thay đổi. Việc
-bổ sung một thư viện hoặc hạ tầng mới cần có lý do thực tế và phù hợp
-với phạm vi của dự án.
-
-------------------------------------------------------------------------
-
-# Cấu trúc dự án
-
-Sigma được phát triển theo hướng modular monolith trong V1.
-
-Cấu trúc khái quát:
-
-``` text
+```text
 sigma/
-├── README.md
-├── pyproject.toml
-├── uv.lock
-├── docs/
-├── src/
-│   └── sigma/
-│       ├── data/
-│       ├── modeling/
-│       ├── scenarios/
-│       ├── risk/
-│       ├── quantum/
-│       ├── application/
-│       └── api/
+├── src/sigma/
+│   ├── domain/        # Financial concepts (portfolio, market data, scenarios)
+│   ├── data/          # Data loading, validation, snapshots
+│   ├── modeling/      # Returns, volatility, regime, distribution
+│   ├── scenarios/     # Monte Carlo and stress scenario generation
+│   ├── risk/          # VaR, CVaR, risk metrics, risk contribution
+│   ├── quantum/       # State preparation, oracle, amplitude estimation
+│   ├── application/   # Workflow orchestration
+│   └── api/           # FastAPI boundary (routes, schemas)
+├── ui/                # Reference client (Taipy dashboard)
+├── research/          # Notebooks and experiments (not runtime code)
+├── data/
+│   ├── raw/
+│   ├── processed/
+│   └── artifacts/
+├── configs/           # YAML model / scenario / benchmark configuration
 ├── tests/
-├── research/
-└── examples/
+│   ├── unit/
+│   ├── integration/
+│   └── evaluation/
+├── docs/              # PRD, architecture, schema, rules, ADRs
+└── pyproject.toml
 ```
 
-Cấu trúc có thể tiếp tục được điều chỉnh trong quá trình phát triển,
-nhưng các ranh giới kiến trúc cốt lõi cần được duy trì ổn định.
+---
 
-------------------------------------------------------------------------
+## Getting Started
 
-# Lộ trình phát triển
+### Requirements
 
-## Giai đoạn 0 --- Nền tảng
+- Python `3.12` (`>=3.12.11,<3.13`)
+- [uv](https://docs.astral.sh/uv/) as the package and environment manager
+- Git
 
--   Hoàn thiện cấu trúc dự án;
--   Thiết lập môi trường Python/uv;
--   Hoàn thiện tài liệu;
--   Xác định schema và quy ước;
--   Thiết lập nền tảng kiểm thử.
+### Installation
 
-## Giai đoạn 1 --- Classical Risk Core
-
--   Ingestion dữ liệu thị trường;
--   Kiểm tra và xử lý dữ liệu;
--   Tính returns;
--   Mô hình hóa volatility và regime;
--   Xây dựng phân phối;
--   Sinh kịch bản;
--   Monte Carlo;
--   VaR/CVaR;
--   Stress Testing.
-
-## Giai đoạn 2 --- API và giao diện
-
--   FastAPI;
--   Application layer;
--   Risk API;
--   Taipy reference client;
--   Trực quan hóa kết quả phân tích.
-
-## Giai đoạn 3 --- Quantum Benchmark
-
--   Công thức hóa đại lượng tài chính;
--   Chuẩn bị trạng thái;
--   Xây dựng oracle;
--   Thực nghiệm QAE/QMC;
--   Classical baseline;
--   Benchmark công bằng;
--   Phân tích tài nguyên.
-
-## Giai đoạn 4 --- Nghiên cứu nâng cao
-
--   Phân phối nâng cao;
--   Mô hình hóa uncertainty;
--   Learned distributions;
--   Advanced portfolio risk;
--   Một số bài toán optimization phù hợp;
--   Các phương pháp Quantum khác khi có cơ sở.
-
-## Giai đoạn 5 --- Productization
-
--   Data connectors ổn định;
--   Persistence;
--   Authentication / Authorization;
--   Observability;
--   Auditability;
--   Deployment;
--   Model Governance.
-
-------------------------------------------------------------------------
-
-# Phạm vi của Sigma
-
-## Sigma là
-
--   Financial Risk Intelligence Engine;
--   Nền tảng nghiên cứu Classical -- Quantum;
--   Hệ thống phân tích rủi ro theo hướng risk-first;
--   Hệ thống mô phỏng kịch bản và phân tích tail risk;
--   Môi trường nghiên cứu có thể benchmark;
--   Nền tảng API cho decision support.
-
-## Sigma không phải
-
--   Hệ thống giao dịch tự động;
--   Sản phẩm dự báo giá cổ phiếu;
--   Nền tảng ngân hàng production;
--   Hệ thống thay thế các risk system tổ chức;
--   Công cụ được xây dựng chỉ để chứng minh quantum advantage;
--   Cố vấn đầu tư tự động.
-
-------------------------------------------------------------------------
-
-# Sử dụng có trách nhiệm
-
-Sigma là một dự án nghiên cứu và kỹ thuật. Các kết quả rủi ro phải luôn
-được xem xét trong bối cảnh của:
-
-``` text
-Dữ liệu
-Mô hình
-Giả định
-Kịch bản
-Mức tin cậy
-Phương pháp
-Giới hạn
+```bash
+uv sync
 ```
 
-Kết quả của Sigma không phải là tư vấn tài chính và không bảo đảm hiệu
-quả đầu tư.
+### Run the tests
 
-Việc sử dụng Sigma trong môi trường tài chính thực tế sẽ cần thêm các
-yêu cầu phù hợp, bao gồm:
+```bash
+uv run pytest
+```
 
--   Independent Validation;
--   Data Governance;
--   Security;
--   Model Governance;
--   Domain Expertise;
--   Regulatory / Compliance Review.
+### Quality checks
 
-------------------------------------------------------------------------
+```bash
+uv run ruff check .
+uv run ruff format --check .
+uv run pyright
+```
+
+Or run the full pre-PR gate:
+
+```bash
+make check
+```
+
+### Start the API server
+
+```bash
+uv run uvicorn sigma.api.main:app --reload
+```
+
+Interactive API documentation is available at the served `/docs` endpoint.
+
+### Download market data
+
+Market data is managed through a versioned universe configuration and immutable local snapshots:
+
+```bash
+uv run python -m sigma.data.download --universe configs/universe.yaml
+```
+
+---
+
+## Roadmap
+
+- **Classical Risk Core** — data pipeline, returns, volatility and regime modeling, scenario generation, Monte Carlo, VaR/CVaR, stress testing
+- **API & Client** — FastAPI boundary, application layer, reference dashboard, visualization
+- **Quantum Benchmark** — financial quantity formulation, state preparation, oracle construction, QAE/QMC experiments, fair classical–quantum comparison
+- **Advanced Research** — richer distributions, uncertainty modeling, advanced portfolio risk
+- **Productization** — persistence, observability, auditability, model governance
+
+---
+
+## Documentation
+
+Detailed documentation lives in [`docs/`](docs/):
+
+| Document | Scope |
+|---|---|
+| `PRD.md` | What and why |
+| `ARCHITECTURE.md` | System structure and boundaries |
+| `SCHEMA.md` | Data meaning and contracts |
+| `RULES.md` | Engineering and research guardrails |
+| `TECH_STACK.md` | Technology choices and rationale |
+| `ADR/` | Architectural decision records |
+
+---
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for contribution guidelines: branch naming, commit conventions, testing expectations, and the research → validate → stabilize → test promotion flow.
+
+Key expectations:
+
+- Follow the **Classical First** principle; every quantum contribution needs a classical baseline
+- Negative and inconclusive results are valid research outcomes
+- Never claim quantum advantage without supporting evidence
+- Keep architecture boundaries intact: clients talk to the API, not the core
+
+---
 
 ## License
 
 Copyright © 2026 Quantstellar Technologies.
 
-This project is proprietary software.
-All rights reserved.
+This project is proprietary software. All rights reserved.
 
 See [LICENSE](./LICENSE) for the full license terms.
