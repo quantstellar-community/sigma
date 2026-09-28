@@ -13,8 +13,6 @@
 
 Sigma is a research and engineering effort to build a **Financial Risk Intelligence Engine** that combines financial modeling, statistical methods, classical computation, and quantum computing — not for the sake of using quantum, but to build a risk analysis system that is verifiable, reproducible, and practically useful.
 
-> **Classical First → Quantum Where Justified → Fair Benchmark → Measure Real Value**
-
 ---
 
 ## Overview
