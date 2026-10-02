@@ -45,6 +45,10 @@ module-root = "src"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+filterwarnings = [
+    # hmmlearn uses deprecated numpy reshape-in-place (out of our control)
+    "ignore:Setting the shape on a NumPy array:DeprecationWarning:hmmlearn",
+]
 
 [tool.ruff]
 extend-exclude = ["research"]
