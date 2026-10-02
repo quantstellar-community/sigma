@@ -72,9 +72,9 @@ Data Validation & Preprocessing
     ↓
 Returns / Features
     ↓
-Volatility & Regime Modeling
+HMM — Hidden Market Regimes
     ↓
-Distribution Modeling
+Regime-Conditioned GARCH / Distribution Modeling
     ↓
 Scenario Generation
     ↓
@@ -82,20 +82,23 @@ Portfolio P&L / Loss
     ↓
 Loss Distribution
     ↓
-Risk Estimation
-    ├── Classical
-    └── Quantum
+Risk Estimation (per regime)
+    ├── Classical (MC)
+    └── Quantum (QMC/QAE)
     ↓
-Classical–Quantum Benchmark
+Classical–Quantum Benchmark (per regime)
     ↓
 Risk Intelligence
     ↓
 Decision Support
     ↓
-API
+API (deferred)          ── tích hợp product deferred trong research-first
     ↓
-Dashboard / Client
+Dashboard / Client (deferred)
 ```
+
+(Giai đoạn hiện tại: workflow dừng ở Decision Support, chạy qua Core/CLI;
+API/Dashboard là lớp tích hợp deferred.)
 
 ---
 
@@ -185,7 +188,9 @@ Validated Market Data
       ↓
 Returns
       ↓
-Volatility
+HMM — Hidden Market Regimes
+      ↓
+Regime-Conditioned GARCH (σ theo từng regime)
       ↓
 Correlation / Covariance
       ↓
@@ -194,33 +199,38 @@ Market Dynamics
 
 Các output này là nền cho risk modeling.
 
-## 5.1. Volatility
+## 5.1. Volatility (supporting layer)
 
-Có thể sử dụng historical volatility, conditional volatility, GARCH hoặc methodology phù hợp khác.
+GARCH(1,1)-Student-t là supporting volatility layer (ADR-0006/0007): dự báo
+vol 1 ngày cho báo cáo và làm baseline. Trong nghiên cứu regime-conditioned,
+GARCH được fit **riêng trong từng regime** (two-stage) sau khi HMM gán nhãn.
 
 Model phải có financial/statistical justification.
 
-## 5.2. Market Regime
+## 5.2. Market Regime (trung tâm nghiên cứu)
 
-Nếu sử dụng regime-aware methodology:
-
-```text
-Returns / Volatility
-      ↓
-Regime Model
-      ↓
-Inferred Market Regime
-```
-
-Ví dụ:
+HMM infer **latent market regimes** từ returns (ADR-0007):
 
 ```text
-Low Volatility
-High Volatility
-Stress
+Returns
+      ↓
+HMM (transition model + emission model)
+      ↓
+Hidden Market Regimes
+      ↓
+P(S_t = k | r_{1:t})
 ```
 
-Regime là **model output**, không phải ground truth nếu được suy ra từ dữ liệu.
+Ví dụ (gán nhãn SAU khi characterise từ data — không hard-code):
+
+```text
+Calm      — low volatility, mean ≈ 0
+Volatile  — elevated / changing volatility
+Crisis    — high volatility, heavy tail
+```
+
+Regime là **model output** được HMM suy ra từ dữ liệu, không phải ground truth
+và không phải trạng thái quan sát tường minh từ bên ngoài.
 
 ## 5.3. Distribution
 
@@ -520,6 +530,12 @@ Confidence Level
 Scenario Context
 ```
 
+Theo ADR-0008, benchmark là **per regime**: mỗi regime tạo thành một
+regime-conditioned quantum risk estimation experiment, so sánh Classical MC
+vs QMC/QAE trong CHÍNH regime đó. Regime là một dimension bắt buộc của
+benchmark — câu hỏi trung tâm là "quantum risk estimation có khác nhau theo
+regime không".
+
 ## 12.1. Accuracy
 
 Có thể ghi nhận:
@@ -737,7 +753,8 @@ FastAPI là integration boundary, không sở hữu financial computation.
 
 # 18. UI Flow
 
-Taipy là reference client V1.
+Taipy là reference client dự kiến — tích hợp product **deferred** trong
+research-first (mô tả giữ để ghi rõ ranh giới UI, chưa xây).
 
 ```text
 User
@@ -803,9 +820,14 @@ Engineering / Product Evaluation
 
 ## 19.1. Problem
 
-Ví dụ:
+Ví dụ (theo ADR-0008 — research question trung tâm):
 
-> Có thể estimate một tail-risk quantity bằng Quantum với computational/resource profile có ý nghĩa hơn Classical trong một điều kiện xác định hay không?
+> When, if ever, does quantum risk estimation provide practical value for
+> financial tail-risk estimation **under different market regimes**?
+
+Tức: với từng regime (Calm / Volatile / Crisis) được HMM infer từ data,
+quantum risk estimation có computational/resource profile có ý nghĩa hơn
+Classical MC không — và profile đó có khác nhau theo regime không.
 
 ## 19.2. Hypothesis
 
@@ -1042,12 +1064,12 @@ Benchmark vì vậy có scientific value thay vì chỉ là một bảng số.
 
 # 24. End-to-End Example
 
-Một analysis điển hình:
+Một analysis điển hình (research-first — API/UI là deferred):
 
 ```text
-1. User selects portfolio
+1. Select portfolio
         ↓
-2. User selects horizon / confidence level
+2. Select horizon / confidence level
         ↓
 3. Data is loaded
         ↓
@@ -1055,25 +1077,25 @@ Một analysis điển hình:
         ↓
 5. Returns calculated
         ↓
-6. Volatility / regime modeled
+6. HMM infers hidden market regimes
         ↓
-7. Distribution constructed
+7. Regime-conditioned GARCH / distribution constructed
         ↓
-8. Scenarios generated
+8. Scenarios generated (per regime)
         ↓
 9. Portfolio loss distribution calculated
         ↓
-10. Classical VaR / CVaR estimated
+10. Classical VaR / CVaR estimated (MC, per regime)
         ↓
-11. Quantum estimator optionally executed
+11. Quantum estimator optionally executed (per regime)
         ↓
-12. Classical–Quantum benchmark
+12. Classical–Quantum benchmark (per regime)
         ↓
 13. Risk intelligence generated
         ↓
-14. API returns result
+14. API returns result          ── deferred khi tích hợp product
         ↓
-15. Taipy displays risk / scenario / benchmark
+15. Taipy displays risk / scenario / benchmark  ── deferred
 ```
 
 ---
@@ -1111,11 +1133,9 @@ Modeling Input
 ```text
 Returns
   ↓
-Volatility
+HMM — Hidden Market Regimes
   ↓
-Regime
-  ↓
-Distribution
+Regime-Conditioned GARCH / Distribution
 ```
 
 ### Scenarios
@@ -1251,7 +1271,7 @@ Evaluate product utility
 # 30. Sigma Workflow
 
 ```text
-                    SIGMA WORKFLOW
+SIGMA WORKFLOW
 
 Market Data
      ↓
@@ -1259,13 +1279,13 @@ Data Validation
      ↓
 Returns / Features
      ↓
-Volatility
+HMM — Hidden Market Regimes
      ↓
-Market Regime
+Regime-Conditioned GARCH / Distribution
      ↓
 Regime-Aware Distribution
      ↓
-Scenario Generation
+Scenario Generation (per regime)
      ↓
 Portfolio Loss Distribution
      ↓
@@ -1274,19 +1294,20 @@ Portfolio Loss Distribution
 ▼                              ▼
 Classical Risk             Quantum Risk
 MC / VaR / CVaR            State / Oracle / QAE
+(per regime)               (per regime)
 │                              │
 └──────────────┬───────────────┘
                ▼
       Classical–Quantum
-          Benchmark
+          Benchmark (per regime)
                ↓
        Risk Intelligence
                ↓
         Decision Support
                ↓
-              API
+              API           ── deferred (tích hợp product)
                ↓
-       Taipy / Other Client
+       Taipy / Other Client ── deferred
 ```
 
 ---

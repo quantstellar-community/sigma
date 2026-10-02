@@ -3,9 +3,12 @@
 ## What this repo is
 
 Sigma — hybrid quantum-classical financial risk engine (VaR/CVaR/stress testing).
-**Currently a scaffold**: all files under `src/`, `ui/`, and `configs/` are empty placeholders.
+Core layers implemented and tested: `domain/` (pydantic frozen entities), `data/`
+(universe → yfinance loader → snapshot + validation), `modeling/` (returns,
+volatility/GARCH). Research focus is a **Hybrid HMM regime layer + regime-conditioned
+GARCH** (ADR-0007). `ui/` (Taipy) and `api/` (FastAPI) are **deferred** — research & core first.
 The real specification lives in the Vietnamese docs (`README.md`, `docs/RULES.md`, `docs/ARCHITECTURE.md`,
-`docs/TECH_STACK.md`, `CONTRIBUTING.md`). Read them before implementing anything.
+`docs/TECH_STACK.md`, `CONTRIBUTING.md`, `docs/ADR/*`). Read them before implementing anything.
 
 ## Commands
 
@@ -25,7 +28,7 @@ make check                       # pre-PR gate: lint + format + type + test
 Gotchas:
 - Makefile has standard targets (`sync`, `test`, `lint`, `format`, `format-fix`, `type`, `check`, `run`) but **make is not installed by default on Windows** — use the raw `uv run ...` commands there.
 - No `[tool.pytest.ini_options]` beyond `testpaths` / no `[tool.pyright]` in `pyproject.toml` — defaults. `[tool.ruff]` only excludes `research/` from linting (notebooks are exploratory, never runtime code).
-- `pyproject.toml` has **no `[build-system]`**, so the package isn't installable; imports of `sigma.*` rely on path setup until packaging is added.
+- `hmmlearn` is a **limited-maintenance** package (added 2026-08 for HMM regime layer); keep its usage isolated so a future migration is cheap.
 - No CI workflows, no pre-commit config.
 
 ## Architecture rules (hard constraints from docs/RULES.md)
@@ -51,4 +54,4 @@ Other binding conventions:
 - Branches: `feature/`, `fix/`, `research/`, `docs/`, `refactor/<name>`. Don't develop significant changes on `main`.
 - Commits: small, prefixed — `feat:`, `fix:`, `docs:`, `refactor:`, `test:`, plus non-standard **`research:`** for notebook/experiment work.
 - Any change affecting architecture/schema/rules/workflow **must update the corresponding doc in the same change** (RULE-084).
-- Test layout semantics (no tests exist yet): `tests/unit` = numerics/domain helpers; `tests/integration` = workflows/API; `tests/evaluation` = model quality + classical-vs-quantum benchmarks. Keep quantum tests independent of backend availability.
+- Test layout semantics: `tests/unit` = numerics/domain helpers; `tests/integration` = workflows/snapshot→model interaction (skips if no local data); `tests/evaluation` = model quality + benchmarks (OOS volatility benchmark runs on real snapshot). Keep quantum tests independent of backend availability.

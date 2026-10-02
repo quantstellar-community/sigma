@@ -115,3 +115,8 @@ họ Student-t với distribution layer phía sau.
 **Điều kiện ràng buộc:** EWMA giữ vai trò baseline thường trực trong
 evaluation suite. Nếu benchmark mở rộng sau này cho thấy GARCH-t kém EWMA
 ra ngoài nhiễu thống kê → xem xét lại, không giữ vì cảm tình.
+
+> **Cập nhật 2026-08-24 (ADR-0007):** vai trò của GARCH được điều chỉnh —
+> từ "primary model của pipeline" thành **supporting layer + baseline**.
+> Định hướng nghiên cứu trung tâm chuyển sang HMM regime layer
+> (regime-conditioned GARCH). Code/tests giữ nguyên; ngừng phát triển thêm.

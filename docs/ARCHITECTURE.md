@@ -39,9 +39,13 @@ Taipy / External Clients
 
 Nguyên tắc chính:
 
-> **Một repository → module rõ ràng → ranh giới rõ ràng → API-first → client có thể thay thế.**
+> **Một repository → module rõ ràng → ranh giới rõ ràng → Core research trước → API/client sau.**
 
 Sigma V1 **không** sử dụng microservices.
+
+Giai đoạn hiện tại: **research & core engine first** — xây và kiểm chứng
+HMM regime layer, regime-conditioned GARCH, risk engine trước; FastAPI/UI
+là lớp tích hợp **deferred** (thiết kế ranh giới từ trước, không xây ngay).
 
 Mục tiêu là giữ hệ thống đơn giản để phát triển và nghiên cứu nhanh, nhưng đủ rõ ràng để có thể mở rộng khi xuất hiện nhu cầu thực tế.
 
@@ -102,9 +106,10 @@ Benchmark
 
 Quantum là **lớp tăng cường tính toán**, không phải một hệ thống thay thế toàn bộ Sigma.
 
-### 3.6. API-first
+### 3.6. API boundary (thiết kế; tích hợp deferred)
 
-FastAPI là ranh giới giữa Sigma Core và client.
+FastAPI là ranh giới giữa Sigma Core và client — **được thiết kế từ đầu,
+nhưng tích hợp trong giai đoạn research-first được deferred** (chưa xây).
 
 ```text
 Taipy / External Client
@@ -116,7 +121,8 @@ Taipy / External Client
       Sigma Core
 ```
 
-Client không truy cập trực tiếp các module nội bộ của Core.
+Client không truy cập trực tiếp các module nội bộ của Core. Hiện tại Core
+chạy độc lập, dùng qua CLI/script research.
 
 ### 3.7. Research tách khỏi Core
 
@@ -200,9 +206,9 @@ flowchart LR
     UI --> User
 ```
 
-- Người dùng tương tác thông qua client.
-- Taipy là reference client của V1.
-- FastAPI là product-facing interface.
+- Người dùng tương tác thông qua client (khi tích hợp — deferred).
+- Taipy là reference client dự kiến (tích hợp deferred).
+- FastAPI là product-facing interface (thiết kế; chưa xây trong research phase).
 - Core thực hiện financial computation.
 - Market data đi vào Data layer.
 - Quantum backend chỉ được dùng khi workflow yêu cầu.
@@ -254,23 +260,23 @@ Các thành phần chính:
 
 ```text
 returns.py
-volatility.py
-regime.py
+regime.py        ← HMM infer latent market regimes (trung tâm nghiên cứu)
+volatility.py    ← regime-conditioned GARCH (supporting layer + baseline)
 distribution.py
 ```
 
-Luồng:
+Luồng (ADR-0007/0008 — HMM infer regime TRƯỚC, GARCH chạy TRONG từng regime):
 
 ```text
 Market Data
     ↓
 Returns
     ↓
-Volatility
+HMM — Hidden Market Regimes
     ↓
-Regime
+Regime-Conditioned GARCH (σ theo từng regime)
     ↓
-Distribution
+Regime-Aware Distribution
 ```
 
 Modeling tạo các biểu diễn thống kê và tài chính phục vụ scenario generation.
@@ -546,23 +552,23 @@ flowchart TD
     MARKET["Market Data"]
     VALIDATE["Validation / Cleaning"]
     RETURNS["Returns"]
-    VOL["Volatility"]
-    REGIME["Regime"]
+    REGIME["HMM — Hidden Regimes"]
+    VOL["Regime-Conditioned GARCH"]
     DIST["Regime-Aware Distribution"]
     SCENARIO["Scenario Generation"]
     LOSS["Portfolio Loss Distribution"]
-    CLASSICAL["Classical Risk Estimation"]
-    QUANTUM["Quantum Risk Estimation"]
+    CLASSICAL["Classical Risk Estimation (MC)"]
+    QUANTUM["Quantum Risk Estimation (QMC/QAE)"]
     RISK["VaR / CVaR"]
     INTEL["Risk Intelligence"]
-    API["FastAPI"]
-    UI["Taipy"]
+    API["FastAPI (deferred)"]
+    UI["Taipy (deferred)"]
 
     MARKET --> VALIDATE
     VALIDATE --> RETURNS
-    RETURNS --> VOL
-    VOL --> REGIME
-    REGIME --> DIST
+    RETURNS --> REGIME
+    REGIME --> VOL
+    VOL --> DIST
     DIST --> SCENARIO
     SCENARIO --> LOSS
     LOSS --> CLASSICAL
@@ -570,8 +576,8 @@ flowchart TD
     CLASSICAL --> RISK
     QUANTUM --> RISK
     RISK --> INTEL
-    INTEL --> API
-    API --> UI
+    INTEL -.deferred.-> API
+    API -.deferred.-> UI
 ```
 
 Đây là luồng logic cấp hệ thống. Chi tiết schema và data contract thuộc `SCHEMA.md`.
@@ -618,41 +624,34 @@ Sigma
 ### 12.1. Phân tích rủi ro danh mục
 
 ```text
-Client
-  ↓
-FastAPI
-  ↓
-Application
-  ↓
 Load / Validate Data
   ↓
 Build Portfolio Context
   ↓
-Model Returns / Volatility / Regime
+Returns
   ↓
-Build Distribution
+HMM — Hidden Market Regimes
+  ↓
+Regime-Conditioned GARCH / Distribution
   ↓
 Generate Scenarios
   ↓
 Build Loss Distribution
   ↓
-Calculate Risk
+Calculate Risk (VaR / CVaR)
   ↓
 Return Risk Result
 ```
 
+(Giai đoạn research-first: flow này chạy qua Core/CLI. Khi tích hợp product,
+đầu flow được thay bằng `Client → FastAPI → Application →` — deferred.)
+
 ### 12.2. Benchmark lượng tử
 
 ```text
-Client
+Define Financial Quantity (theo từng regime)
   ↓
-FastAPI
-  ↓
-Application
-  ↓
-Define Financial Quantity
-  ↓
-Run Classical Baseline
+Run Classical Baseline (MC per regime)
   ↓
 Prepare Quantum Representation
   ↓
@@ -660,7 +659,7 @@ Run Quantum Estimator
   ↓
 Collect Resource Metrics
   ↓
-Compare
+Compare (per regime)
   ↓
 Return Benchmark
 ```
@@ -944,13 +943,14 @@ Chính sách truy cập dữ liệu tài chính phụ thuộc vào môi trườn
 
 ### ADR-02 — FastAPI làm Product API
 
-**Quyết định:** FastAPI là interface giữa Sigma và client.
+**Quyết định:** FastAPI là interface giữa Sigma và client — thiết kế ranh
+giới từ đầu, **tích hợp deferred** (research-first).
 
 **Lý do:** tạo integration boundary rõ ràng và giữ Core độc lập với UI.
 
 ### ADR-03 — Taipy làm Reference Client
 
-**Quyết định:** Taipy là reference client của V1.
+**Quyết định:** Taipy là reference client dự kiến — **tích hợp deferred**.
 
 **Lý do:** phù hợp với hệ sinh thái Python hiện tại và giữ UI tách khỏi Core.
 
@@ -1015,44 +1015,49 @@ Kiến trúc V1 phù hợp khi đáp ứng:
 ## 22. Architecture North Star
 
 ```text
-                         USER
-                           │
-                           ▼
-                    TAIPY / CLIENT
-                           │
-                          HTTP
-                           │
-                           ▼
-                        FASTAPI
-                           │
-                           ▼
-                     APPLICATION
-                           │
-             ┌─────────────┼─────────────┐
-             ▼             ▼             ▼
-          DOMAIN        ENGINES         DATA
-                           │
-                    ┌──────┼──────┐
-                    ▼      ▼      ▼
-                  MODEL SCENARIOS RISK
-                                  │
-                                  ▼
-                               QUANTUM
-                                  │
-                                  ▼
-                          RISK INTELLIGENCE
-                                  │
-                                  ▼
-                           DECISION SUPPORT
+                   MARKET DATA + PORTFOLIO
+                            │
+                            ▼
+                        RETURNS
+                            │
+                            ▼
+                   HMM — HIDDEN REGIMES
+                            │
+                            ▼
+              REGIME-CONDITIONED GARCH
+                            │
+                            ▼
+                     REGIME-AWARE DIST
+                            │
+                            ▼
+                       SCENARIOS
+                            │
+                            ▼
+                  PORTFOLIO LOSS DIST
+                            │
+              ┌─────────────┼─────────────┐
+              ▼             ▼             ▼
+          CLASSICAL      DOMAIN         QUANTUM
+             MC            DATA         (QMC/QAE)
+              │             │             │
+              └─────────────┼─────────────┘
+                            ▼
+                       VaR / CVaR
+                            │
+                            ▼
+                   RISK INTELLIGENCE
+                            │
+                            ▼
+                    DECISION SUPPORT
 ```
 
 Nguyên tắc cốt lõi:
 
-> **Sigma Core là Financial Risk Intelligence Engine độc lập với giao diện.**  
-> **API là boundary để productize Core.**  
-> **Taipy là một client có thể thay thế.**  
-> **Research là experimental layer.**  
-> **Quantum là computational enhancement layer.**  
+> **Sigma Core là Regime-Aware Financial Risk Intelligence Engine độc lập với giao diện.**  
+> **HMM regime layer là trung tâm nghiên cứu; GARCH là supporting layer + baseline.**  
+> **Classical MC là baseline bắt buộc; Quantum là computational enhancement layer.**  
+> **API/Taipy là ranh giới product — deferred, thiết kế trước, xây sau.**  
+> **Research là experimental layer cung cấp tri thức cho Core.**  
 > **Mỗi module giữ đúng trách nhiệm của mình.**  
 > **Complexity chỉ được đưa vào khi hệ thống thực sự cần.**
 

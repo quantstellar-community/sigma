@@ -62,15 +62,14 @@ Không chọn technology chỉ vì:
 |---|---|---|
 | Runtime | Python 3.12.x | Runtime chính |
 | Environment / Dependencies | `uv` | Python, virtual environment, dependencies, lockfile |
-| API | FastAPI | Product API |
-| API Server | Uvicorn | ASGI server |
-| UI | Taipy | Reference client V1 |
+| Regime Modeling | hmmlearn | HMM regime layer (trung tâm nghiên cứu) |
+| Volatility | arch | GARCH(1,1)-t supporting layer + baseline |
 | Numerical | NumPy | Numerical primitives |
 | Data | pandas | Tabular / time-series data |
 | Scientific | SciPy | Statistical / numerical methods |
-| Statistical Modeling | statsmodels | Classical statistical models khi phù hợp |
+| Statistical Modeling | statsmodels | Diagnostics, MarkovRegression, switching regression |
 | ML | scikit-learn | Classical ML / evaluation khi cần |
-| Visualization | Plotly | Interactive analytical charts |
+| Visualization | Plotly / matplotlib / seaborn | Analytical charts (research) |
 | Quantum | Qiskit | Quantum circuits / algorithms |
 | Quantum Simulation | Qiskit Aer | Local / noisy simulation |
 | Testing | pytest | Unit / integration / evaluation |
@@ -78,6 +77,10 @@ Không chọn technology chỉ vì:
 | Type Checking | Pyright | Static type checking |
 | Documentation | Markdown + Mermaid | Project documentation |
 | Version Control | Git | Source control |
+
+> **API (FastAPI) / UI (Taipy):** thiết kế ranh giới từ đầu nhưng tích hợp
+> **deferred** trong giai đoạn research-first — chưa nằm trong runtime hiện
+> tại (xem ADR-0007 D5).
 
 Package versions cụ thể phải được quản lý trong `pyproject.toml` và lockfile. Bảng này mô tả **vai trò**, không thay thế dependency configuration.
 
@@ -166,11 +169,12 @@ Dependency phải được quản lý qua project configuration và lockfile tha
 
 ---
 
-# 6. API Stack
+# 6. API Stack (deferred — thiết kế ranh giới, chưa tích hợp trong research-first)
 
 ## 6.1. FastAPI
 
-FastAPI là product API boundary:
+FastAPI là product API boundary — **tích hợp deferred** (ADR-0007 D5); giai
+đoạn hiện tại Core chạy độc lập qua CLI/script:
 
 ```text
 Client
@@ -216,9 +220,9 @@ Deployment configuration có thể thay đổi theo environment.
 
 ---
 
-# 7. UI — Taipy
+# 7. UI — Taipy (deferred)
 
-Taipy là **reference client V1**:
+Taipy là reference client dự kiến — **tích hợp deferred** trong research-first:
 
 ```text
 Taipy
@@ -310,19 +314,30 @@ Chỉ sử dụng phần phù hợp với methodology.
 
 # 9. Statistical & Financial Modeling
 
+## HMM Regime Layer (trung tâm nghiên cứu — ADR-0007/0008)
+
+`hmmlearn` (GaussianHMM) dùng cho HMM regime detection — infer latent market
+regimes từ returns. Lưu ý: `hmmlearn` là package **limited-maintenance**;
+giữ usage cô lập trong modeling layer để future migration rẻ. `statsmodels`
+(MarkovRegression) là lựa chọn thay thế cho switching regression khi cần
+standard errors.
+
 ## statsmodels
 
 `statsmodels` là lựa chọn cho classical statistical modeling khi cần, chẳng hạn:
 
 - statistical estimation;
 - time-series models;
-- econometric analysis.
+- econometric analysis;
+- ADF stationarity test, ARCH-LM diagnostic;
+- MarkovRegression (thay thế/đối chiếu với hmmlearn).
 
 Không mặc định mọi volatility hoặc regime model đều phải dùng `statsmodels`.
 
-## Volatility / GARCH
+## Volatility / GARCH (supporting layer — ADR-0006/0007)
 
-Nếu Sigma sử dụng GARCH hoặc volatility methodology khác, package phải được chọn dựa trên:
+`arch` được chọn cho GARCH(1,1)-Student-t — supporting volatility layer +
+baseline. Cách chọn package dựa trên:
 
 ```text
 Model Correctness
@@ -616,7 +631,9 @@ Data source cụ thể có thể thay đổi theo:
 - data quality;
 - project stage.
 
-Sigma V1 không khóa vào một vendor dữ liệu duy nhất.
+Sigma V1 không khóa kiến trúc vào một vendor — nhưng với dữ liệu giá, sau
+đánh giá thực nghiệm (ADR-0004), **yfinance là provider giá duy nhất của
+giai đoạn hiện tại**.
 
 Quyết định V1 cho market data (cập nhật theo ADR-0004):
 
@@ -674,16 +691,17 @@ Optional
 
 Ví dụ:
 
-### Runtime
+### Runtime (core engine)
 
 ```text
-fastapi
-uvicorn
 numpy
 pandas
 scipy
-plotly
-taipy
+arch          # GARCH volatility layer
+hmmlearn      # HMM regime layer (limited-maintenance)
+statsmodels   # statistical modeling / diagnostics
+quantlib      # trading calendar
+yfinance      # price provider (sole source per ADR-0004)
 ```
 
 ### Research / Quantum
@@ -855,7 +873,9 @@ Nếu workload tăng và có evidence cần observability nâng cao, stack có t
 
 # 31. Deployment
 
-V1 ưu tiên deployment đơn giản:
+Giai đoạn research-first: Sigma Core chạy standalone (CLI/script), không
+cần deployment topology. Khi tích hợp product (deferred), V1 ưu tiên
+deployment đơn giản:
 
 ```text
 Taipy Client

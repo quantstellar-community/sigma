@@ -396,31 +396,42 @@ Schema không hard-code một model duy nhất.
 | `timestamp` | Timestamp | Thời điểm |
 | `value` | Decimal | Estimated volatility |
 | `model_id` | Identifier | Model sử dụng |
+| `regime_id` | Identifier \| null | Regime mà volatility thuộc về (nếu regime-conditioned GARCH) |
 
 Volatility phải gắn với methodology/model context.
 
+Trong workflow regime-conditioned (ADR-0007/0008), GARCH được fit riêng
+trong từng regime → mỗi `VolatilityState` phải trỏ về `regime_id` của nó,
+để trace được `σ²ₜ` thuộc regime nào.
+
 ## 8.3. MarketRegime
 
-`MarketRegime` biểu diễn trạng thái thị trường do model xác định.
+`MarketRegime` biểu diễn trạng thái thị trường **ẩn (latent)** do HMM infer
+từ returns.
 
 | Field | Kiểu | Ý nghĩa |
 |---|---|---|
 | `regime_id` | Identifier | Regime |
 | `timestamp` | Timestamp | Thời điểm |
-| `label` | String/Enum | Regime label |
-| `probability` | Decimal | Probability nếu có |
-| `model_id` | Identifier | Regime model |
+| `label` | String/Enum | Regime label (gán SAU khi characterise từ data) |
+| `probability` | Decimal | P(S_t = k | r_{1:t}) nếu có |
+| `model_id` | Identifier | Regime model (HMM) |
+| `distribution_id` | Identifier \| null | Distribution của regime này |
+| `volatility_model_id` | Identifier \| null | GARCH của regime này |
 
-Ví dụ:
+Ví dụ (gán nhãn sau khi đo statistical characteristics — không hard-code):
 
 ```text
-Low Volatility
-High Volatility
-Stress
-Normal
+Calm      — low volatility, mean ≈ 0
+Volatile  — elevated / changing volatility
+Crisis    — high volatility, heavy tail
 ```
 
-Label thực tế phải do methodology định nghĩa.
+Label thực tế phải do methodology định nghĩa từ đặc tính dữ liệu học được.
+
+> **Lưu ý:** nhãn regime (vd `Crisis`) là **state ẩn inferred từ returns**,
+> khác với `Scenario.scenario_type` (vd `Stress` = scenario được thiết kế).
+> Hai khái niệm không được trộn (xem RULE-027).
 
 ## 8.4. DistributionSpecification
 
@@ -816,6 +827,15 @@ RiskAnalysis
 
 RiskAnalysis
   1 ──── 1..N ScenarioSet
+
+ModelSpecification (HMM)
+  1 ──── N MarketRegime
+
+MarketRegime
+  1 ──── 0..N DistributionSpecification
+
+MarketRegime
+  1 ──── 0..N VolatilityState
 
 ScenarioSet
   1 ──── N Scenario

@@ -33,13 +33,13 @@ The V1 focus is a **Regime-Aware Portfolio Risk Intelligence Engine**:
 flowchart TD
     DATA["Market Data + Portfolio"] --> VALIDATE["Data Validation"]
     VALIDATE --> RETURNS["Returns / Features"]
-    RETURNS --> VOL["Volatility Modeling"]
-    VOL --> REGIME["Market Regime"]
-    REGIME --> DIST["Regime-Aware Distribution"]
+    RETURNS --> REGIME["HMM: Hidden Market Regimes"]
+    REGIME --> VOL["Regime-Conditioned GARCH / Distribution"]
+    VOL --> DIST["Regime-Aware Distribution"]
     DIST --> SCENARIO["Scenario Generation"]
     SCENARIO --> LOSS["Portfolio Loss Distribution"]
-    LOSS --> CLASSICAL["Classical Risk Engine"]
-    LOSS --> QUANTUM["Quantum Risk Module"]
+    LOSS --> CLASSICAL["Classical Risk Engine (MC)"]
+    LOSS --> QUANTUM["Quantum Risk Module (QMC/QAE)"]
     CLASSICAL --> RISK["VaR / CVaR / Stress"]
     QUANTUM --> RISK
     RISK --> INTEL["Risk Intelligence"]
@@ -79,19 +79,33 @@ A method is only meaningful to the product when it produces measurable practical
 
 ## Key Features
 
-- **Regime-aware modeling** — volatility and market regime modeling feeding a regime-aware distribution
+- **Regime-aware modeling** — HMM infers latent market regimes from returns, feeding regime-conditioned distributions (research center)
 - **Scenario generation** — Monte Carlo and stress scenario engines
 - **Portfolio loss distribution** — scenario propagation into portfolio P&L and loss
 - **Risk metrics** — VaR, CVaR / Expected Shortfall, Expected Loss, Stress Loss, Risk Contribution
 - **Quantum estimation** — Quantum Monte Carlo and Quantum Amplitude Estimation as a research layer
-- **Classical–Quantum benchmark** — fair, documented comparison on identical problem settings
-- **API-first architecture** — a stable FastAPI boundary between the core and any client
+- **Classical–Quantum benchmark** — fair, documented comparison on identical problem settings, per market regime
+- **Core research engine** — research-first: API/UI integration is deferred to a later phase (FastAPI boundary designed but not built yet)
 
 ---
 
 ## Architecture
 
-Sigma V1 is organized as a **modular monolith** with an **API-first** design.
+Sigma V1 is organized as a **modular monolith**. The core research engine
+is built and tested first; the API-first boundary is designed but its
+integration (FastAPI, reference client) is **deferred** to a later phase.
+
+```text
+Sigma Core (research & core engine — current focus)
+  ├── Domain
+  ├── Data
+  ├── Modeling  (HMM regime layer · regime-conditioned GARCH)
+  ├── Scenarios
+  ├── Risk
+  └── Quantum
+```
+
+Deferred integration layers (designed, not yet built):
 
 ```text
 Client
@@ -101,12 +115,6 @@ FastAPI
 Application Layer
   ↓
 Sigma Core
-  ├── Domain
-  ├── Data
-  ├── Modeling
-  ├── Scenarios
-  ├── Risk
-  └── Quantum
 ```
 
 Architectural boundaries:
@@ -132,7 +140,9 @@ flowchart LR
     I --> J["Reference Client"]
 ```
 
-The reference client for V1 is a Taipy-based dashboard, but it is a replaceable client — the core and API contract do not depend on it.
+When integrated later, the reference client is planned as a Taipy-based
+dashboard — a replaceable client that the core and API contract do not
+depend on. UI work is deferred; the research engine is the current focus.
 
 ---
 
@@ -143,7 +153,7 @@ sigma/
 ├── src/sigma/
 │   ├── domain/        # Financial concepts (portfolio, market data, scenarios)
 │   ├── data/          # Data loading, validation, snapshots
-│   ├── modeling/      # Returns, volatility, regime, distribution
+│   ├── modeling/      # Returns, HMM regime, regime-conditioned GARCH, distribution
 │   ├── scenarios/     # Monte Carlo and stress scenario generation
 │   ├── risk/          # VaR, CVaR, risk metrics, risk contribution
 │   ├── quantum/       # State preparation, oracle, amplitude estimation
@@ -220,10 +230,10 @@ uv run python -m sigma.data.download --universe configs/universe.yaml
 
 ## Roadmap
 
-- **Classical Risk Core** — data pipeline, returns, volatility and regime modeling, scenario generation, Monte Carlo, VaR/CVaR, stress testing
-- **API & Client** — FastAPI boundary, application layer, reference dashboard, visualization
-- **Quantum Benchmark** — financial quantity formulation, state preparation, oracle construction, QAE/QMC experiments, fair classical–quantum comparison
-- **Advanced Research** — richer distributions, uncertainty modeling, advanced portfolio risk
+- **Classical Risk Core** — data pipeline, returns, HMM regime layer, regime-conditioned GARCH, scenario generation, Monte Carlo, VaR/CVaR, stress testing
+- **Quantum Benchmark** — financial quantity formulation, state preparation, oracle construction, QAE/QMC experiments, fair classical–quantum comparison **per market regime**
+- **Advanced Research** — richer regime-aware distributions, MS-GARCH as future extension, quantum regime-transition encoding
+- **API & Client** (deferred) — FastAPI boundary, application layer, reference dashboard, visualization
 - **Productization** — persistence, observability, auditability, model governance
 
 ---

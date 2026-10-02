@@ -4,8 +4,12 @@
 **Trạng thái:** Draft / Internal Baseline  
 **Sản phẩm:** Sigma Risk Intelligence  
 **Định hướng:** Professional Risk Intelligence Workstation  
-**Reference Client V1:** Taipy  
-**Product Interface:** FastAPI + Client UI
+**Reference Client dự kiến:** Taipy (tích hợp **deferred** — research-first)  
+**Product Interface:** FastAPI + Client UI (thiết kế; chưa xây)
+
+> Giai đoạn hiện tại: Sigma tập trung vào research & core engine. Tài liệu
+> này mô tả thiết kế sản phẩm tương lai — UI chưa được xây dựng trong giai
+> đoạn research-first (ADR-0007 D5).
 
 ---
 
@@ -279,7 +283,7 @@ Demo phải ngắn và không yêu cầu người dùng hiểu toàn bộ method
 
 ## 5. Cấu trúc thông tin
 
-Navigation V1:
+Navigation dự kiến (thiết kế sản phẩm — UI deferred trong research-first):
 
 ```text
 SIGMA
@@ -1053,7 +1057,8 @@ Hai nhóm có thể dùng cùng application nhưng không nên trộn toàn bộ
 
 ## 23. Demo Experience
 
-Demo flow:
+Demo flow (khi UI được tích hợp — deferred; giai đoạn research-first có thể
+thể hiện qua script/notebook xuất kết quả):
 
 ```text
 1. Select Demo Portfolio
@@ -1123,7 +1128,8 @@ Về khả năng sử dụng:
 
 ## 25. Độc lập với Client
 
-Taipy là reference client V1, không phải identity của Sigma Core.
+Taipy là reference client dự kiến (tích hợp deferred trong research-first),
+không phải identity của Sigma Core.
 
 Design mô tả **trải nghiệm và cấu trúc thông tin**, không phụ thuộc vào một UI framework cụ thể.
 
@@ -1177,16 +1183,18 @@ How results are communicated
 
 ## 27. Ưu tiên thiết kế V1
 
-### P0 — Core Experience
+> **Lưu ý:** các ưu tiên này mô tả thiết kế sản phẩm tương lai. Giai đoạn
+> hiện tại là research-first (ADR-0007 D5) — UI chưa được xây; phần lõi
+> (core experience) tạm thời được kiểm chứng qua Core/CLI/notebook.
 
-- Portfolio Explorer;
+### P0 — Core Experience (core engine trước)
+
 - Risk Analysis;
 - Loss Distribution;
-- VaR/CVaR presentation;
+- VaR/CVaR;
 - Risk Contribution;
 - Scenario / Stress Testing;
-- Analysis Context;
-- Loading / Error / Empty states.
+- Analysis Context.
 
 ### P1 — Research & Reporting
 
@@ -1195,11 +1203,12 @@ How results are communicated
 - resource visualization;
 - Reports.
 
-### P2 — Mở rộng
+### P2 — Mở rộng (khi tích hợp product)
 
 - advanced scenario exploration;
 - detailed risk decomposition;
 - richer investigation workflows;
+- Portfolio Explorer + UI states (Loading / Error / Empty);
 - additional clients.
 
 ---

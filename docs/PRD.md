@@ -5,7 +5,7 @@
 **Sản phẩm:** Sigma Risk Intelligence  
 **Loại sản phẩm:** Regime-Aware Portfolio Risk Intelligence Engine  
 **Lĩnh vực:** Market Risk & Portfolio Risk  
-**Định hướng:** API-first, Modular Monolith
+**Định hướng:** Research-first, Modular Monolith (API-first khi tích hợp product)
 
 ---
 
@@ -67,11 +67,15 @@ Phân phối lợi suất và mức độ biến động có thể thay đổi t
 Sigma hướng tới:
 
 ```text
-Market State
+Market Data
     ↓
-Return / Volatility Dynamics
+Returns
     ↓
-Risk Distribution
+HMM — Hidden Market Regimes (infer từ data)
+    ↓
+Regime-conditioned Return / Volatility Dynamics
+    ↓
+Regime-Aware Risk Distribution
     ↓
 Scenario Generation
     ↓
@@ -232,8 +236,8 @@ Sigma phải có khả năng:
 
 - xử lý market data;
 - tính returns;
-- mô hình hóa volatility;
-- nhận diện market regime;
+- **HMM infer latent market regimes từ returns** (regime là trạng thái ẩn, không quan sát trực tiếp);
+- **regime-conditioned GARCH** — fit GARCH riêng trong từng regime;
 - xây dựng regime-aware distribution;
 - sinh scenarios;
 - tạo portfolio loss distribution;
@@ -357,12 +361,16 @@ Sigma V1 tập trung vào:
 
 ### Market Modeling
 
-- return modeling;
-- conditional volatility modeling;
-- market regime detection;
-- regime-aware distribution modeling.
+- **HMM regime layer** — infer latent market regimes từ returns (transition
+  model + emission model); đây là trung tâm nghiên cứu của Sigma;
+- **regime-conditioned GARCH** — fit GARCH riêng trong từng regime
+  (two-stage), dùng làm supporting volatility layer;
+- **regime-aware distribution** — phân phối theo từng regime;
+- MS-GARCH (formal) là future extension, không phải requirement V1.
 
-GARCH và HMM có thể được sử dụng khi phù hợp với financial/statistical assumptions.
+HMM là cốt lõi; GARCH(1,1)-t là supporting layer + baseline cho benchmark.
+Regime là trạng thái ẩn được HMM infer từ returns — không phải trạng thái
+quan sát tường minh từ bên ngoài.
 
 ### Scenario Generation
 
@@ -409,7 +417,7 @@ V1 hỗ trợ:
 
 ### API
 
-API hỗ trợ các nhóm chức năng:
+API hỗ trợ các nhóm chức năng (thiết kế — tích hợp **deferred**, research-first):
 
 - portfolio analysis;
 - risk estimation;
@@ -418,9 +426,8 @@ API hỗ trợ các nhóm chức năng:
 
 ### Dashboard
 
-Taipy là:
+Taipy là reference client dự kiến (tích hợp **deferred**):
 
-- reference client;
 - interactive risk console;
 - visualization layer;
 - benchmark interface;
@@ -439,9 +446,9 @@ Data Validation & Cleaning
       ↓
 Returns / Risk Features
       ↓
-Volatility Modeling
+HMM — Hidden Market Regimes
       ↓
-Market Regime Modeling
+Regime-Conditioned GARCH (volatility theo regime)
       ↓
 Regime-Aware Distribution
       ↓
@@ -450,9 +457,9 @@ Scenario Generation
 Portfolio Loss Distribution
       ↓
 ┌───────────────────────────┐
-│ Classical Risk Estimation │
+│ Classical Risk Estimation │  (per regime)
 │            vs             │
-│ Quantum Risk Estimation   │
+│ Quantum Risk Estimation   │  (per regime)
 └─────────────┬─────────────┘
               ↓
           VaR / CVaR
@@ -462,9 +469,9 @@ Portfolio Loss Distribution
        Risk Intelligence
               ↓
        Decision Support
-              ↓
-        FastAPI / UI
 ```
+
+FastAPI / UI là lớp tích hợp product **deferred** — nằm ngoài core research flow hiện tại.
 
 Quantum là nhánh estimation/benchmark tùy trường hợp, không phải điều kiện bắt buộc của Classical risk workflow.
 
@@ -738,9 +745,9 @@ trước khi mở rộng commercial deployment.
 ### Technical Correctness
 
 - Core modules hoạt động độc lập;
-- API contract rõ ràng;
-- Dashboard sử dụng API;
+- API contract rõ ràng (thiết kế; tích hợp product deferred);
 - Classical baseline có thể tái lập;
+- HMM regime layer cho regimes ổn định và có ý nghĩa tài chính;
 - Quantum module có thể chạy trên simulator và/hoặc backend phù hợp.
 
 ### Scientific Validity
@@ -855,13 +862,13 @@ Quantum Hype
 
 ## 22. Ưu tiên phát triển V1
 
-### P0 — Core Risk Foundation
+### P0 — Core Risk Foundation (research-first)
 
 - Data;
 - Returns;
-- Volatility;
-- Regime;
-- Distribution;
+- **HMM regime layer** (latent regimes từ returns);
+- **regime-conditioned GARCH**;
+- Regime-Aware Distribution;
 - Monte Carlo;
 - Loss Distribution;
 - VaR/CVaR.
@@ -872,10 +879,10 @@ Quantum Hype
 - state preparation;
 - oracle;
 - QAE-family;
-- benchmarking;
+- benchmarking (per regime);
 - resource tracking.
 
-### P2 — Productization
+### P2 — Productization (deferred)
 
 - FastAPI;
 - API schemas;
@@ -910,11 +917,11 @@ Core Architecture
 ```text
 Returns
   ↓
-Volatility
+HMM — Hidden Market Regimes
   ↓
-Regime
+Regime-Conditioned GARCH
   ↓
-Distribution
+Regime-Aware Distribution
   ↓
 Monte Carlo
   ↓
@@ -924,7 +931,7 @@ VaR/CVaR
 ### Phase 3 — Quantum Research
 
 ```text
-Financial Problem
+Financial Problem (per regime)
   ↓
 Quantum Formulation
   ↓
@@ -934,10 +941,10 @@ Oracle
   ↓
 QAE
   ↓
-Benchmark
+Benchmark (Classical MC vs QAE, per regime)
 ```
 
-### Phase 4 — Product Integration
+### Phase 4 — Product Integration (deferred)
 
 ```text
 Risk Engine
@@ -1027,7 +1034,13 @@ Quantum là computational enhancement layer bên trong Risk Intelligence, không
 
 ## 26. Product Definition
 
-> **Sigma là một Regime-Aware Portfolio Risk Intelligence Engine sử dụng dữ liệu thị trường để mô hình hóa điều kiện thị trường, sinh kịch bản, xây dựng phân phối tổn thất và ước lượng các chỉ số rủi ro như VaR/CVaR; đồng thời nghiên cứu khả năng sử dụng Quantum Amplitude Estimation để tăng cường một số bài toán ước lượng và đánh giá phương pháp lượng tử một cách công bằng với Classical Computing.**
+> **Sigma là một Regime-Aware Portfolio Risk Intelligence Engine: dùng HMM
+> để infer latent market regimes từ dữ liệu thị trường, fit GARCH theo từng
+> regime (regime-conditioned GARCH), xây dựng regime-aware distribution,
+> sinh kịch bản, tạo phân phối tổn thất danh mục và ước lượng các chỉ số
+> rủi ro như VaR/CVaR; đồng thời nghiên cứu liệu Quantum risk estimation
+> (QMC/QAE) có practical value theo từng market regime, đánh giá phương
+> pháp lượng tử một cách công bằng với Classical Computing.**
 
 Sigma không tuyên bố Quantum Advantage trước khi có bằng chứng thực nghiệm.
 
@@ -1042,11 +1055,11 @@ Classical Baseline
             +
 Quantum Enhancement
             +
-Fair Benchmark
+Fair Benchmark (per regime)
             +
 Risk Intelligence
             +
-API-first Product
+Product Integration (API-first — deferred)
 ```
 
 ---
