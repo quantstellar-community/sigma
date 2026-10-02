@@ -13,6 +13,14 @@ from sigma.modeling.regime import (
     label_regimes,
     select_k,
 )
+from sigma.modeling.regime_garch import (
+    GARCHParams,
+    RegimeGARCHFit,
+    RegimeVolForecast,
+    fit_regime_garch,
+    forecast_regime_vol,
+    simulate_regime_paths,
+)
 from sigma.modeling.returns import (
     AlignmentReport,
     ReturnMatrix,
@@ -33,22 +41,28 @@ from sigma.modeling.volatility import (
 __all__ = [
     "AlignmentReport",
     "ArchDiagnostics",
+    "GARCHParams",
     "KSelection",
     "ModelingError",
     "RegimeCharacterization",
     "RegimeFit",
+    "RegimeGARCHFit",
+    "RegimeVolForecast",
     "ReturnMatrix",
     "VolatilityState",
     "characterize_regimes",
     "check_arch_effects",
     "constant_sigma",
     "ewma_sigma",
+    "fit_regime_garch",
     "fit_regime_model",
+    "forecast_regime_vol",
     "garch_sigma",
     "label_regimes",
     "price_to_float",
     "rolling_sigma",
     "select_k",
     "simple_returns",
+    "simulate_regime_paths",
     "to_log",
 ]
