@@ -77,6 +77,11 @@ conditioned distribution (WP-5), Student-t emission (chỉ khi có bằng chứn
 - Nếu k=3 không ổn định trên data thật → k=2 là kết quả hợp lệ (RULES-043).
 - Đây là nền tảng cho regime-conditioned GARCH và quantum per regime.
 
+> **Cập nhật 2026-08-24 (ADR-0011 §5):** survey 12 assets cho thấy state
+> thứ 3 là artifact ở 11/12 assets → **k=2 là mặc định** trong code
+> (`fit_regime_model(returns, dataset_id=...)` dùng k=2); k=3 vẫn khả dụng
+> khi data ủng hộ (vd XOM).
+
 ---
 
 ## 5. Measurement Outcome (bổ sung sau khi chạy trên snapshot thật)

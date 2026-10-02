@@ -66,13 +66,13 @@ chưa tích hợp vào scenario engine.
 ## 3. Phạm vi
 
 In: fit_regime_garch, forecast_regime_vol, simulate_regime_paths, tests
-synthetic + benchmark OOS vs GARCH toàn chuỗi.
+synthetic + benchmark OOS vs baselines naive (constant/rolling/ewma).
 Out: market-factor HMM (WP-5), regime-conditioned distribution (WP-5),
 scenario engine tích hợp (WP-5).
 
 ## 4. Hệ quả
 
-- GARCH per regime được benchmark công bằng với baseline GARCH toàn chuỗi
+- GARCH per regime được benchmark công bằng với các baseline naive
   (không tuyên bố tốt hơn nếu chưa đo — RULES-043).
 - Decoupled: khi C triển khai (market factor), chỉ đổi nguồn nhãn, không
   đổi code fit/forecast.
@@ -98,7 +98,9 @@ scenario engine tích hợp (WP-5).
    volatility model riêng thì nghi ngờ không phải regime thật. Đây là
    phát hiện từ thực nghiệm, CHƯA phải quyết định — sẽ được cân nhắc
    đưa vào select_k protocol (khi đó mở ADR riêng).
-3. Benchmark (WP-4b.5b) dùng k=2 làm mặc định; XOM k=3 làm case study.
+3. Benchmark (WP-4b.5b) dùng k=2 làm mặc định — k=3 (vd XOM) là extension
+   tiềm năng, KHÔNG phải case study của paper core (tập trung quantum
+   experiment per regime với k=2).
 
 ### Quan sát: nu ngược trực giác (SPY, k=2)
 
@@ -116,3 +118,59 @@ tương đối → đuôi innovation béo.
 Hàm ý: bằng chứng ủng hộ luận điểm "tách regime đã bắt phần lớn fat
 tails" — liên quan trực tiếp quyết định Gaussian-vs-Student-t ở WP-5.
 Là quan sát cần kiểm chứng thêm, không phải kết luận cuối.
+
+---
+
+## 6. Benchmark Outcome (WP-4b.5b — OOS, causal labels, 250 ngày × 3 assets)
+
+Protocol: HMM refit expanding-window (63 ngày), nhãn regime **causal**
+(predict từng ngày với model fit trên data ≤ t — không lookahead), cùng
+ladder tiêu chí (VaR viol 95/99 + MAE) với các baseline naive
+(constant/rolling/ewma).
+
+| Asset | ewma viol95 | garch-regime viol95 | MAE thắng |
+|---|---|---|---|
+| SPY | 6.0% | 7.2% | regime (0.00444 vs 0.00453) |
+| NVDA | 6.4% | 7.2% | regime (0.01351 vs 0.01278) |
+| GLD | 4.0% | 6.4% | ewma (0.01143 vs 0.01017) |
+
+> Ghi chú lịch sử: bảng đầu tiên (trước khi xóa `garch_sigma`) so với
+> garch-full — GLD cải thiện viol95 8.8 → 6.4, MAE thắng 2/3 assets.
+> Quyết định sau đó xóa `garch_sigma` standalone (xem §6.1), harness giờ
+> so với baselines naive.
+
+Kết luận trung thực:
+
+- **GLD (bản garch-full cũ)**: regime cải thiện rõ (viol95 8.8 → 6.4,
+  gần mục tiêu 5%) — ủng hộ.
+- **SPY/NVDA**: MAE tốt hơn nhưng viol95 cao hơn mục tiêu — trung tính.
+- Với 250 ngày, sai số ±3–4pp → khoảng cách nằm trong nhiễu cho phần lớn
+  chỉ số → kết quả là **hòa/nhỉnh hơn, chưa đủ kết luận "thắng"** cũng
+  không "thua".
+
+**Quyết định theo ADR-0006 tiêu chí:** chưa đủ bằng chứng để tuyên bố
+GARCH-per-regime vượt trội → giữ các baseline naive làm thước đo đối
+chứng; GARCH-per-regime là phương án nghiên cứu tiếp tục đo (thêm asset,
+thêm ngày test) — không phải negative result dứt khoát, cũng không phải
+chiến thắng được công nhận. Regime layer (HMM) độc lập với kết luận này
+(ADR-0012 D2 fallback chưa kích hoạt).
+
+---
+
+## 6.1. Xóa `garch_sigma` standalone (quyết định sau benchmark)
+
+Sau khi hybrid regime-GARCH là ứng viên chính, `garch_sigma` (GARCH toàn
+chuỗi) bị XÓA khỏi code (function + exports + các test tham chiếu) vì:
+
+- Paper benchmark trung tâm là **quantum per regime** (ADR-0008), không
+  phải GARCH-vs-GARCH;
+- Hybrid là model chính của volatility layer — không giữ "GARCH lẻ" kề bên;
+- Bằng chứng benchmark đã được ghi lại trong §6, không mất đi khi xóa code;
+- Baselines naive (constant/rolling/ewma) giữ làm thước đo so sánh trong
+  evaluation suite.
+
+Hệ quả: `modeling/__init__.py` không còn expose `garch_sigma`;
+`tests/evaluation/test_volatility_benchmark.py` và
+`test_regime_garch_benchmark.py` dùng baselines naive + garch-regime.
+Kết quả đo (GLD cải thiện viol95, MAE thắng 2/3) là tín hiệu nghiên cứu
+được giữ trong ADR — không phải kết luận sản phẩm.

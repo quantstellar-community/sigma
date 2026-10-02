@@ -23,25 +23,26 @@ GARCH có giá trị nếu chưa thắng baseline bằng phép đo out-of-sample
 Chuyên môn hẹp đúng bài toán, API ổn định, hỗ trợ Normal/t/skewt/GED.
 Zero new dependency (TECH_STACK §22).
 
-### D2 — Benchmark ladder: năm ứng viên cùng interface
+### D2 — Benchmark ladder: các ứng viên cùng interface
 
 ```text
 constant_sigma(returns)                    # baseline 0
 rolling_sigma(returns, window=60)          # baseline 1
 ewma_sigma(returns, lam=0.94)              # baseline 2 (RiskMetrics)
-garch_sigma(returns, dist="normal")        # model 1
-garch_sigma(returns, dist="t")             # model 2
 ```
+
+(Các baseline naive này được giữ làm thước đo so sánh trong evaluation
+suite. GARCH-per-regime — ứng viên chính — sống trong `regime_garch.py`
+theo ADR-0011.)
 
 Mỗi hàm trả `sigma_daily: float` — dự báo 1 bước cho ngày kế tiếp. Interface
 thuần float giúp benchmark ghép công bằng và unit test số tay trực tiếp.
 
 ### D3 — Distribution chọn bằng phép đo, không mặc định
 
-GARCH-Normal và GARCH-Student-t đấu nhau qua log-likelihood/AIC trên fit
-và VaR coverage ngoài mẫu. Nếu Normal đủ tốt → dùng Normal (ít tham số).
-Không chấp nhận "Student-t vì literature nói vậy" không có bằng chứng trên
-dữ liệu của Sigma.
+GARCH-Student-t được chọn so với GARCH-Normal qua VaR coverage ngoài mẫu
+(chi tiết trong §6). Không chấp nhận "Student-t vì literature nói vậy"
+không có bằng chứng trên dữ liệu của Sigma.
 
 ### D4 — Rolling window 1000 ngày giao dịch (~4 năm), refit theo snapshot
 
@@ -76,16 +77,20 @@ notebook sau này chỉ vẽ chart từ kết quả đã xuất.
 
 ## 3. Chi tiết kỹ thuật
 
-- `arch` fit trên returns ×100 (percent) cho ổn định số học; kết quả chia lại 100.
 - EWMA khởi tạo variance = sample variance toàn chuỗi, đệ quy RiskMetrics λ=0.94.
 - Rolling std ddof=1 trên `window` phiên gần nhất; yêu cầu đủ `window` điểm.
-- Chuỗi <2 điểm → ModelingError; chuỗi <100 điểm → GARCH từ chối fit.
+- Chuỗi <2 điểm → ModelingError.
+- (GARCH-per-regime: chi tiết kỹ thuật trong ADR-0011 — fit pooled trên
+  percent-scale, carry-over forecast, `_MIN_REGIME_OBS = 100`.)
 
 ## 4. Phạm vi
 
-In: 5 estimator, diagnostics, VolatilityState entity, evaluation harness lean.
-Out: Regime layer (WP-4b), multi-day forecast, per-regime models, MS-GARCH
-(research-only theo ADR-0004 tinh thần).
+In: 3 baselines naive (constant/rolling/ewma), diagnostics, VolatilityState
+entity, evaluation harness.
+Out: Regime layer (WP-4b), multi-day forecast, MS-GARCH (research-only theo
+ADR-0004 tinh thần). GARCH-per-regime chuyển sang `regime_garch.py`
+(ADR-0011) — `garch_sigma` standalone đã bị xóa (quyết định tại ADR-0011 §6:
+hybrid là ứng viên chính, không giữ GARCH lẻ kề bên).
 
 ## 5. Hệ quả
 
@@ -105,12 +110,9 @@ Kết quả OOS 250 ngày × 3 assets (chi tiết trong
   conditional volatility là cần thiết.
 - EWMA và GARCH-t hòa ở coverage 1 ngày (khoảng cách nằm trong nhiễu mẫu).
 
-**Quyết định:** `GARCH(1,1)-Student-t` là primary volatility model của Sigma.
-
-Lý do vượt ngoài bảng coverage: residuals chuẩn hóa sạch cho WP-4b,
-đường nâng cấp tự nhiên (GJR/EGARCH cho leverage effect, multi-step
-forecast), tham số diễn giải được (persistence α+β, tail ν), và nhất quán
-họ Student-t với distribution layer phía sau.
+**Quyết định (tại thời điểm WP-4a):** `GARCH(1,1)-Student-t` được chọn làm
+volatility model — thắng Normal về tail behavior, cung cấp residuals chuẩn
+hóa, tham số diễn giải được (persistence α+β, tail ν).
 
 **Điều kiện ràng buộc:** EWMA giữ vai trò baseline thường trực trong
 evaluation suite. Nếu benchmark mở rộng sau này cho thấy GARCH-t kém EWMA
@@ -120,3 +122,9 @@ ra ngoài nhiễu thống kê → xem xét lại, không giữ vì cảm tình.
 > từ "primary model của pipeline" thành **supporting layer + baseline**.
 > Định hướng nghiên cứu trung tâm chuyển sang HMM regime layer
 > (regime-conditioned GARCH). Code/tests giữ nguyên; ngừng phát triển thêm.
+>
+> **Cập nhật 2026-08-24 (ADR-0011 §6):** `garch_sigma` standalone bị XÓA
+> khỏi code. GARCH-per-regime (hybrid) là ứng viên chính của volatility
+> layer; benchmark OOS cho kết quả hỗn hợp (GLD cải thiện, MAE thắng 2/3,
+> viol95 SPY/NVDA cao hơn — trong nhiễu mẫu) → giữ baselines naive làm
+> thước đo, không giữ GARCH lẻ kề bên hybrid.

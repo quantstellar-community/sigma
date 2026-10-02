@@ -1,8 +1,8 @@
 """Conditional volatility estimation (WP-4a, ADR-0006).
 
-Five candidates share one contract: given a return history, forecast the
-next day's volatility as ``sigma_daily: float``. GARCH is never trusted
-until it beats the naive baselines out-of-sample (ADR-0006 D2/D8).
+The standalone (full-series) GARCH estimator was removed in favour of the
+regime-conditioned GARCH in ``regime_garch.py`` (ADR-0011). This module
+keeps the naive baselines used for comparison, and the diagnostics.
 """
 
 from __future__ import annotations
@@ -22,14 +22,11 @@ __all__ = [
     "check_arch_effects",
     "constant_sigma",
     "ewma_sigma",
-    "garch_sigma",
     "rolling_sigma",
 ]
 
 _RISKMETRICS_LAMBDA = 0.94
 _TRADING_DAYS = 252
-_MIN_GARCH_OBS = 100
-_GARCH_DISTS = ("normal", "t")
 
 
 @dataclass(frozen=True)
@@ -97,31 +94,6 @@ def ewma_sigma(returns: np.ndarray, lam: float = _RISKMETRICS_LAMBDA) -> float:
     for observation in values:
         variance = lam * variance + (1.0 - lam) * observation * observation
     return math.sqrt(variance)
-
-
-def garch_sigma(
-    returns: np.ndarray,
-    dist: str = "t",
-) -> float:
-    """GARCH(1,1) one-step-ahead volatility forecast via the ``arch`` package.
-
-    Fits on percent-scaled returns for numerical stability and converts back.
-    Maximum likelihood is deterministic, so repeated fits are reproducible.
-    Invalid ``dist`` values are rejected at runtime.
-    """
-    if dist not in _GARCH_DISTS:
-        msg = f"unsupported dist {dist!r}; expected one of {_GARCH_DISTS}"
-        raise ModelingError(msg)
-    values = _as_returns(returns, minimum=_MIN_GARCH_OBS)
-
-    arch = import_module("arch")
-    percent = values * 100.0
-    model = arch.arch_model(percent, mean="Constant", vol="GARCH", p=1, q=1, dist=dist)
-    result = model.fit(disp="off", show_warning=False)
-    forecast_variance = float(
-        result.forecast(horizon=1, reindex=False).variance.values[-1, 0]
-    )
-    return math.sqrt(forecast_variance) / 100.0
 
 
 def check_arch_effects(returns: np.ndarray) -> ArchDiagnostics:

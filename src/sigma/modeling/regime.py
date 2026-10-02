@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from importlib import import_module
+from typing import Any
 
 import numpy as np
 
@@ -28,6 +29,7 @@ __all__ = [
 _TRADING_DAYS = 252
 _MIN_OBS_PER_REGIME = 20
 _DEFAULT_SEED = 42
+_DEFAULT_K = 2  # data-supported default (ADR-0011 §5); k=3 available where data allows
 _MAX_STABILITY_RELABEL_TRIES = 5
 
 
@@ -47,6 +49,7 @@ class RegimeFit:
     emissions: dict[int, GaussianParams]
     transition_matrix: np.ndarray  # (k, k)
     dataset_id: str
+    model: Any  # fitted hmmlearn model (kept for causal re-prediction)
 
 
 @dataclass(frozen=True)
@@ -98,11 +101,15 @@ def _validate_inputs(returns: np.ndarray, k: int) -> np.ndarray:
 def fit_regime_model(
     returns: np.ndarray,
     *,
-    k: int,
+    k: int = _DEFAULT_K,
     dataset_id: str,
     seed: int = _DEFAULT_SEED,
 ) -> RegimeFit:
     """Fit a Gaussian HMM with ``k`` hidden states on log returns.
+
+    ``k=2`` is the default: the data survey (ADR-0011 §5) showed a third
+    HMM state is an artifact for 11/12 assets (too few observations).
+    ``k=3`` remains available where data supports it (e.g. XOM).
 
     Deterministic given a fixed seed (ADR-0009 D5).
     """
@@ -146,7 +153,7 @@ def fit_regime_model(
     emissions: dict[int, GaussianParams] = {}
     for state in range(k):
         mask = states == state
-        if mask.any():
+        if mask.sum() >= 2:  # <2 obs => std undefined; treat as empty artifact
             state_returns = values[mask]
             emissions[state] = GaussianParams(
                 mean=float(np.mean(state_returns)),
@@ -160,6 +167,7 @@ def fit_regime_model(
         emissions=emissions,
         transition_matrix=np.asarray(model.transmat_),
         dataset_id=dataset_id,
+        model=model,
     )
 
 
@@ -244,7 +252,7 @@ def label_regimes(
 def select_k(
     returns: np.ndarray,
     *,
-    candidates: tuple[int, ...],
+    candidates: tuple[int, ...] = (2, 3),
     dataset_id: str,
     seed: int = _DEFAULT_SEED,
 ) -> KSelection:

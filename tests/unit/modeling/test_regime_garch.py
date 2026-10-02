@@ -4,7 +4,6 @@ Synthetic series with KNOWN regime labels are the ground truth: we verify
 that fitting GARCH per regime recovers distinct volatility structures.
 """
 
-
 import numpy as np
 import pytest
 

@@ -34,7 +34,6 @@ from sigma.modeling.volatility import (
     check_arch_effects,
     constant_sigma,
     ewma_sigma,
-    garch_sigma,
     rolling_sigma,
 )
 
@@ -57,7 +56,6 @@ __all__ = [
     "fit_regime_garch",
     "fit_regime_model",
     "forecast_regime_vol",
-    "garch_sigma",
     "label_regimes",
     "price_to_float",
     "rolling_sigma",

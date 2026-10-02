@@ -12,7 +12,6 @@ from sigma.modeling.volatility import (
     check_arch_effects,
     constant_sigma,
     ewma_sigma,
-    garch_sigma,
     rolling_sigma,
 )
 
@@ -66,42 +65,6 @@ def test_ewma_sigma_requires_two_points() -> None:
         ewma_sigma(np.array([0.01]))
 
 
-# ------------------------------------------------------------------ garch
-
-
-def _clustered_returns(n: int = 500) -> np.ndarray:
-    """Deterministic synthetic returns with volatility clustering."""
-    rng = np.random.default_rng(42)
-    calm, wild = [], []
-    while len(calm) + len(wild) < n:
-        calm.extend(rng.normal(0.0, 0.006, size=40))
-        wild.extend(rng.normal(0.0, 0.025, size=15))
-    combined = calm[:400] + wild[:100]
-    return np.array(combined)
-
-
-@pytest.mark.parametrize("dist", ["normal", "t"])
-def test_garch_sigma_runs_and_returns_sane_daily_vol(dist: str) -> None:
-    sigma = garch_sigma(_clustered_returns(), dist=dist)
-    assert math.isfinite(sigma)
-    assert 0.0 < sigma < 0.05  # daily vol far below an absurd 5%
-
-
-def test_garch_sigma_is_deterministic() -> None:
-    returns = _clustered_returns()
-    assert garch_sigma(returns) == garch_sigma(returns)
-
-
-def test_garch_sigma_rejects_short_series() -> None:
-    with pytest.raises(ModelingError):
-        garch_sigma(np.zeros(99))
-
-
-def test_garch_sigma_rejects_unknown_dist() -> None:
-    with pytest.raises(ModelingError):
-        garch_sigma(_clustered_returns(), dist="cauchy")
-
-
 # ------------------------------------------------------------ diagnostics
 
 
@@ -113,7 +76,10 @@ def test_diagnostics_report_no_arch_for_iid_noise() -> None:
 
 
 def test_diagnostics_detect_clustering() -> None:
-    diagnostics = check_arch_effects(_clustered_returns())
+    rng = np.random.default_rng(42)
+    calm = rng.normal(0.0, 0.006, 400)
+    wild = rng.normal(0.0, 0.025, 100)
+    diagnostics = check_arch_effects(np.concatenate([calm, wild]))
     assert diagnostics.has_arch_effects is True
 
 
